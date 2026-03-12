@@ -1,0 +1,229 @@
+\begin{thebibliography}{10}
+
+\bibitem{gsma2020mobile}
+{GSMA}.
+\newblock The Mobile Economy 2020.
+\newblock \url{https://www.gsma.com/mobileeconomy/}, 2020
+
+\bibitem{liteos}
+{Huawei}.
+\newblock Huawei LiteOS.
+\newblock \url{https://www.huawei.com/en/products/iot/operating-system}
+
+\bibitem{freertos}
+{Amazon Web Services}.
+\newblock FreeRTOS - Real-time operating system for microcontrollers.
+\newblock \url{https://www.freertos.org/}
+
+\bibitem{zephyr}
+{Linux Foundation}.
+\newblock Zephyr Project - Real-time operating system for IoT.
+\newblock \url{https://www.zephyrproject.org/}
+
+\bibitem{yang2021iotsurvey}
+杨毅宇, 周威, 赵尚儒, 刘聪, 张宇辉, 王鹤, et~al.
+\newblock 物联网安全研究综述:威胁,检测与防御.
+\newblock 通信学报, 2021, 42(8): 18
+
+\bibitem{mirai2018}
+Manos Antonakakis, Tim April, Michael Bailey, Mathew Bernhard, Elie Bursztein,
+  Jaime Cochran, et~al.
+\newblock Analysis of the Mirai Botnet.
+\newblock In: USENIX Security Symposium, 2018
+
+\bibitem{firmadyne}
+Daming~D Chen, Manuel Egele, Maverick Woo, David Brumley.
+\newblock Firmadyne: Towards Automated Dynamic Firmware Analysis.
+\newblock In: IEEE Symposium on Security and Privacy, 2016: 1--16
+
+\bibitem{fuzzware}
+Tobias Scharnowski, Nils Bars, Moritz Schloegel, Eric Gustafson, Marius Muench,
+  Giovanni Vigna, et~al.
+\newblock Fuzzware: Using Precise MMIO Modeling for Effective Firmware Fuzzing.
+\newblock In: 31st USENIX Security Symposium, 2022
+
+\bibitem{qemu}
+Fabrice Bellard, et~al.
+\newblock QEMU, the FAST! processor emulator.
+\newblock \url{https://www.qemu.org/}
+
+\bibitem{avatar}
+Musard Kamilov, et~al.
+\newblock Avatar: A Framework to Support Dynamic Security Analysis of Embedded
+  Firmware Binaries.
+\newblock In: NDSS, 2015
+
+\bibitem{avatar2}
+Marius Muench, Jan Stijohann, Fabian Kargl, Aur{\'e}lien Francillon, Davide
+  Balzarotti.
+\newblock Avatar$^2$: A Multi-target Orchestration Platform.
+\newblock In: Workshop on Binary Analysis Research, 2018
+
+\bibitem{pretender}
+Eric Gustafson, Marius Muench, Chad Spensky, Tobias Scharnowski, Paul Grosen,
+  Stephen Mavidis, et~al.
+\newblock Pretender: High-Fidelity Peripheral Emulation for Firmware.
+\newblock In: USENIX Security Symposium, 2019
+
+\bibitem{fengp2020p2im}
+Bo~Feng, Alejandro Mera, Long Lu.
+\newblock P2IM: Scalable and Hardware-independent Firmware Testing via
+  Automatic Peripheral Interface Modeling.
+\newblock In: Proceedings of Usenix Security Symposium, 2020
+
+\bibitem{laelaps}
+Chen Cao, Le~Guan, Peng Cui, Limin Cheng, Mingyu Zhu.
+\newblock Laelaps: An Efficient and Fast Dynamic Analysis Tool for IoT
+  Firmware.
+\newblock In: IEEE International Conference on Embedded Software and Systems,
+  2021
+
+\bibitem{uemu}
+Wei Zhou, et~al.
+\newblock uEmu: A Framework for Firmware Emulation and Vulnerability Discovery.
+\newblock In: ACM CCS, 2021
+
+\bibitem{pararehosting}
+Wenqiang Li, Libo Li, Shenglin Zhang, Tao Xie, Lei Ma, et~al.
+\newblock Para-rehosting: Automatic Payload Generation for Embedded
+  Inter-Process Communication.
+\newblock In: USENIX Security Symposium, 2022
+
+\bibitem{clements2020halucinator}
+Abraham~A Clements, Eric Gustafson, Tobias Scharnowski, Paul Grosen, David
+  Fritz, Christopher Kruegel, et~al.
+\newblock HALucinator: Firmware Re-hosting Through Abstraction Layer Emulation.
+\newblock In: 29th USENIX Security Symposium, 2020: 1--18
+
+\bibitem{iotfuzzer}
+Jiongyi Chen, Wenrui Diao, Qingchuan Zhao, Chaoshun Zuo, Zhiqiang Lin, XiaoFeng
+  Guo, et~al.
+\newblock IoTFuzzer: Discovering Memory Corruptions in IoT Through App-based
+  Fuzzing.
+\newblock In: NDSS, 2018
+
+\bibitem{firmalice}
+Yan Shoshitaishvili, Ruoyu Wang, Christophe Hauser, Christopher Kruegel,
+  Giovanni Vigna.
+\newblock Firmalice: Automatic Detection of Authentication Bypass
+  Vulnerabilities in Binary Firmware.
+\newblock In: NDSS, 2015
+
+\bibitem{openai2023gpt4}
+OpenAI.
+\newblock GPT-4 Technical Report.
+\newblock arXiv preprint arXiv:2303.08774, 2023
+
+\bibitem{roziere2023code}
+Baptiste Rozi{\`e}re, Jonas Gehring, Fabian Gloeckle, Sten Sootla, Itai Gat,
+  Xiaoqing~Ellen Tan, et~al.
+\newblock Code Llama: Open Foundation Models for Code.
+\newblock arXiv preprint arXiv:2308.12950, 2023
+
+\bibitem{li2023starcoder}
+Raymond Li, Loubna~Ben Allal, Yangtian Zi, Niklas Muennighoff, Denis Kocetkov,
+  Chenghao Mou, et~al.
+\newblock StarCoder: May the Source Be with You!
+\newblock arXiv preprint arXiv:2305.06161, 2023
+
+\bibitem{wei2022finetuned}
+Jason Wei, Maarten Bosma, Vincent~Y Zhao, Kelvin Guu, Adams~Wei Yu, Brian
+  Lester, et~al.
+\newblock Finetuned Language Models Are Zero-Shot Learners.
+\newblock arXiv preprint arXiv:2109.01652, 2022
+
+\bibitem{dolphcoder2024}
+Weize Wang, Qipeng Chen, Zihao Zhang, Yang Li, Xin Cui, Jing Chen, et~al.
+\newblock DolphCoder: Echo-Locating Code with Diverse and Multi-Objective
+  Instruction Tuning.
+\newblock arXiv preprint, 2024
+
+\bibitem{codelsi2024}
+Tianyu Zhang, et~al.
+\newblock CodeLSI: Leveraging Foundation Models for Automated Code Generation
+  with Low-Rank Optimization and Domain-Specific Instruction Tuning.
+\newblock arXiv preprint, 2024
+
+\bibitem{chen2023teaching}
+Xinyun Chen, Maxwell Lin, Dale Schuurmans, Quoc Le.
+\newblock Teaching Large Language Models to Self-Debug.
+\newblock arXiv preprint arXiv:2304.05128, 2023
+
+\bibitem{rlcf2024}
+Kechi Liu, Shusheng Zhang, Ge~Li, Zhi Jin, Li~Zhao, Yang Li.
+\newblock Tuning Models of Code with Compiler-Generated Reinforcement Learning
+  Feedback.
+\newblock arXiv preprint, 2024
+
+\bibitem{codedpo2024}
+Yuxiang Zhang, et~al.
+\newblock CodeDPO: Aligning Code Models with Self-Generated and Verified Source
+  Code.
+\newblock arXiv preprint, 2024
+
+\bibitem{wei2022cot}
+Jason Wei, Xuezhi Wang, Dale Schuurmans, Maarten Bosma, Brian Ichter, Fei Xia,
+  et~al.
+\newblock Chain-of-Thought Prompting Elicits Reasoning in Large Language
+  Models.
+\newblock arXiv preprint arXiv:2201.11903, 2022
+
+\bibitem{motcoder2024}
+Kechi Zhang, et~al.
+\newblock MoTCoder: Elevating Large Language Models with Modular of Thought for
+  Challenging Programming Tasks.
+\newblock arXiv preprint, 2024
+
+\bibitem{schick2023toolformer}
+Timo Schick, Jane Dwivedi-Yu, Roberto Dess{\`\i}, Roberta Raileanu, Maria
+  Lomeli, Eric Hambro, et~al.
+\newblock Toolformer: Language Models Can Teach Themselves to Use Tools.
+\newblock arXiv preprint arXiv:2302.02531, 2023
+
+\bibitem{mccoder2024}
+Wei Chen, et~al.
+\newblock MCCoder: Streamlining Motion Control with LLM-Assisted Code
+  Generation and Rigorous Verification.
+\newblock arXiv preprint, 2024
+
+\bibitem{rgd2024}
+Zhi Li, et~al.
+\newblock RGD: Multi-LLM Based Agent Debugger via Refinement and Generation
+  Guidance.
+\newblock arXiv preprint, 2024
+
+\bibitem{gpiot2024}
+Hao Li, et~al.
+\newblock GPIoT: Tailoring Small Language Models for IoT Program Synthesis and
+  Development.
+\newblock arXiv preprint, 2024
+
+\bibitem{spec2code2024}
+Simon M{\"u}ller, et~al.
+\newblock Towards Specification-Driven LLM-Based Generation of Embedded
+  Automotive Software.
+\newblock arXiv preprint, 2024
+
+\bibitem{improvingllm2024}
+Yu~Chen, et~al.
+\newblock Improving LLM-Assisted Secure Code Generation through
+  Retrieval-Augmented Generation and Multi-Tool Feedback.
+\newblock arXiv preprint, 2024
+
+\bibitem{agents4plc2024}
+Tianyu Wang, et~al.
+\newblock Agents4PLC: Automating Closed-Loop PLC Code Generation and
+  Verification in Industrial Control Systems Using LLM-Based Agents.
+\newblock arXiv preprint, 2024
+
+\bibitem{rtthread}
+{RT-Thread Community}.
+\newblock RT-Thread: An Open Source Embedded Real-Time Operating System.
+\newblock \url{https://www.rt-thread.org/}
+
+\bibitem{afl}
+Michal Zalewski.
+\newblock American fuzzy lop (AFL).
+\newblock \url{https://lcamtuf.coredump.cx/afl/}
+
+\end{thebibliography}
