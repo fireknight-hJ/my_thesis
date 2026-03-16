@@ -1,0 +1,104 @@
+# 参考文献 PDF 下载总结
+
+## ✅ 已成功下载 (33篇)
+
+### LLM 和代码生成基础
+1. openai2023gpt4.pdf - GPT-4 Technical Report
+2. touvron2023llama.pdf - LLaMA: Open and Efficient Foundation Language Models
+3. roziere2023code.pdf - Code Llama: Open Foundation Models for Code
+4. li2023starcoder.pdf - StarCoder: May the Source be With You!
+5. brown2020language.pdf - Language Models are Few-Shot Learners (GPT-3)
+6. radford2018improving.pdf - Improving Language Understanding by Generative Pre-Training (GPT-1)
+7. du2022glm.pdf - GLM: General Language Model Pretraining with Autoregressive Blank Infilling
+8. vaswani2017attention.pdf - Attention Is All You Need
+
+### 代码理解和生成模型
+9. feng2020codebert.pdf - CodeBERT: A Pre-Trained Model for Programming and Natural Languages
+10. wang2021codet5.pdf - CodeT5: Identifier-Aware Unified Pre-Trained Encoder-Decoder Models
+11. zheng2023codegeex.pdf - CodeGeeX: A Pre-Trained Model for Code Generation
+12. chen2021evaluating.pdf - Evaluating Large Language Models Trained on Code
+13. hendrycks2021measuring.pdf - Measuring Coding Challenge Competence With APPS
+
+### LLM 推理和调试
+14. wei2022cot.pdf - Chain-of-Thought Prompting Elicits Reasoning in Large Language Models
+15. wei2022finetuned.pdf - Finetuned Language Models Are Zero-Shot Learners
+16. schick2023toolformer.pdf - Toolformer: Language Models Can Teach Themselves to Use Tools
+17. chen2023teaching.pdf - Teaching Large Language Models to Self-Debug
+18. austin2021program.pdf - Program Synthesis with Large Language Models
+
+### 安全漏洞修复
+19. pearce2022examining.pdf - Examining Zero-Shot Vulnerability Repair with Large Language Models
+20. fan2023automated.pdf - Automated Program Repair: A Systematic Review
+
+### 2024 年最新工作
+21. codedpo2024.pdf - CodeDPO: Aligning Code Models with Self-Generated and Verified Source Code
+22. codelsi2024.pdf - CodeLSI: Leveraging Foundation Models for Automated Code Generation
+23. rlcf2024.pdf - Tuning Models of Code with Compiler-Generated Reinforcement Learning Feedback
+24. motcoder2024.pdf - MoTCoder: Elevating Large Language Models with Modular of Thought
+25. mccoder2024.pdf - MCCoder: Streamlining Motion Control with LLM-Assisted Code Generation
+26. rgd2024.pdf - RGD: Multi-LLM Based Agent Debugger via Refinement and Generation Guidance
+27. spec2code2024.pdf - Towards Specification-Driven LLM-Based Generation of Embedded Automotive Software
+28. improvingllm2024.pdf - Improving LLM-Assisted Secure Code Generation
+29. agents4plc2024.pdf - Agents4PLC: Automating Closed-Loop PLC Code Generation
+30. gpiot2024.pdf - GPIoT: Tailoring Small Language Models for IoT Program Synthesis
+
+### 固件分析和安全
+31. firmadyne.pdf - Firmadyne: Towards Automated Dynamic Firmware Analysis (arXiv version)
+32. angora.pdf - Angora: Efficient Fuzzing by Principled Search
+
+### 其他
+33. ziegler2022productivity.pdf - Productivity Assessment of Neural Code Completion
+
+## ❌ 未找到或需要手动下载
+
+### USENIX Security 论文 (需要注册或直接访问官网)
+- P2IM (USENIX Security 2020): https://www.usenix.org/conference/usenixsecurity20/presentation/feng
+- FirmAFL (USENIX Security 2019): https://www.usenix.org/conference/usenixsecurity19/presentation/zheng
+- Avatar2 (USENIX Security 2018): https://www.usenix.org/conference/usenixsecurity18/presentation/muench
+- Fuzzware (USENIX Security 2022): https://www.usenix.org/conference/usenixsecurity22/presentation/scharnowski
+- Pretender (USENIX Security 2019): https://www.usenix.org/conference/usenixsecurity19/presentation/gustafson
+- QSYM (USENIX Security 2018): https://www.usenix.org/conference/usenixsecurity18/presentation/yun
+- Mirai (USENIX Security 2018): https://www.usenix.org/conference/usenixsecurity18/presentation/antonakakis
+- Para-rehosting (USENIX Security 2022): https://www.usenix.org/conference/usenixsecurity22/presentation/li
+
+### NDSS 论文
+- Avatar (NDSS 2015): https://www.ndss-symposium.org/ndss2015/avatar-framework-support-dynamic-security-analysis/
+- HALucinator (USENIX Security 2020): https://www.usenix.org/conference/usenixsecurity20/presentation/clements
+- IoTFuzzer (NDSS 2018): https://www.ndss-symposium.org/ndss2018/iotfuzzer-discovering-memory-corruptions/
+- Firmalice (NDSS 2015): https://www.ndss-symposium.org/ndss2015/firmalice-automatic-detection/
+- Driller (NDSS 2016): https://www.ndss-symposium.org/ndss2016/driller-augmenting-fuzzing/
+
+### 期刊论文 (中文)
+- yang2021iotsurvey - 物联网安全研究综述 (通信学报, 需要知网权限)
+- iotpot - IoTPOT: Analysing and Detecting Malware in IoT (Journal of Computer Virology)
+
+### 其他论文
+- Laelaps (IEEE ICESS 2021)
+- uEmu (ACM CCS 2021)
+- Industroyer (ESET 白皮书)
+
+### 工具和项目 (无需PDF)
+- qemu - QEMU 官网
+- freertos - FreeRTOS 官网
+- zephyr - Zephyr Project 官网
+- rtthread - RT-Thread 官网
+- openharmony - OpenHarmony 官网
+- unicorn - Unicorn Engine 官网
+- afl - AFL 官网
+
+## 📊 统计
+
+- ✅ 已下载: 33 篇
+- ❌ 未找到/需手动: 约 20 篇
+- 📁 总大小: 69 MB
+- 📝 原始参考文献: 约 80 篇
+
+## 💡 建议
+
+1. 对于 USENIX/NDSS 论文，可以直接访问会议官网下载
+2. 对于中文期刊论文，需要通过知网或其他学术数据库获取
+3. 对于 IEEE/ACM 论文，部分有 arXiv 版本，可以尝试搜索
+4. 所有 PDF 文件已保存在: `/home/haojie/workspace/my_thesis/references_pdf/`
+
+---
+生成时间: 2026-03-17
