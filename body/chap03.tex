@@ -552,44 +552,156 @@ void HAL_ETH_IRQHandler(ETH_HandleTypeDef *heth) {
 
 \textbf{Steering 策略：执行流导向}
 
-Steering 策略是针对复杂场景（特别是 DMA+RingBuffer 的网络接收路径）的控制流改写。该策略的目标是：当固件因为硬件依赖而"走不到正确路径"（例如等待硬件标志死循环、Ring 状态机无法退出）时，通过控制流旁路/短路把执行导向到"仿真可达且语义保持"的分支。
+Steering 策略通过控制流旁路和改写，将因硬件依赖而"走不到正确路径"的执行导向到"仿真可达且语义保持"的分支。该策略适用于复杂场景，例如依赖硬件标志的循环、基于 DMA+RingBuffer 的数据接收状态机等。Steering 策略的核心思想是：当固件因为硬件依赖导致执行路径不可达时，通过控制流改写把执行导向到仿真可用的路径，同时保证数据传输和状态更新的语义一致性。
 
-Steering 策略的核心动作包括：跳过依赖硬件标志扫描 Ring 的 while/do-while 结构，在注入落点插入 HAL\_BE\_ENET\_ReadFrame 把仿真数据写入 buffer，然后推进 Ring（保证上层可消费）。该策略遵循"单次收一包"的强约束，禁止保留依赖 LAST/EMPTY 等硬件 flag 的多帧/环扫描结构。
+Steering 策略包含三个核心动作：一是跳过依赖硬件标志的条件判断，让执行直接进入数据处理分支；二是通过 HAL\_BE\_* 注入函数将仿真数据写入缓冲区；三是保留 buffer 管理、状态标志、Ring 更新等非 I/O 逻辑，确保数据能够被上层协议栈正确消费。
 
-以 ENET 接收函数为例，原始代码包含依赖硬件 EMPTY/LAST/OWN 等标志扫描 Ring 的 while/do-while 状态机。在仿真环境中，这些标志不会被硬件更新，导致执行卡死在循环中。采用 Steering 策略替换后，用条件判断旁路掉硬件 gate，在当前 buffer descriptor 调用 HAL\_BE\_ENET\_ReadFrame 注入数据，完成一次 BD 更新后立即返回。
+以 NXP 网卡驱动中的 ENET\_GetRxFrame 函数为例，该函数使用 DMA+RingBuffer 机制接收以太网帧，具有复杂的状态机。原始代码包含依赖硬件标志扫描 Ring 的 while/do-while 结构，在仿真环境中这些标志（EMPTY、LAST、OWN）不会被硬件更新，导致执行卡死在循环中。
 
-代码示例如下：
+原始代码的关键逻辑如下：
 
 \begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt]
-// 原始代码（依赖硬件标志扫描）
-/* Check current buffer descriptor's empty flag */
-while (0U == (curBuffDescrip->control & ENET_BUFFDESCRIPTOR_RX_EMPTY_MASK)) {
-    if (0U != (curBuffDescrip->control & ENET_BUFFDESCRIPTOR_RX_LAST_MASK)) {
-        /* Found last buffer descriptor */
-        result = ENET_GetRxFrameErr(...);
+/* Check current buffer descriptor's empty flag. If empty means there is no frame received. */
+index = rxBdRing->rxGenIdx;
+while (0U == (curBuffDescrip->control & ENET_BUFFDESCRIPTOR_RX_EMPTY_MASK))
+{
+    /* Find last buffer descriptor. */
+    if (0U != (curBuffDescrip->control & ENET_BUFFDESCRIPTOR_RX_LAST_MASK))
+    {
+        /* The last buffer descriptor stores the error status of this received frame. */
+        result = ENET_GetRxFrameErr((enet_rx_bd_struct_t *)(uintptr_t)curBuffDescrip, &rxFrame->rxFrameError);
         break;
     }
-    index = ENET_IncreaseIndex(index, rxBdRing->rxRingLen);
+
+    /* Get feedback that no-empty BD takes frame length of 0. Probably an IP issue and drop this BD. */
+    if (curBuffDescrip->length == 0U)
+    {
+        /* Set LAST bit manually to let following drop error frame operation drop this abnormal BD. */
+        curBuffDescrip->control |= ENET_BUFFDESCRIPTOR_RX_LAST_MASK;
+        result = kStatus_ENET_RxFrameError;
+        break;
+    }
+
+    /* Can't find last BD flag, no valid frame. */
+    index          = ENET_IncreaseIndex(index, rxBdRing->rxRingLen);
     curBuffDescrip = rxBdRing->rxBdBase + index;
+    if (index == rxBdRing->rxGenIdx)
+    {
+        /* kStatus_ENET_RxFrameEmpty. */
+        break;
+    }
 }
 
-// 替换代码（Steering 策略）
-/* Skip hardware-dependent empty flag check - simulate that we have a frame */
-if (1) /* Always enter frame processing path for simulation */ {
-    /* Simulate that we found last BD */
-    result = kStatus_Success;
-}
+/* Get valid frame */
+curBuffDescrip = rxBdRing->rxBdBase + rxBdRing->rxGenIdx;
+index          = 0;
+do
+{
+    newBuff = (uintptr_t)(uint8_t *)handle->rxBuffAlloc(base, handle->userData, ringId);
+    if (newBuff != 0U)
+    {
+        rxBuffer = &rxFrame->rxBuffArray[index];
 
-/* Inject simulation data into buffer */
-if (rxBuffer->buffer != NULL && rxBuffer->length > 0) {
-    HAL_BE_ENET_ReadFrame(rxBuffer->buffer, rxBuffer->length);
-}
+        /* The last buffer descriptor of a frame. */
+        if (0U != (curBuffDescrip->control & ENET_BUFFDESCRIPTOR_RX_LAST_MASK))
+        {
+            isLastBuff       = true;
+            rxFrame->totLen  = curBuffDescrip->length;
+            rxBuffer->length = curBuffDescrip->length - buffLen;
+        }
+        else
+        {
+            rxBuffer->length = curBuffDescrip->length;
+            buffLen += rxBuffer->length;
+        }
+        /* Give new buffer from application to BD */
 
-/* Update Ring state and return immediately */
-rxBdRing->rxGenIdx = ENET_IncreaseIndex(rxBdRing->rxGenIdx, rxBdRing->rxRingLen);
+#if defined(FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET) && FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET
+        buffer = MEMORY_ConvertMemoryMapAddress(newBuff, kMEMORY_Local2DMA);
+#else
+        buffer = newBuff;
+#endif /* FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET */
+
+#if defined(FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL) && FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL
+        if (handle->rxMaintainEnable[ringId])
+        {
+            DCACHE_InvalidateByRange(buffer, handle->rxBuffSizeAlign[ringId]);
+        }
+#endif /* FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL */
+
+        curBuffDescrip->buffer = (uint32_t)buffer;
+
+        /* Clears status including the owner flag. */
+        curBuffDescrip->control &= ENET_BUFFDESCRIPTOR_RX_WRAP_MASK;
+        /* Sets the receive buffer descriptor with empty flag. */
+        curBuffDescrip->control |= ENET_BUFFDESCRIPTOR_RX_EMPTY_MASK;
+
+        /* Increase Rx array index and buffer descriptor address. */
+        index++;
+        rxBdRing->rxGenIdx = ENET_IncreaseIndex(rxBdRing->rxGenIdx, rxBdRing->rxRingLen);
+        curBuffDescrip     = rxBdRing->rxBdBase + rxBdRing->rxGenIdx;
+    }
+} while (!isLastBuff);
 \end{lstlisting}
 
-该策略通过控制流旁路把"依赖硬件 MMIO 写入才能进入的路径"变为"只要 buffer/state 正确即可继续上层逻辑"的路径，同时保留 buffer 管理、状态标志、Ring 更新等非 I/O 逻辑，确保数据能够被上层协议栈正确消费。
+采用 Steering 策略替换后，跳过依赖硬件 EMPTY/LAST 等标志的 while 循环，在当前 buffer descriptor 调用 HAL\_BE\_ENET\_ReadFrame 注入数据，完成一次 BD 更新后立即返回。替换代码如下：
+
+\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt]
+/* Get valid frame buffer */
+curBuffDescrip = rxBdRing->rxBdBase + rxBdRing->rxGenIdx;
+index          = 0;
+do
+{
+    newBuff = (uintptr_t)(uint8_t *)handle->rxBuffAlloc(base, handle->userData, ringId);
+    if (newBuff != 0U)
+    {
+        assert((uint64_t)newBuff + handle->rxBuffSizeAlign[ringId] - 1U <= UINT32_MAX);
+        rxBuffer = &rxFrame->rxBuffArray[index];
+
+#if defined(FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET) && FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET
+        address = MEMORY_ConvertMemoryMapAddress(curBuffDescrip->buffer, kMEMORY_DMA2Local);
+#else
+        address = curBuffDescrip->buffer;
+#endif /* FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET */
+
+#if defined(FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL) && FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL
+        if (handle->rxMaintainEnable[ringId])
+        {
+            DCACHE_InvalidateByRange(address, handle->rxBuffSizeAlign[ringId]);
+        }
+#endif /* FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL */
+
+        rxBuffer->buffer = (void *)(uint8_t *)address;
+
+        /* The last buffer descriptor of a frame. */
+        if (0U != (curBuffDescrip->control & ENET_BUFFDESCRIPTOR_RX_LAST_MASK))
+        {
+            /* This is a valid frame. */
+            isLastBuff       = true;
+            rxFrame->totLen  = curBuffDescrip->length;
+            rxBuffer->length = curBuffDescrip->length - buffLen;
+        }
+        else
+        {
+            rxBuffer->length = curBuffDescrip->length;
+            buffLen += rxBuffer->length;
+        }
+    }
+
+    /* Simulate receiving data into buffer */
+    if (rxBuffer->buffer != NULL && rxBuffer->length > 0)
+    {
+        HAL_BE_ENET_ReadFrame(rxBuffer->buffer, rxBuffer->length);
+    }
+
+    /* Increase Rx array index and buffer descriptor address. */
+    index++;
+    rxBdRing->rxGenIdx = ENET_IncreaseIndex(rxBdRing->rxGenIdx, rxBdRing->rxRingLen);
+    curBuffDescrip     = rxBdRing->rxBdBase + rxBdRing->rxGenIdx;
+} while (!isLastBuff);
+\end{lstlisting}
+
+Steering 策略通过三方面实现控制流导向：一是用条件判断旁路掉依赖硬件 flag 的 while/do-while 结构，让代码直接进入处理分支；二是在处理分支中把仿真数据写入 buffer（HAL\_BE\_ENET\_ReadFrame），保证后续 `rxFrame`/上层协议栈读取到的内容是由 fuzzemu 注入的；三是保留对 BD/`rxGenIdx` 的更新，使 RingBuffer 不至于卡死在同一个 BD 上。该策略遵循"单次收一包"的强约束，在保证 RingBuffer 状态正确的前提下，禁止保留依赖 LAST/EMPTY 等硬件 flag 的多帧/环扫描结构。
 
 \subsection{智能体工作流设计}
 
