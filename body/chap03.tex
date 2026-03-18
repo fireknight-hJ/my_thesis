@@ -414,7 +414,7 @@ SEND & 将数据写入寄存器/外设 & \texttt{HAL\_UART\_Transmit} \\
 IRQ & 中断处理函数/回调 & \texttt{HAL\_UART\_IRQHandler} \\
 INIT & 外设初始化 & \texttt{HAL\_UART\_Init} \\
 CTRL & 启停、模式切换 & \texttt{HAL\_UART\_Start} \\
-POLL & 轮询状态位 & \texttt{HAL\_UART\_GetState} \\
+LOOP & 轮询等待硬件状态 & \texttt{HAL\_UART\_GetState} \\
 DMA & 配置 DMA 传输 & \texttt{HAL\_UART\_Transmit\_DMA} \\
 NODRIVER & 不需要替换的函数 & 纯业务逻辑函数 \\
 \bottomrule
@@ -433,40 +433,58 @@ NODRIVER & 不需要替换的函数 & 纯业务逻辑函数 \\
 \toprule
 \textbf{函数类别} & \textbf{推荐策略} & \textbf{说明} \\
 \midrule
-INIT & Skip & 初始化副作用在仿真中不重要 \\
+INIT & Skip & 跳过部分硬件初始化逻辑 \\
 SEND & Strip/Redirect & 保留状态或将数据输出到虚拟设备 \\
 RECV & Redirect & 从虚拟设备读取数据 \\
 IRQ & Event & 通过事件机制模拟中断 \\
 CTRL & Skip & 控制操作在仿真中跳过 \\
-POLL & Redirect & 返回虚拟设备状态 \\
-DMA & Redirect & 使用虚拟 DMA 接口 \\
+LOOP & Skip & 跳过轮询等待逻辑，避免死循环 \\
+DMA & Strip & 剥离DMA配置代码 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\textbf{策略1：跳过硬件副作用（Skip）}
+\textbf{策略1：跳过部分操作（Skip）}
 
-适用于：初始化类、控制类函数，寄存器写入对仿真无实际影响。
+适用于：初始化类、控制类、轮询类函数，需要跳过部分硬件相关逻辑。
 
-该策略将寄存器写操作替换为无副作用语句，保留函数签名和返回值。对于仿真环境而言，外设初始化和控制操作通常不需要真实执行，因为虚拟外设的状态由仿真器管理。
+该策略跳过部分硬件相关操作，保留函数签名和返回值，使函数执行路径能够支持固件正常运行。对于初始化类函数，跳过部分硬件寄存器配置逻辑；对于控制类函数，跳过控制命令的硬件执行；对于轮询类函数，跳过等待硬件状态的循环逻辑，避免仿真环境中的死循环。
 
 代码示例如下：
 
 \begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt]
-// 原始代码
+// 原始代码（初始化类）
 void HAL_UART_Enable(UART_HandleTypeDef *huart) {
     huart->Instance->CR1 |= USART_CR1_UE;
 }
 
-// 替换代码
+// 替换代码（Skip 策略）
 void HAL_UART_Enable(UART_HandleTypeDef *huart) {
     (void)huart;
+}
+
+// 原始代码（轮询类）
+HAL_StatusTypeDef HAL_UART_WaitOnFlag(UART_HandleTypeDef *huart, uint32_t Flag, uint32_t Timeout) {
+    while (!(__HAL_UART_GET_FLAG(huart, Flag))) {
+        if (Timeout != HAL_MAX_DELAY) {
+            if ((Timeout--) == 0) return HAL_TIMEOUT;
+        }
+    }
+    return HAL_OK;
+}
+
+// 替换代码（Skip 策略）
+HAL_StatusTypeDef HAL_UART_WaitOnFlag(UART_HandleTypeDef *huart, uint32_t Flag, uint32_t Timeout) {
+    (void)huart;
+    (void)Flag;
+    (void)Timeout;
+    return HAL_OK;
 }
 \end{lstlisting}
 
 \textbf{策略2：剥离硬件代码、保留控制逻辑（Strip）}
 
-适用于：发送类函数，需要保留状态更新但移除寄存器操作。
+适用于：发送类函数、DMA配置类函数，需要保留状态更新但移除寄存器操作。
 
 该策略删除寄存器访问代码，保留状态管理逻辑（如状态变量更新）。该策略确保驱动状态机正确运行，同时避免对不存在硬件的访问。
 
