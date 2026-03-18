@@ -214,7 +214,7 @@ $$D = \{f \in F \mid \exists m \in M: A(f, m)\}$$
 
 针对三种 MMIO 定位模式，本研究设计了相应的查询规则。查询从 CodeQL 数据库中提取所有符合 MMIO 结构体特征的变量及其初始化表达式。查询的核心设计思想是将"寄存器字段访问"追溯到一个可被 CodeQL 稳定描述的基对象表达式。
 
-\begin{lstlisting}[style=CStyle,language=C, caption={MMIO表达式收集查询示例}]
+\begin{lstlisting}[language=C, caption={MMIO表达式收集查询示例}]
 import cpp
 import libraries.MMIOAnalyzer
 
@@ -236,7 +236,7 @@ select expr.toString(),
 
 对于"间接初始化"和"常量指针参数"模式，查询采用数据流追踪策略，通过追踪赋值语句和函数参数来识别 MMIO 实例。常量基址的追踪利用 CodeQL 提供的数据流和污点追踪能力，将"常量大值表达式（外设基址）"追踪到后续的变量访问/解引用位置。
 
-\begin{lstlisting}[style=CStyle,language=C, caption={常量基址数据流追踪查询示例}]
+\begin{lstlisting}[language=C, caption={常量基址数据流追踪查询示例}]
 predicate isMMIOConstantExpr(ConstantExpr src_mmio) {
     exists( DataFlow::Node source, DataFlow::Node sink, Expr varAccess, 
              PointerDereferenceExpr deref | 
@@ -264,7 +264,7 @@ predicate isMMIOTracedExpr(Expr e) {
 
 对于"函数第 0 个参数是指针类型，实参是常量大值表达式"的情况，查询通过函数调用关系和参数类型匹配，定位"把常量基址传给接受结构体指针的驱动函数"的调用点。
 
-\begin{lstlisting}[style=CStyle,language=C, caption={函数参数类型匹配查询示例}]
+\begin{lstlisting}[language=C, caption={函数参数类型匹配查询示例}]
 predicate isMMIOStructure_MK(Struct s){
     exists( FunctionCall call, Expr e, TypedefType typeDef | 
         call.getTarget().getParameter(0).getType() instanceof PointerType and
@@ -287,9 +287,6 @@ predicate isMMIOStructure_MK(Struct s){
 
 \begin{lstlisting}[style=Python,language=Python]
 # 示例：数据模型定义
-from dataclasses import dataclass
-from typing import List, Dict
-
 @dataclass
 class MmioAccessInfo:
     struct_type: str      # 结构体类型，如"USART_TypeDef"
