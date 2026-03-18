@@ -210,7 +210,7 @@ $$D = \{f \in F \mid \exists m \in M: A(f, m)\}$$
 
 本节阐述分析与识别模块的具体实现技术。模块采用 CodeQL 静态分析引擎作为底层支撑，CodeQL 通过构建包含语法树、控制流图、数据流图的综合数据库，为语义级代码分析提供了强大的查询能力。
 
-\subsubsection{查询规则设计}
+\subsubsection{MMIO 操作定位模块实现}
 
 针对三种 MMIO 定位模式，本研究设计了相应的查询规则。查询从 CodeQL 数据库中提取所有符合 MMIO 结构体特征的变量及其初始化表达式。查询的核心设计思想是将"寄存器字段访问"追溯到一个可被 CodeQL 稳定描述的基对象表达式。
 
@@ -224,11 +224,11 @@ from
 where
     isInterestingMMIOFunction(func) and
     expr.getEnclosingFunction() = func
-select expr.toString(), 
-       expr.getEnclosingFunction().getName(), 
-       expr.getFile().getAbsolutePath().toString(), 
-       expr.getLocation().getStartLine(), 
-       expr.checkExprType(), 
+select expr.toString(),
+       expr.getEnclosingFunction().getName(),
+       expr.getFile().getAbsolutePath().toString(),
+       expr.getLocation().getStartLine(),
+       expr.checkExprType(),
        expr.checkEnclosingType()
 \end{lstlisting}
 
@@ -237,12 +237,12 @@ select expr.toString(),
 对于"间接初始化"和"常量指针参数"模式，查询采用数据流追踪策略，通过追踪赋值语句和函数参数来识别 MMIO 实例。常量基址的追踪利用 CodeQL 提供的数据流和污点追踪能力，将"常量大值表达式（外设基址）"追踪到后续的变量访问/解引用位置。
 
 \begin{lstlisting}[style=CodeQL,language=CodeQL, caption={常量基址数据流追踪查询示例}]
-predicate isMMIOConstantExpr(ConstantExpr src_mmio) {
-    exists( DataFlow::Node source, DataFlow::Node sink, Expr varAccess, 
-             PointerDereferenceExpr deref | 
+ predicate isMMIOConstantExpr(ConstantExpr src_mmio) {
+    exists( DataFlow::Node source, DataFlow::Node sink, Expr varAccess,
+             PointerDereferenceExpr deref |
         source.asExpr() = src_mmio and
         isConstantBigValueExpr(src_mmio) and
-        sink.asExpr() = varAccess and 
+        sink.asExpr() = varAccess and
         deref.getOperand() = varAccess and
         TaintFlow::flow(source, sink) and
         not sink.asExpr().getFile() instanceof DriverFile
@@ -250,10 +250,10 @@ predicate isMMIOConstantExpr(ConstantExpr src_mmio) {
 }
 
 predicate isMMIOTracedExpr(Expr e) {
-    exists( DataFlow::Node source, DataFlow::Node sink, ConstantExpr src_mmio | 
+    exists( DataFlow::Node source, DataFlow::Node sink, ConstantExpr src_mmio |
         source.asExpr() = src_mmio and
         isMMIOConstantExpr(src_mmio) and
-        sink.asExpr() = e and 
+        sink.asExpr() = e and
         TaintFlow::flow(source, sink) and
         not sink.asExpr().getFile() instanceof DriverFile
     )
@@ -262,11 +262,21 @@ predicate isMMIOTracedExpr(Expr e) {
 
 上述查询定义了两个谓词：\texttt{isMMIOConstantExpr} 识别常量大值表达式（外设基址），\texttt{isMMIOTracedExpr} 通过污点追踪将源点追踪到汇点。查询的逻辑可形式化表示为：当存在一个常量大值表达式作为数据流源点，经过数据流传播到达某个变量访问或解引用操作时，该操作即为 MMIO 相关的表达式。
 
+\begin{lstlisting}[style=CStyle,language=C]
+// 示例：常量基址在代码中的传播
+#define USART1_BASE 0x40011000UL
+USART_TypeDef *USART1 = (USART_TypeDef *)USART1_BASE;  // 基址强转
+huart->Instance = USART1;                              // 赋值给Instance成员
+huart->Instance->DR = data;                            // 最终的字段访问点
+\end{lstlisting}
+
+查询通过污点追踪，将上述代码中的 \texttt{USART1\_BASE}（源点）追踪到最终的 \texttt{huart->Instance->DR}（汇点），从而识别出整个 MMIO 使用链路。
+
 对于"函数第 0 个参数是指针类型，实参是常量大值表达式"的情况，查询通过函数调用关系和参数类型匹配，定位"把常量基址传给接受结构体指针的驱动函数"的调用点。
 
 \begin{lstlisting}[style=CodeQL,language=CodeQL, caption={函数参数类型匹配查询示例}]
-predicate isMMIOStructure_MK(Struct s){
-    exists( FunctionCall call, Expr e, TypedefType typeDef | 
+ predicate isMMIOStructure_MK(Struct s){
+    exists( FunctionCall call, Expr e, TypedefType typeDef |
         call.getTarget().getParameter(0).getType() instanceof PointerType and
         (
             (call.getTarget().getParameter(0).getType().(PointerType).getBaseType() = typeDef and
@@ -280,6 +290,47 @@ predicate isMMIOStructure_MK(Struct s){
 \end{lstlisting}
 
 上述查询通过参数类型匹配（\texttt{PointerType}）和实参的常量大值表达式检查，识别出 MMIO 结构体类型的函数调用点。查询的逻辑可表示为：当函数调用的第 0 个参数类型为结构体指针，且该参数对应的实参是经过数据流追踪的 MMIO 常量表达式时，该调用点即为候选的 MMIO 使用点。
+
+\begin{lstlisting}[style=CStyle,language=C]
+// 示例：常量指针参数传递
+void uart_send_data(USART_TypeDef *uart, uint8_t *data, uint16_t len);
+
+// 调用时传递MMIO实例
+uart_send_data(USART1, buffer, len);     // 直接传强转实例
+uart_send_data(huart->Instance, buffer, len);  // 传Instance成员
+\end{lstlisting}
+
+查询通过参数类型匹配（\texttt{USART\_TypeDef *}）和实参的数据流追踪，识别出上述调用点中的 MMIO 参数传递关系。
+
+\subsubsection{驱动函数定位模块实现}
+
+驱动函数定位模块的核心任务是根据前述定位准则，从固件源代码中识别出所有驱动函数，并构建驱动函数调用图。模块采用 CodeQL 静态分析技术，通过定义驱动函数的判定规则来实现自动化识别。
+
+模块的核心判定规则是：\textbf{包含 \texttt{DriverFieldAccess} 且不包含 \texttt{MMIOFieldAccess} 的函数被定义为驱动函数}。\texttt{DriverFieldAccess} 指的是通过句柄或间接方式访问 MMIO 寄存器块的字段操作，而 \texttt{MMIOFieldAccess} 指的是直接通过 MMIO 结构体指针访问寄存器的字段操作。这一定义确保了识别出的函数是真正需要替换的驱动层函数，而非底层的硬件抽象层函数。
+
+\begin{lstlisting}[style=CodeQL,language=CodeQL, caption={驱动函数判定规则}]
+class DriverFunction extends Function
+{
+    DriverFunction() {
+        exists(DriverFieldAccess fa | fa.getEnclosingFunction() = this) and
+        not exists(MMIOFieldAccess fa | fa.getEnclosingFunction() = this)
+    }
+}
+\end{lstlisting}
+
+上述查询定义了 \texttt{DriverFunction} 类，该类继承自 \texttt{Function}，通过检查函数内部是否包含 \texttt{DriverFieldAccess} 且不包含 \texttt{MMIOFieldAccess} 来判定函数是否为驱动函数。
+
+在识别出驱动函数列表后，模块进一步分析驱动函数之间的调用关系，构建函数调用图。调用图以驱动函数为节点，函数调用关系为边，记录调用方、被调用方、调用位置等信息。调用图为后续的智能替换模块提供了函数依赖关系，有助于理解函数的调用上下文和语义关联。
+
+\begin{lstlisting}[style=CodeQL,language=CodeQL, caption={驱动函数调用关系查询}]
+from DriverToCall call
+select call.toString2(),
+       call.getTargetFunction().toString(),
+       call.getEnclosingFunction().toString(),
+       call.isDirectCall()
+\end{lstlisting}
+
+上述查询从 \texttt{DriverToCall} 关系中提取驱动函数之间的调用关系，输出调用边的字符串表示、目标函数名、封装函数名以及调用是否为直接调用等信息。
 
 \subsubsection{统一数据模型}
 
