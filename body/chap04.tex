@@ -528,35 +528,7 @@ LwIP\_StreamingServer & 24h & 390 & 31.4 & 5 \\
 \end{tabular}
 \end{table}
 
-\subsection{完整工作流}
-
-系统实现"静态识别→智能替换→构建验证→动态反馈"的完整闭环，如图~\ref{fig:workflow}所示。这个闭环是系统设计的核心理念，确保替换代码的质量通过多轮迭代不断优化。
-
-\begin{figure}[htbp]
-\centering
-\begin{tikzpicture}[
-    box/.style={rectangle, draw, rounded corners, minimum width=2cm, minimum height=1cm, align=center, font=\small},
-    arrow/.style={->, thick, >=stealth}
-]
-    \node[box, fill=blue!20] (static) at (0, 0) {静态\\分析};
-    \node[box, fill=green!20] (analyze) at (3, 0) {函数\\分析};
-    \node[box, fill=orange!20] (replace) at (6, 0) {代码\\替换};
-    \node[box, fill=purple!20] (build) at (9, 0) {编译\\构建};
-    \node[box, fill=red!20] (run) at (12, 0) {仿真\\运行};
-    \node[box, fill=gray!20] (feedback) at (12, -2) {反馈\\分析};
-    
-    \draw[arrow] (static) -- (analyze);
-    \draw[arrow] (analyze) -- (replace);
-    \draw[arrow] (replace) -- (build);
-    \draw[arrow] (build) -- (run);
-    \draw[arrow] (run) -- (feedback);
-    \draw[arrow] (feedback) -- (analyze) node[midway, left, font=\scriptsize] {重新分析};
-\end{tikzpicture}
-\caption{完整工作流程图}
-\label{fig:workflow}
-\end{figure}
-
-实验结果表明，在本文方法构建的仿真环境中，AFL++能够有效地对固件进行模糊测试。平均基本块覆盖率达到71.0\%，平均执行速度为2086 exec/s，在24小时内平均发现4.4个Crash。这些结果表明，本文方法能够有效支持后续的模糊测试和漏洞挖掘任务。
+实验结果表明，在本文方法构建的仿真环境中，AFL++能够有效地对固件进行模糊测试。平均覆盖基本块数量为411.6个，平均执行速度为32.4 exec/s，在24小时内平均发现3.8个Crash。这些结果表明，本文方法能够有效支持后续的模糊测试和漏洞挖掘任务。
 
 \section{本章小结}
 \label{sec:exp_summary}
