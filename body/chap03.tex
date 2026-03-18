@@ -425,40 +425,139 @@ NODRIVER & 不需要替换的函数 & 纯业务逻辑函数 \\
 \label{tab:replace-strategies}
 \begin{tabular}{lll}
 \toprule
-\textbf{函数类别} & \textbf{推荐策略} & \textbf{说明} \\
+\textbf{函数类别} & \textbf{策略类型} & \textbf{说明} \\
 \midrule
-INIT & Skip & 跳过部分硬件初始化逻辑 \\
-SEND & Strip/Redirect & 保留状态或将数据输出到虚拟设备 \\
-RECV & Redirect & 从虚拟设备读取数据 \\
-IRQ & Event & 通过事件机制模拟中断 \\
-CTRL & Skip & 控制操作在仿真中跳过 \\
-LOOP & Skip & 跳过轮询等待逻辑，避免死循环 \\
-DMA & Strip & 剥离DMA配置代码 \\
+INIT & INIT Steering & 保留结构初始化，移除硬件寄存器操作 \\
+RECV & RECV Steering & 使用仿真注入函数替代硬件数据读 \\
+IRQ & IRQ Steering & 移除硬件操作，保留 OS 通知与状态迁移 \\
+LOOP & LOOP Steering & 短路等待标志的循环，避免死循环 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\textbf{策略1：跳过部分操作（Skip）}
+\textbf{INIT Steering：初始化后置状态可达}
 
-适用于：初始化类、控制类、轮询类函数，需要跳过部分硬件相关逻辑。
+INIT Steering 的目标是确保替换后的函数处于硬件初始化之后的期望状态。该策略移除所有 MMIO 和寄存器访问操作，但保留结构初始化、资源分配（如 malloc）、默认值设置等关键逻辑。这种控制流改写将"依赖 MMIO 写入才能进入 ready 的硬件路径"变为"只要结构 state/default 值正确即可继续上层逻辑"的路径，保证了初始化后的状态一致性。
 
-该策略跳过部分硬件相关操作，保留函数签名和返回值，使函数执行路径能够支持固件正常运行。对于初始化类函数，跳过部分硬件寄存器配置逻辑；对于控制类函数，跳过控制命令的硬件执行；对于轮询类函数，跳过等待硬件状态的循环逻辑，避免仿真环境中的死循环。
+以 UART 初始化函数为例，原始代码包含使能 UART 时钟、配置 UART 寄存器、设置波特率等硬件相关操作，同时设置驱动句柄的状态和错误码。采用 INIT Steering 策略替换后，保留结构初始化和默认值设置，跳过硬件特定配置，直接返回成功状态。
 
 代码示例如下：
 
 \begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt]
-// 原始代码（初始化类）
-void HAL_UART_Enable(UART_HandleTypeDef *huart) {
-    huart->Instance->CR1 |= USART_CR1_UE;
+// 原始代码
+HAL_StatusTypeDef HAL_UART_Init(UART_HandleTypeDef *huart)
+{
+    // Enable UART clock
+    __HAL_RCC_USART1_CLK_ENABLE();
+    // Configure UART registers
+    huart->Instance->CR1 = USART_CR1_UE | USART_CR1_TE | USART_CR1_RE;
+    huart->Instance->BRR = UART_BRR_SAMPLING16(HAL_RCC_GetPCLK2Freq(), huart->Init.BaudRate);
+    // Set driver state
+    huart->State = HAL_UART_STATE_READY;
+    return HAL_OK;
 }
 
-// 替换代码（Skip 策略）
-void HAL_UART_Enable(UART_HandleTypeDef *huart) {
-    (void)huart;
+// 替换代码（INIT Steering）
+HAL_StatusTypeDef HAL_UART_Init(UART_HandleTypeDef *huart)
+{
+    // Preserve structure initialization
+    huart->State = HAL_UART_STATE_READY;
+    huart->ErrorCode = HAL_UART_ERROR_NONE;
+    // Skip hardware-specific configuration
+    return HAL_OK;
+}
+\end{lstlisting}
+
+该策略通过保留结构初始化与默认值，确保驱动层的后置状态与硬件初始化后的期望状态一致，使上层函数能够正确判断驱动是否可用。对于属于 CORE 类型或调用了 CORE 函数的 INIT 函数，替换代码必须保留 CORE 调用或相应的寄存器写操作，以确保仿真器的中断和调度机制能够正常工作。
+
+\textbf{RECV Steering：接收数据注入落点可达}
+
+RECV Steering 的核心目标是在网络接收场景中，通过控制流旁路和数据注入，确保仿真数据能够到达缓冲区并推动 Ring 状态机前进。该策略解决了两个关键问题：一是依赖硬件标志扫描 Ring 导致执行卡死在 while/do-while 状态机中无法退出；二是通过仿真注入函数将数据写入缓冲区，使上层协议栈能够消费这些数据。
+
+在固定长度接收场景，该策略使用 HAL\_BE\_In 函数将仿真输入数据填充到缓冲区。在变长报文接收场景（如以太网 ENET + DMA + RingBuffer），该策略跳过依赖硬件 EMPTY/LAST/OWN 等标志扫描 Ring 的 while/do-while 结构，在当前有效 buffer 指针处调用 HAL\_BE\_ENET\_ReadFrame 注入数据，完成一次 buffer descriptor 更新后立即返回，遵循"单次收一包"的约束。
+
+代码示例如下：
+
+\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt]
+// 固定长度接收（RECV Steering）
+HAL_StatusTypeDef HAL_UART_Receive(UART_HandleTypeDef *huart, uint8_t *pData, 
+                                    uint16_t Size, uint32_t Timeout)
+{
+    // Simulate data reception
+    HAL_BE_In(pData, Size);
+    // Preserve non-I/O logic
+    huart->RxXferCount = 0;
+    huart->RxXferSize = Size;
+    huart->RxState = HAL_UART_STATE_READY;
+    return HAL_OK;
 }
 
-// 原始代码（轮询类）
-HAL_StatusTypeDef HAL_UART_WaitOnFlag(UART_HandleTypeDef *huart, uint32_t Flag, uint32_t Timeout) {
+// 变长报文接收（RECV Steering，单包模式）
+/* Skip hardware-dependent empty flag check */
+if (1) /* Always enter frame processing path for simulation */
+{
+    /* Simulate that we found last BD */
+    result = kStatus_Success;
+}
+
+/* Get valid frame buffer and inject simulation data */
+if (rxBuffer->buffer != NULL && rxBuffer->length > 0)
+{
+    HAL_BE_ENET_ReadFrame(rxBuffer->buffer, rxBuffer->length);
+}
+
+/* Update Ring state and return (single packet mode) */
+rxBdRing->rxGenIdx = ENET_IncreaseIndex(rxBdRing->rxGenIdx, rxBdRing->rxRingLen);
+\end{lstlisting}
+
+该策略通过跳过硬件标志的门控条件，让执行直接进入"处理帧/buffer descriptor"的分支，同时保留 buffer 指针更新、状态标志、rxFrame 填充等非 I/O 逻辑，确保数据能够被上层协议栈正确消费。
+
+\textbf{IRQ Steering：中断后的 OS 通知/回调分支可达}
+
+IRQ Steering 的目标是移除真实硬件中断控制寄存器写等操作，但保留中断标志检查、OS 中断通知、状态机更新等关键逻辑，确保执行流能够到达原本的数据处理或任务触发分支。在仿真环境中，硬件中断信号由仿真器生成的事件触发，IRQ Steering 通过控制流改写让中断处理函数必然执行到 OS 通知和回调触发分支。
+
+以 UART 中断处理函数为例，原始代码检查中断状态标志位，从数据寄存器读取数据，处理数据后向 RTOS 提供信号量，最后清除中断标志。采用 IRQ Steering 策略替换后，移除硬件中断标志寄存器的清除操作，保留数据处理、RTOS 信号量提交等逻辑。
+
+代码示例如下：
+
+\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt]
+// 原始代码
+void UART0_IRQHandler(void)
+{
+    if ((UART0->S1 & UART_S1_RDRF_MASK) != 0U) {
+        data = UART0->D;
+        process_data(data);
+        xSemaphoreGiveFromISR(semaphore, &xHigherPriorityTaskWoken);
+    }
+    // Clear interrupt flags
+    UART0->S1 |= UART_S1_TDRE_MASK;
+}
+
+// 替换代码（IRQ Steering）
+void UART0_IRQHandler(void)
+{
+    // Simulate interrupt flag being set
+    data = HAL_BE_In(&data, 1);
+    process_data(data);
+    xSemaphoreGiveFromISR(semaphore, &xHigherPriorityTaskWoken);
+    // No need to clear hardware interrupt flags
+}
+\end{lstlisting}
+
+该策略通过直接进入原本"中断标志满足时才会执行的处理分支"，保证回调/OS 通知触发分支在仿真中可达，同时移除与硬件控制寄存器写相关的动作，避免仿真环境中的不必要操作。
+
+\textbf{LOOP Steering：短路等待/轮询死循环}
+
+LOOP Steering 的目标是通过控制流旁路，将依赖硬件状态的轮询等待短路掉，避免在仿真中出现"等待条件永远不满足"的异常死循环。该策略针对两种典型场景：一是等待硬件状态标志的循环，直接跳过整个循环；二是从 FIFO 读取直到空的循环，替换为单次读或单次仿真接收。
+
+以 UART 等待硬件传输完成标志的循环为例，原始代码通过 while 循环轮询状态寄存器，直到传输完成标志位置位。在仿真环境中，硬件标志永远不会被置位，导致死循环。采用 LOOP Steering 策略替换后，将整个循环替换为一次仿真读操作，模拟清空溢出标志的效果。
+
+代码示例如下：
+
+\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt]
+// 原始代码（等待硬件传输完成标志）
+HAL_StatusTypeDef HAL_UART_WaitOnFlag(UART_HandleTypeDef *huart, 
+                                    uint32_t Flag, uint32_t Timeout) {
     while (!(__HAL_UART_GET_FLAG(huart, Flag))) {
         if (Timeout != HAL_MAX_DELAY) {
             if ((Timeout--) == 0) return HAL_TIMEOUT;
@@ -467,67 +566,27 @@ HAL_StatusTypeDef HAL_UART_WaitOnFlag(UART_HandleTypeDef *huart, uint32_t Flag, 
     return HAL_OK;
 }
 
-// 替换代码（Skip 策略）
-HAL_StatusTypeDef HAL_UART_WaitOnFlag(UART_HandleTypeDef *huart, uint32_t Flag, uint32_t Timeout) {
+// 原始代码（读 FIFO 清除溢出）
+while ((base->S1 & UART_S1_RDRF_MASK) != 0U)
+{
+    (void)base->D;
+}
+
+// 替换代码（LOOP Steering）
+// 跳过等待标志的循环
+HAL_StatusTypeDef HAL_UART_WaitOnFlag(UART_HandleTypeDef *huart, 
+                                    uint32_t Flag, uint32_t Timeout) {
     (void)huart;
     (void)Flag;
     (void)Timeout;
     return HAL_OK;
 }
+
+// 替换为单次仿真读
+(void)HAL_BE_In(NULL, 1); /* Simulate reading to clear overrun flag */
 \end{lstlisting}
 
-\textbf{策略2：剥离硬件代码、保留控制逻辑（Strip）}
-
-适用于：发送类函数、DMA配置类函数，需要保留状态更新但移除寄存器操作。
-
-该策略删除寄存器访问代码，保留状态管理逻辑（如状态变量更新）。该策略确保驱动状态机正确运行，同时避免对不存在硬件的访问。
-
-代码示例如下：
-
-\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt]
-// 替换代码
-HAL_StatusTypeDef HAL_UART_Transmit(UART_HandleTypeDef *huart, 
-                                     uint8_t *pData, uint16_t Size) {
-    huart->gState = HAL_UART_STATE_BUSY_TX;
-    lcmhal_uart_transmit(huart->Instance, pData, Size);
-    huart->gState = HAL_UART_STATE_READY;
-    return HAL_OK;
-}
-\end{lstlisting}
-
-\textbf{策略3：替换为仿真 I/O（Redirect）}
-
-适用于：接收/发送类函数，将操作重定向到仿真平台。
-
-该策略使用 LCMHal 虚拟设备接口替代硬件访问，为替换后的驱动代码提供与仿真环境交互的标准接口。
-
-代码示例如下：
-
-\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt]
-// 替换代码
-HAL_StatusTypeDef HAL_UART_Receive(UART_HandleTypeDef *huart, 
-                                    uint8_t *pData, uint16_t Size, 
-                                    uint32_t Timeout) {
-    return lcmhal_uart_receive(huart->Instance, pData, Size, Timeout);
-}
-\end{lstlisting}
-
-\textbf{策略4：事件驱动模拟（Event）}
-
-适用于：中断回调类函数，引入事件触发机制。
-
-该策略通过事件队列模拟硬件中断触发。在仿真环境中，硬件中断由仿真器生成的事件触发，而非真实的硬件信号。
-
-代码示例如下：
-
-\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt]
-// 替换代码
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
-    lcmhal_event_t event = {.type = LCMHAL_EVENT_UART_RX_COMPLETE, .handle = huart};
-    lcmhal_event_post(&event);
-    process_received_data(huart->pRxBuffPtr);
-}
-\end{lstlisting}
+该策略通过直接移除"等待硬件条件"的控制流门控，让函数在仿真中能尽快返回并把执行导向到后续上层逻辑分支，避免因硬件依赖导致的死循环问题。
 
 \subsection{智能体工作流设计}
 
