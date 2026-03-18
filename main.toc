@@ -56,11 +56,11 @@
 \contentsline {subsubsection}{\numberline {3.3.1.1}分类提示词设计}{34}{subsubsection.3.3.1.1}%
 \contentsline {subsubsection}{\numberline {3.3.1.2}结构化输出模型}{34}{subsubsection.3.3.1.2}%
 \contentsline {subsubsection}{\numberline {3.3.1.3}替换策略体系}{34}{subsubsection.3.3.1.3}%
-\contentsline {subsubsection}{\numberline {3.3.1.4}策略一：跳过硬件副作用（Skip）}{34}{subsubsection.3.3.1.4}%
+\contentsline {subsubsection}{\numberline {3.3.1.4}策略一：跳过硬件副作用（Skip）}{35}{subsubsection.3.3.1.4}%
 \contentsline {subsubsection}{\numberline {3.3.1.5}策略二：剥离硬件代码、保留控制逻辑（Strip）}{35}{subsubsection.3.3.1.5}%
-\contentsline {subsubsection}{\numberline {3.3.1.6}策略三：替换为仿真 I/O（Redirect）}{35}{subsubsection.3.3.1.6}%
+\contentsline {subsubsection}{\numberline {3.3.1.6}策略三：替换为仿真 I/O（Redirect）}{36}{subsubsection.3.3.1.6}%
 \contentsline {subsubsection}{\numberline {3.3.1.7}策略四：事件驱动模拟（Event）}{36}{subsubsection.3.3.1.7}%
-\contentsline {subsection}{\numberline {3.3.2}智能体协作工作流设计}{36}{subsection.3.3.2}%
+\contentsline {subsection}{\numberline {3.3.2}智能体协作工作流设计}{37}{subsection.3.3.2}%
 \contentsline {subsubsection}{\numberline {3.3.2.1}智能体角色与职责}{37}{subsubsection.3.3.2.1}%
 \contentsline {subsubsection}{\numberline {3.3.2.2}工作流执行过程}{38}{subsubsection.3.3.2.2}%
 \contentsline {subsubsection}{\numberline {3.3.2.3}智能体协作的优势}{39}{subsubsection.3.3.2.3}%
