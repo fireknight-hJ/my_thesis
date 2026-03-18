@@ -9,6 +9,52 @@
 \raggedbottom
 
 \usepackage{HUSTtils}
+\lstdefinestyle{Python}{
+  language=Python,
+  backgroundcolor=\color{backgroundColour},
+  commentstyle=\color{mGreen},
+  keywordstyle=\color{magenta},
+  basicstyle=\ttfamily\scriptsize\bfseries,
+  columns=fullflexible,
+  breaklines=true,
+  breakatwhitespace=true,
+  showstringspaces=false,
+  keepspaces=true,
+  numbers=left,
+  numbersep=5pt,
+  showspaces=false,
+  showtabs=false,
+  tabsize=2
+}
+
+\lstdefinelanguage{CodeQL}{
+  morekeywords={
+    import, from, where, select,
+    exists, predicate, class, module,
+    and, or, not, true, false, instanceof
+  },
+  sensitive=true,
+  morecomment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]"
+}
+
+\lstdefinestyle{CodeQL}{
+  backgroundcolor=\color{backgroundColour},
+  commentstyle=\color{mGreen},
+  keywordstyle=\color{magenta},
+  basicstyle=\ttfamily\scriptsize\bfseries,
+  breaklines=true,
+  captionpos=b,
+  keepspaces=true,
+  numbers=left,
+  numbersep=5pt,
+  showspaces=false,
+  showstringspaces=false,
+  showtabs=false,
+  tabsize=2,
+  language=CodeQL
+}
 \setmainfont{Times New Roman}
 
 \begin{document}
@@ -27,9 +73,8 @@
 \mainmatter
 \include{body/chap01}  % 绪论
 \include{body/chap02}  % 背景知识与相关技术
-\include{body/chap03}  % 系统设计
-\include{body/chap04}  % 系统实现
-\include{body/chap05}  % 实验设计与结果分析
+\include{body/chap03}  % 系统设计与实现
+\include{body/chap04}  % 实验设计与结果分析
 
 %%% 结论
 \include{body/conclusion}

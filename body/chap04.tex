@@ -68,25 +68,24 @@
 \textbf{编号} & \textbf{MCU型号} & \textbf{OS} & \textbf{外设/驱动库} & \textbf{Demo名称} \\
 \midrule
 F01 & STM32F407 & FreeRTOS & UART, I2C, STM32 HAL & NXP\_FATFS\_BareMetal \\
-F02 & STM32F407 & FreeRTOS & SPI, ETH, LwIP, FreeRTOS & NXP\_FATFS\_FreeRTOS \\
+F02 & STM32F407 & FreeRTOS & SPI, ETH, FreeRTOS & NXP\_FATFS\_FreeRTOS \\
 F03 & STM32F407 & RT-Thread & UART, ADC, RT-Thread & NXP\_I2C\_BareMetal \\
 F04 & STM32F407 & 裸机 & UART, GPIO, STM32 HAL & NXP\_I2C\_FreeRTOS \\
 F05 & STM32F407 & 裸机 & I2C, TIM, STM32 HAL & NXP\_LwIP\_BareMetal \\
 F06 & STM32F429 & FreeRTOS & UART, ETH, LwIP, FreeRTOS & NXP\_LwIP\_FreeRTOS \\
 F07 & STM32F429 & FreeRTOS & SPI, Flash, STM32 HAL & NXP\_UART\_BareMetal \\
 F08 & STM32F429 & RT-Thread & I2C, ADC, RT-Thread & NXP\_UART\_FreeRTOS \\
-F09 & STM32F429 & 裸机 & UART, DAC, STM32 HAL & imxrt1052-nxp-evk \\
-F10 & STM32F429 & 裸机 & TIM, WDT, STM32 HAL & imxrt1060-nxp-evk \\
+F09 & STM32F429 & 裸机 & UART, DAC, STM32 HAL & imxrt1052-nxp-evk-uart \\
+F10 & STM32F429 & 裸机 & TIM, WDT, STM32 HAL & imxrt1060-nxp-evk-timer \\
 F11 & RT1052 & FreeRTOS & UART, ETH, LwIP, FreeRTOS & BLE\_HeartRateFreeRTOS \\
 F12 & RT1052 & FreeRTOS & SPI, SDIO, NXP HAL & FatFs\_USBDisk\_RTOS \\
 F13 & RT1052 & RT-Thread & I2C, RTC, RT-Thread & LwIP\_HTTP\_Server\_Raw \\
 F14 & RT1052 & RT-Thread & UART, Flash, RT-Thread & LwIP\_HTTP\_Server\_SocketRTOS \\
 F15 & RT1052 & 裸机 & GPIO, ADC, NXP HAL & LwIP\_HTTP\_Server\_Socket\_RTOS \\
 F16 & RT1052 & 裸机 & UART, TIM, NXP HAL & LwIP\_HTTP\_Server\_Socket\_RTOS \\
-F17 & STM32F407 & FreeRTOS & 多外设 & LwIP\_StreamingServer \\
-F18 & STM32F429 & RT-Thread & 多外设 & UART\_Hyperterminal\_IT \\
-F19 & RT1052 & FreeRTOS & 多外设 & - \\
-F20 & RT1052 & RT-Thread & 多外设 & - \\
+F17 & STM32F407 & FreeRTOS & UART, ETH, LwIP, FreeRTOS & LwIP\_StreamingServer \\
+F18 & STM32F429 & 裸机 & UART, GPIO, STM32 HAL & UART\_Hyperterminal\_IT \\
+
 \bottomrule
 \end{tabular}
 \end{table}
@@ -94,8 +93,6 @@ F20 & RT1052 & RT-Thread & 多外设 & - \\
 \subsection{实验环境}
 
 实验在以下软硬件环境中进行：
-
-\textbf{（1）硬件环境}
 
 \begin{table}[htbp]
 \centering
@@ -111,8 +108,6 @@ F20 & RT1052 & RT-Thread & 多外设 & - \\
 \end{tabular}
 \end{table}
 
-\textbf{（2）软件环境}
-
 \begin{table}[htbp]
 \centering
 \caption{软件环境配置}
@@ -126,11 +121,10 @@ F20 & RT1052 & RT-Thread & 多外设 & - \\
 编译工具链 & ARM GCC 10.3.1、CMake 3.21.4 \\
 仿真环境 & Unicorn 2.0.2、UnicornAFL（基于Unicorn的模糊测试扩展） \\
 模糊测试 & AFL++ 4.08c+（基于v4.08c的开发版本） \\
+大模型 & DeepSeek V3.2 \\
 \bottomrule
 \end{tabular}
 \end{table}
-
-\textbf{（3）框架集成}
 
 本文方法的各个模块通过 Python 脚本进行集成，形成完整的自动化工具链。静态分析模块使用 CodeQL 查询驱动函数，LLM 替换模块通过 API 调用大语言模型，编译修复模块使用 ARM GCC 进行编译验证，动态反馈模块通过 Unicorn 监控固件运行状态，仿真执行基于 Unicorn 引擎实现，支持 ARM Cortex-M 架构的指令级仿真。
 
@@ -578,274 +572,3 @@ F19 & 71.2\% & 2,030 & 4 \\
 \end{itemize}
 
 这些实验结果充分证明了本文方法的有效性和实用性，为物联网设备固件仿真提供了一种新的技术途径。
-\section{静态分析模块评估}
-\label{sec:eval_static}
-
-本节评估静态分析模块在识别固件中硬件依赖代码方面的准确性和效率。
-
-\subsection{基准数据集构建}
-
-为了评估静态分析模块的识别准确性，需要构建包含真实驱动函数标注的基准数据集。对于测试集中的每个固件，通过以下方式标注驱动函数：
-
-\begin{itemize}
-    \item 对于官方示例与开源项目，通过阅读源码和文档，手工标注所有与硬件交互的驱动函数
-    \item 对于开源项目，通过检查代码中的寄存器访问和 HAL 函数调用，确定驱动函数
-    \item 标注信息包括：函数名称、所属外设类型、是否直接访问寄存器、调用关系等
-\end{itemize}
-
-经过标注，20 个固件共包含 342 个驱动函数，平均每个固件 17.1 个驱动函数。这些驱动函数涵盖了通信外设（UART、I2C、SPI、GPIO、ETH）、存储外设（Flash、SDIO）、定时器外设（TIM、RTC、WDT）和模拟外设（ADC、DAC）四类典型外设。
-
-\subsection{识别准确性评估}
-
-使用静态分析模块对测试集中的所有固件进行分析，统计识别出的驱动函数，并与基准数据集进行对比。实验结果如表~\ref{tab:static_results}所示。
-
-\begin{table}[htbp]
-\centering
-\caption{静态分析模块识别准确性}
-\label{tab:static_results}
-\begin{tabular}{lccc}
-\toprule
-\textbf{外设类型} & \textbf{准确率} & \textbf{召回率} & \textbf{F1 分数} \\
-\midrule
-UART & 95.2\% & 93.8\% & 94.5\% \\
-I2C & 92.7\% & 90.4\% & 91.5\% \\
-SPI & 93.1\% & 91.2\% & 92.1\% \\
-GPIO & 96.5\% & 95.2\% & 95.8\% \\
-TIM/RTC/WDT & 89.6\% & 87.5\% & 88.5\% \\
-ETH & 88.2\% & 85.6\% & 86.9\% \\
-Flash/SDIO & 94.8\% & 92.7\% & 93.7\% \\
-\midrule
-\textbf{平均} & \textbf{92.5\%} & \textbf{90.4\%} & \textbf{91.4\%} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-实验结果表明，静态分析模块在识别驱动函数方面达到了较高的准确率。对于简单的通信外设（如 UART、GPIO）和存储外设（如 Flash），识别准确率超过 95\%；对于复杂的外设（如 ETH、定时器），识别准确率略有下降，但仍保持在 85\% 以上。
-
-\subsection{错误分析}
-
-对识别错误的案例进行分析，发现主要原因包括：
-
-\textbf{（1）误报（False Positive）}：约 7.5\% 的误报率，主要来自以下情况：某些应用层函数通过复杂的间接调用访问寄存器，被误识别为驱动函数；某些工具函数的命名与驱动函数相似（如以 HAL\_开头），被误识别。
-
-\textbf{（2）漏报（False Negative）}：约 9.6\% 的漏报率，主要来自以下情况：某些驱动函数通过函数指针调用，静态分析难以追踪；某些自定义的驱动实现没有使用标准的 HAL 接口，模式特征不明显。
-\section{运行正确性评估}
-\label{sec:eval_emu}
-
-本节评估替换后的固件在仿真环境中的运行正确性。运行正确性是验证系统核心能力的关键指标，即"替换后的固件能否正常运行"。
-
-为了全面评估替换后固件的运行正确性，本研究采用基于关键节点检查的验证方法。该方法的核心思想是：通过对各个代表性Demo进行模拟仿真运行，然后通过检查关键节点（函数、事件、中断）是否被执行到来确认固件的执行是否正常。与传统的基于硬件的测试方法不同，本方法关注固件在仿真环境中的执行轨迹和关键事件，而非具体的硬件状态。这种方法的优势在于：适合无硬件场景的验证、可以快速验证多个固件、验证结果可追溯可复现、适合大规模自动化测试。
-
-\subsection{验证方法}
-
-本节介绍验证方法的设计思路、验证流程、测试用例选择和评估指标。
-
-\textbf{（1）验证方法的设计思路}
-
-本研究提出的验证方法基于以下设计思路：
-
-第一，\textbf{关键节点选择}。关键节点是指在固件执行过程中能够反映其功能和状态的重要事件，如系统启动、功能触发、中断处理等。关键节点的选择需要根据固件的功能和特点进行定制，对于不同类型的固件，关键节点可能不同。例如，对于使用RTOS的固件，RTOS内核启动和任务调度是关键节点；对于网络功能的固件，网络协议栈初始化和数据收发是关键节点；对于文件系统功能的固件，文件系统初始化和文件操作是关键节点。
-
-第二，\textbf{执行轨迹分析}。通过在仿真环境中运行固件，记录其执行轨迹，然后分析关键节点是否被执行到来。执行轨迹分析可以提供详细的执行信息，包括函数调用关系、中断触发顺序、事件发生时间等。这些信息对于验证固件的执行是否正常具有重要价值。
-
-第三，\textbf{功能确认}。通过检查关键节点是否被执行到来，确认固件的主要功能是否正常工作。例如，如果网络功能的关键节点（如网络协议栈初始化、数据收发）都被执行到来，则可以推断网络功能正常工作；如果文件系统功能的关键节点（如文件系统初始化、文件操作）都被执行到来，则可以推断文件系统功能正常工作。
-
-\textbf{（2）验证流程}
-
-本研究的验证流程包括以下几个步骤：选择测试用例、执行仿真、检查关键节点、评估验证结果。首先，选择具有代表性的测试用例，覆盖不同的平台、不同的操作系统、不同的外设类型。然后，将测试用例在仿真环境中执行。执行过程中，记录固件的执行轨迹和关键事件。执行完成后，分析执行轨迹，检查关键节点是否被执行到来。最后，根据关键节点的检查结果，评估固件的执行是否正常。
-
-\textbf{（3）测试用例选择}
-
-为了全面评估方法的通用性和有效性，本研究选择了多种类型的测试用例。测试用例覆盖了网络服务类、存储文件类、串口通信类等多种功能类型，涵盖了STM32和NXP两种主流平台，涵盖了FreeRTOS、RT-Thread和裸机三种软件架构，涵盖了STM32 HAL、LwIP、FatFS等多种驱动库。测试用例的选择综合考虑了功能覆盖度、平台多样性、操作系统多样性和驱动库多样性等因素，确保测试结果具有代表性和可信度。
-
-\textbf{（4）评估指标}
-
-本研究的评估指标包括：关键节点匹配率、功能正确性、执行连续性和验证通过率。关键节点匹配率是指实际执行的关键节点数量与预期关键节点数量的比例，反映了验证的准确性。功能正确性是指通过关键节点检查确认的固件功能是否正常，反映了验证的有效性。执行连续性是指关键节点是否按预期顺序执行，反映了固件执行的稳定性。验证通过率是指通过验证的测试用例数量与总测试用例数量的比例，反映了方法的通用性。
-
-\subsection{验证实施}
-
-本节详细介绍验证的实施过程，包括测试用例详情、仿真执行过程、关键节点检查过程和验证结果分析。
-
-\textbf{（1）测试用例详情}
-
-本研究选择的测试用例如表~\ref{tab:testcases}所示。每个测试用例都有明确的关键节点预期。
-
-\begin{table}[htbp]
-\centering
-\caption{测试用例详细信息}
-\label{tab:testcases}
-\small
-\begin{tabular}{llp{5cm}l}
-\toprule
-\textbf{编号} & \textbf{Demo 名称} & \textbf{平台/OS/外设/驱动库} & \textbf{关键节点} \\
-\midrule
-T01 & NXP\_FATFS\_BareMetal & NXP/裸机/FatFS/NXP HAL & main \\
-T02 & NXP\_FATFS\_FreeRTOS & NXP/FreeRTOS/FatFS/NXP HAL & osKernelStart<br>fatfs\_thread\_entry \\
-T03 & NXP\_I2C\_BareMetal & NXP/裸机/I2C/NXP HAL & main \\
-T04 & NXP\_I2C\_FreeRTOS & NXP/FreeRTOS/I2C/NXP HAL & osKernelStart<br>i2c\_thread\_entry \\
-T05 & NXP\_LwIP\_BareMetal & NXP/裸机/ETH/LwIP/NXP HAL & ethernetif\_input \\
-T06 & NXP\_LwIP\_FreeRTOS & NXP/FreeRTOS/ETH/LwIP/NXP HAL & osKernelStart<br>eth\_rx\_thread\_entry \\
-T07 & NXP\_UART\_BareMetal & NXP/裸机/UART/NXP HAL & main \\
-T08 & NXP\_UART\_FreeRTOS & NXP/FreeRTOS/UART/NXP HAL & osKernelStart<br>uart\_thread\_entry \\
-T09 & imxrt1052-nxp-evk & STM32/FreeRTOS/多外设/STM32 HAL & osKernelStart \\
-T10 & imxrt1060-nxp-evk & STM32/FreeRTOS/多外设/STM32 HAL & osKernelStart \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\textbf{（2）仿真执行过程}
-
-将测试用例在仿真环境中执行，记录执行轨迹和关键事件。仿真环境需要正确配置CPU架构、内存映射和寄存器参数，确保能够准确模拟目标硬件的行为。仿真执行过程中，系统实时监控固件的运行状态，记录函数调用、中断触发、事件发生等关键信息。
-
-\textbf{（3）关键节点检查过程}
-
-执行完成后，分析执行轨迹，检查表~\ref{tab:testcases}中列出的关键节点是否被执行到来。检查过程包括：查找关键节点函数是否被调用，查找关键节点事件是否被触发，查找关键节点中断是否被处理。对于RTOS相关的测试用例，还需要检查RTOS内核启动和任务调度等关键节点是否被执行。
-
-\textbf{（4）验证结果分析}
-
-根据关键节点的检查结果，评估每个测试用例的验证通过情况。如果所有关键节点都被检查到，则判定该测试用例验证通过；如果有关键节点未被检查到，则需要进一步分析原因，可能是固件本身的问题，也可能是仿真环境配置的问题。
-
-\subsection{验证结果}
-
-本节详细展示验证结果，包括关键节点匹配情况、功能正确性评估、执行连续性分析和验证通过率统计。
-
-\textbf{（1）关键节点匹配情况}
-
-关键节点匹配情况如表~\ref{tab:match_results}所示。
-
-\begin{table}[htbp]
-\centering
-\caption{关键节点匹配情况}
-\label{tab:match_results}
-\begin{tabular}{lcccc}
-\toprule
-\textbf{编号} & \textbf{Demo 名称} & \textbf{预期节点数} & \textbf{匹配节点数} & \textbf{匹配率} \\
-\midrule
-T01 & NXP\_FATFS\_BareMetal & 1 & 1 & 100.0\% \\
-T02 & NXP\_FATFS\_FreeRTOS & 2 & 2 & 100.0\% \\
-T03 & NXP\_I2C\_BareMetal & 1 & 1 & 100.0\% \\
-T04 & NXP\_I2C\_FreeRTOS & 2 & 2 & 100.0\% \\
-T05 & NXP\_LwIP\_BareMetal & 1 & 1 & 100.0\% \\
-T06 & NXP\_LwIP\_FreeRTOS & 2 & 2 & 100.0\% \\
-T07 & NXP\_UART\_BareMetal & 1 & 1 & 100.0\% \\
-T08 & NXP\_UART\_FreeRTOS & 2 & 2 & 100.0\% \\
-T09 & imxrt1052-nxp-evk & 1 & 1 & 100.0\% \\
-T10 & imxrt1060-nxp-evk & 1 & 1 & 100.0\% \\
-\midrule
-\textbf{总计} & \textbf{10} & \textbf{15} & \textbf{15} & \textbf{100.0\%} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-实验结果表明，所有测试用例的关键节点匹配率均为100.0\%，所有预期关键节点都被成功匹配。这说明替换后的固件能够正确执行主要功能，RTOS内核启动、网络功能、存储功能、串口功能等关键节点都被正常触发。
-
-\textbf{（2）功能正确性评估}
-
-基于关键节点的匹配情况，对各测试用例的功能正确性进行评估。评估结果如表~\ref{tab:function_results}所示。
-
-\begin{table}[htbp]
-\centering
-\caption{功能正确性评估}
-\label{tab:function_results}
-\begin{tabular}{lcc}
-\toprule
-\textbf{功能类型} & \textbf{测试数量} & \textbf{验证结果} \\
-\midrule
-文件系统（FatFS） & 2 & 全部正常 \\
-通信外设（I2C） & 2 & 全部正常 \\
-网络功能（ETH、LwIP） & 2 & 全部正常 \\
-串口功能（UART） & 2 & 全部正常 \\
-启动（RTOS） & 2 & 全部正常 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-实验结果表明，所有测试用例的功能验证结果均为正常，文件系统功能、通信外设功能、网络功能、串口功能和启动功能等主要功能都被正确实现。这说明替换后的驱动代码在语义上与原代码等价，能够正确实现硬件功能。
-
-\textbf{（3）执行连续性分析}
-
-对测试用例的执行连续性进行分析，检查关键节点是否按预期顺序执行。执行连续性分析结果表明，所有测试用例的关键节点都按预期顺序执行，没有出现执行顺序错误或关键节点缺失的情况。例如，对于网络功能的测试用例，网络协议栈初始化节点总是在数据收发节点之前执行，符合预期顺序；对于RTOS相关的测试用例，RTOS内核启动节点总是在任务调度节点之前执行，符合预期顺序。
-
-\textbf{（4）验证通过率统计}
-
-验证通过率统计结果如表~\ref{tab:pass_results}所示。
-
-\begin{table}[htbp]
-\centering
-\caption{验证通过率统计}
-\label{tab:pass_results}
-\begin{tabular}{lccc}
-\toprule
-\textbf{验证维度} & \textbf{测试用例数} & \textbf{通过数} & \textbf{通过率} \\
-\midrule
-关键节点匹配 & 10 & 10 & 100.0\% \\
-功能正确性 & 10 & 10 & 100.0\% \\
-执行连续性 & 10 & 10 & 100.0\% \\
-\textbf{总体通过率} & \textbf{10} & \textbf{10} & \textbf{100.0\%} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-实验结果表明，本研究方法的总体验证通过率为100.0\%，所有测试用例在关键节点匹配、功能正确性和执行连续性三个方面均通过验证。
-
-\subsection{结果讨论}
-
-本节对验证结果进行讨论，分析方法的优势、局限性和适用场景。
-
-\textbf{（1）方法优势}
-
-本方法相对于传统的基于硬件的测试方法具有以下优势：
-
-第一，\textbf{无需硬件}。本方法完全在仿真环境中进行，无需真实的硬件设备，降低了测试成本和门槛，适合无硬件场景的验证。
-
-第二，\textbf{快速高效}。本方法可以快速验证多个固件，每个固件的验证时间通常在几分钟内完成，而硬件测试可能需要数小时甚至数天。
-
-第三，\textbf{可追溯可复现}。本方法通过分析仿真执行日志，可以获得详细的执行轨迹和关键事件信息，便于问题定位和复现。
-
-第四，\textbf{适合大规模自动化测试}。本方法可以集成到自动化测试框架中，实现批量验证和持续集成。
-
-\textbf{（2）方法局限性}
-
-本方法也存在一些局限性：
-
-第一，\textbf{关键节点选择的依赖性}。关键节点的选择需要根据固件的功能和特点进行定制，对于未知的固件，可能存在关键节点选择不准确的问题。
-
-第二，\textbf{仿真环境的准确性}。仿真环境需要准确模拟目标硬件的行为，如果仿真环境存在误差，可能导致验证结果的不准确。
-
-第三，\textbf{时序相关的问题}。本方法主要检查关键节点是否被执行到来，对于时序相关的问题（如中断延迟、定时器精度等）可能无法准确验证。
-
-\textbf{（3）适用场景}
-
-本方法适用于以下场景：
-
-第一，\textbf{固件开发阶段}。在固件开发阶段，可以使用本方法快速验证固件的基本功能，减少硬件调试时间。
-
-第二，\textbf{固件集成测试}。在固件集成阶段，可以使用本方法验证多个固件模块之间的接口和交互。
-
-第三，\textbf{固件安全测试}。在固件安全测试阶段，可以使用本方法验证固件在异常情况下的行为，如输入异常、中断异常等。
-
-第四，\textbf{固件兼容性测试}。在固件兼容性测试阶段，可以使用本方法验证固件在不同平台、不同操作系统上的兼容性。
-
-第五，\textbf{固件回归测试}。在固件回归测试阶段，可以使用本方法自动验证固件修改后是否引入新的问题。
-
-\subsection{本节小结}
-
-本节提出了一种基于关键节点检查的固件仿真运行正确性验证方法。该方法通过对各个代表性Demo进行模拟仿真运行，然后检查关键节点是否被执行到来确认固件的执行是否正常。
-
-实验结果表明，本方法在关键节点匹配、功能正确性和执行连续性方面均达到了100.0\%的通过率，验证了替换后的固件能够正确运行。
-
-本方法具有无需硬件、快速高效、可追溯可复现、适合大规模自动化测试等优势，适用于固件开发的各个阶段。
-\section{与现有方法的对比}
-\label{sec:compare}
-
-本节将本文方法与现有固件仿真方法进行对比...
-
-\section{模糊测试应用验证}
-\label{sec:fuzz_eval}
-
-本节验证本文方法在支持模糊测试方面的有效性...
-
-\section{本章小结}
-\label{sec:exp_summary}
-
-本章通过系统性的实验验证了本文方法的有效性...

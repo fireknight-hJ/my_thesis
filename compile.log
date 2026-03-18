@@ -1,0 +1,1201 @@
+This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2022/dev/Debian) (preloaded format=xelatex)
+ restricted \write18 enabled.
+entering extended mode
+(./main.tex
+LaTeX2e <2021-11-15> patch level 1
+L3 programming layer <2022-01-21> (./HUSTthesis.cls
+Document Class: HUSTthesis 2022/03/26 3.2 Huazhong University of Science and Te
+chnology Thesis Template
+(/usr/share/texlive/texmf-dist/tex/latex/base/book.cls
+Document Class: book 2021/10/04 v1.4n Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/bk12.clo))
+(/usr/share/texlive/texmf-dist/tex/latex/base/ifthen.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/calc.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/iftex/ifpdf.sty
+(/usr/share/texlive/texmf-dist/tex/generic/iftex/iftex.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/pifont.sty
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/upzd.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/upsy.fd))
+(/usr/share/texlive/texmf-dist/tex/generic/iftex/ifxetex.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/helvet.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/keyval.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amstext.sty
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amssymb.sty
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amsfonts.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphicx.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphics.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/trig.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/graphics.cfg)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-def/xetex.def)))
+(/usr/share/texlive/texmf-dist/tex/latex/subfig/subfig.sty
+(/usr/share/texlive/texmf-dist/tex/latex/caption/caption.sty
+(/usr/share/texlive/texmf-dist/tex/latex/caption/caption3.sty)))
+(/usr/share/texlive/texmf-dist/tex/latex/tools/indentfirst.sty)
+(/usr/share/texlive/texmf-dist/tex/xelatex/xecjk/xeCJK.sty
+(/usr/share/texlive/texmf-dist/tex/latex/l3kernel/expl3.sty
+(/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-xetex.def
+(|extractbb --version)))
+(/usr/share/texlive/texmf-dist/tex/latex/ctex/ctexhook.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/l3packages/l3keys2e/l3keys2e.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/l3packages/xtemplate/xtemplate.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/l3packages/xparse/xparse.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/fontspec/fontspec.sty
+(/usr/share/texlive/texmf-dist/tex/latex/fontspec/fontspec-xetex.sty
+(/usr/share/texlive/texmf-dist/tex/latex/base/fontenc.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/fontspec/fontspec.cfg)))
+(/usr/share/texlive/texmf-dist/tex/xelatex/xecjk/xeCJK.cfg))
+(/usr/share/texlive/texmf-dist/tex/latex/ntheorem/ntheorem.sty
+Style `ntheorem', Version 1.33 <2011/08/15>
+) (/usr/share/texlive/texmf-dist/tex/latex/tools/array.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/booktabs/booktabs.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/titlesec/titletoc.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/natbib/natbib.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/listings/listings.sty
+(/usr/share/texlive/texmf-dist/tex/latex/listings/lstmisc.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/listings/listings.cfg))
+(/usr/share/texlive/texmf-dist/tex/xelatex/xecjk/xeCJK-listings.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hyperref.sty
+(/usr/share/texlive/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty
+(/usr/share/texlive/texmf-dist/tex/generic/infwarerr/infwarerr.sty))
+(/usr/share/texlive/texmf-dist/tex/generic/kvsetkeys/kvsetkeys.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/pdfescape/pdfescape.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/hycolor/hycolor.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/letltxmacro/letltxmacro.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/auxhook/auxhook.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/kvoptions/kvoptions.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/pd1enc.def)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hyperref-langpatches.def)
+(/usr/share/texlive/texmf-dist/tex/generic/intcalc/intcalc.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/etexcmds/etexcmds.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/puenc.def)
+(/usr/share/texlive/texmf-dist/tex/latex/url/url.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/bitset/bitset.sty
+(/usr/share/texlive/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/base/atbegshi-ltx.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hxetex.def
+(/usr/share/texlive/texmf-dist/tex/generic/stringenc/stringenc.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty
+(/usr/share/texlive/texmf-dist/tex/latex/base/atveryend-ltx.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty)))
+(/usr/share/texlive/texmf-dist/tex/latex/hypernat/hypernat.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/xcolor/xcolor.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/color.cfg)
+(/usr/share/texlive/texmf-dist/tex/latex/colortbl/colortbl.sty)))
+(./HUSTtils.sty (/usr/share/texlive/texmf-dist/tex/latex/multirow/multirow.sty)
+ (/usr/share/texlive/texmf-dist/tex/generic/soul/soul.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/makecell/makecell.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/silence/silence.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/pdfpages/pdfpages.sty
+(/usr/share/texlive/texmf-dist/tex/latex/eso-pic/eso-pic.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/pdfpages/ppxetex.def))
+(/usr/share/texlive/texmf-dist/tex/latex/algorithm2e/algorithm2e.sty
+(/usr/share/texlive/texmf-dist/tex/latex/ifoddpage/ifoddpage.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/xspace.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/relsize/relsize.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/algorithmicx/algpseudocode.sty
+(/usr/share/texlive/texmf-dist/tex/latex/algorithmicx/algorithmicx.sty
+Document Style algorithmicx 1.2 - a greatly improved `algorithmic' style
+)
+Document Style - pseudocode environments for use with the `algorithmicx' style
+) (/usr/share/texlive/texmf-dist/tex/latex/chngcntr/chngcntr.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/xurl/xurl.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/enumitem/enumitem.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/natbib/bibentry.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/physics/physics.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/frontendlayer/tikz.sty
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/basiclayer/pgf.sty
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/utilities/pgfrcs.sty
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfutil-common.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfutil-common-lists.t
+ex)) (/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfutil-latex.def
+) (/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfrcs.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/pgf.revision.tex)))
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/basiclayer/pgfcore.sty
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/systemlayer/pgfsys.sty
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgfsys.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfkeys.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfkeysfiltered.code.t
+ex)) (/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgf.cfg)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgfsys-xetex.def
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgfsys-dvipdfmx.def
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgfsys-common-pdf.de
+f))))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgfsyssoftpath.code.
+tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgfsysprotocol.code.
+tex))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcore.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmath.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathcalc.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathutil.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathparser.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.basic.code
+.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.trigonomet
+ric.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.random.cod
+e.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.comparison
+.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.base.code.
+tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.round.code
+.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.misc.code.
+tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.integerari
+thmetics.code.tex)))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfloat.code.tex))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfint.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepoints.code.te
+x)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepathconstruct.
+code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepathusage.code
+.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorescopes.code.te
+x)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoregraphicstate.c
+ode.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoretransformation
+s.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorequick.code.tex
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreobjects.code.t
+ex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepathprocessing
+.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorearrows.code.te
+x)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreshade.code.tex
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreimage.code.tex
+
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreexternal.code.
+tex))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorelayers.code.te
+x)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoretransparency.c
+ode.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepatterns.code.
+tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorerdf.code.tex))
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/modules/pgfmoduleshapes.code.tex
+) (/usr/share/texlive/texmf-dist/tex/generic/pgf/modules/pgfmoduleplot.code.tex
+)
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/compatibility/pgfcomp-version-0-65
+.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/compatibility/pgfcomp-version-1-18
+.sty)) (/usr/share/texlive/texmf-dist/tex/latex/pgf/utilities/pgffor.sty
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/utilities/pgfkeys.sty
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfkeys.code.tex))
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/math/pgfmath.sty
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmath.code.tex))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgffor.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmath.code.tex)))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/tikz.code.tex
+
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/libraries/pgflibraryplothandlers
+.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/modules/pgfmodulematrix.code.tex
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibrarytopaths.code.tex)))
+(/usr/share/texlive/texmf-dist/tex/generic/mathdots/mathdots.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/yhmath/yhmath.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/cancel/cancel.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/siunitx/siunitx.sty
+(/usr/share/texlive/texmf-dist/tex/latex/translations/translations.sty
+(/usr/share/texlive/texmf-dist/tex/latex/etoolbox/etoolbox.sty))
+
+Package siunitx Warning: Detected the "physics" package:
+(siunitx)                Omitting definition of \qty.
+
+) (/usr/share/texlive/texmf-dist/tex/latex/was/gensymb.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/tabularx.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibraryfadings.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/libraries/pgflibraryfadings.code
+.tex))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibrarypatterns.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/libraries/pgflibrarypatterns.cod
+e.tex))
+(/usr/share/texlive/texmf-dist/tex/latex/pgf-blur/tikzlibraryshadows.blur.code.
+tex  v1.02, 2012/12/09
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibraryshadows.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibrarycalc.code.tex))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibraryshapes.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibraryshapes.geometric.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/libraries/shapes/pgflibraryshape
+s.geometric.code.tex))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibraryshapes.misc.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/libraries/shapes/pgflibraryshape
+s.misc.code.tex))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibraryshapes.symbols.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/libraries/shapes/pgflibraryshape
+s.symbols.code.tex))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibraryshapes.arrows.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/libraries/shapes/pgflibraryshape
+s.arrows.code.tex))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibraryshapes.callouts.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/libraries/shapes/pgflibraryshape
+s.callouts.code.tex))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibraryshapes.multipart.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/libraries/shapes/pgflibraryshape
+s.multipart.code.tex)))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibraryarrows.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/libraries/pgflibraryarrows.code.
+tex))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibraryautomata.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibrarydecorations.pathmorphing.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibrarydecorations.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/modules/pgfmoduledecorations.cod
+e.tex))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/libraries/decorations/pgflibrary
+decorations.pathmorphing.code.tex))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibrarydecorations.pathreplacing.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/libraries/decorations/pgflibrary
+decorations.pathreplacing.code.tex))
+(/usr/share/texlive/texmf-dist/tex/latex/dot2texi/dot2texi.sty
+(/usr/share/texlive/texmf-dist/tex/latex/moreverb/moreverb.sty
+(/usr/share/texlive/texmf-dist/tex/latex/tools/verbatim.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/xkeyval/xkeyval.sty
+(/usr/share/texlive/texmf-dist/tex/generic/xkeyval/xkeyval.tex
+(/usr/share/texlive/texmf-dist/tex/generic/xkeyval/xkvutils.tex)))
+
+Package dot2texi Warning: Shell escape not enabled.
+(dot2texi)                You'll need to convert the graphs yourself..
+
+) (/usr/share/texlive/texmf-dist/tex/latex/adjustbox/adjustbox.sty
+(/usr/share/texlive/texmf-dist/tex/latex/adjustbox/adjcalc.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/adjustbox/trimclip.sty
+(/usr/share/texlive/texmf-dist/tex/latex/collectbox/collectbox.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/adjustbox/tc-xetex.def))
+(/usr/share/texlive/texmf-dist/tex/latex/varwidth/varwidth.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/float/float.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/longtable.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/overpic/overpic.sty
+(/usr/share/texlive/texmf-dist/tex/latex/eepic/epic.sty
+Enhancements to Picture Environment. Version 1.2 - Released June 1, 1986
+)) (/usr/share/texlive/texmf-dist/tex/latex/mathtools/mathtools.sty
+(/usr/share/texlive/texmf-dist/tex/latex/mathtools/mhsetup.sty))) (./main.aux
+(./body/chap01.aux) (./body/chap02.aux) (./body/chap03.aux) (./body/chap04.aux)
+(./body/conclusion.aux
+
+LaTeX Warning: Label `sec:contribution' multiply defined.
+
+) (./body/ack.aux)) (/usr/share/texlive/texmf-dist/tex/latex/base/ts1cmr.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/caption/ltcaption.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
+(/usr/share/texlive/texmf-dist/tex/latex/refcount/refcount.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty))
+(./main.out) (./main.out)
+(/usr/share/texlive/texmf-dist/tex/latex/pdflscape/pdflscape.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/lscape.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/translations/translations-basic-dictio
+nary-english.trsl) (./body/0cover.tex)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/yhmath/OMXyhex.fd)
+Overfull \hbox (60.0pt too wide) in paragraph at lines 68--68
+ [] 
+[1]
+Overfull \hbox (86.63875pt too wide) in paragraph at lines 68--68
+ [][] 
+[2]
+Overfull \hbox (26.0pt too wide) in paragraph at lines 68--68
+ []|  [] 
+
+Overfull \hbox (26.0pt too wide) in paragraph at lines 68--68
+ []|  [] 
+
+Overfull \hbox (2.0pt too wide) in paragraph at lines 68--68
+ []|  [] 
+[3]
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\sihao' on input line 68.
+
+
+Overfull \hbox (6.0pt too wide) in paragraph at lines 68--68
+[] 
+
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[1]
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\sihao' on input line 68.
+
+
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[2]
+Overfull \hbox (6.0pt too wide) in paragraph at lines 68--69
+[]
+
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[3] (./main.toc
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[4])
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[5] (./body/chap01.tex
+Chapter 1.
+
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[1]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[2]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[3]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[4]
+Underfull \hbox (badness 10000) in paragraph at lines 61--61
+[]|\TU/TimesNewRoman(0)/m/n/11 QEMU, Pre-
+
+Underfull \hbox (badness 10000) in paragraph at lines 63--63
+[]|\TU/TimesNewRoman(0)/m/n/11 P2IM, uEmu,
+
+Underfull \hbox (badness 10000) in paragraph at lines 63--63
+\TU/TimesNewRoman(0)/m/n/11 Laelaps, Fuz-
+
+Underfull \hbox (badness 10000) in paragraph at lines 65--65
+[]|\TU/TimesNewRoman(0)/m/n/11 HALucinator,
+
+Underfull \hbox (badness 10000) in paragraph at lines 65--65
+\TU/TimesNewRoman(0)/m/n/11 Firmadyne,
+
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[5]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[6]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[7]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[8]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[9]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[10])
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[11] (./body/chap02.tex
+Chapter 2.
+
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[12]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[13]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[14]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[15]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[16]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[17]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[18]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[19]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[20])
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[21] (./body/chap03.tex
+Chapter 3.
+
+Overfull \hbox (72.03004pt too wide) in paragraph at lines 55--56
+ [][] 
+
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[22]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[23] (/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/listings/lstmisc.sty)
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[24]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[25]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[26]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[27]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[28]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[29] (/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty)
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[30]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[31]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[32]
+Overfull \hbox (23.79022pt too wide) in paragraph at lines 408--422
+ [][] 
+
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[33]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[34]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[35]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[36]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[37]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[38]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[39]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[40]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[41]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[42]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[43]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[44]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[45]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[46])
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[47] (./body/chap04.tex
+Chapter 4.
+
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[48]
+Overfull \hbox (42.16122pt too wide) in paragraph at lines 43--53
+ [][] 
+
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[49]
+Overfull \hbox (25.04994pt too wide) in paragraph at lines 70--71
+[]|\TU/TimesNewRoman(0)/m/n/11 NXP_FATFS_BareMetal| 
+
+Overfull \hbox (25.43129pt too wide) in paragraph at lines 71--72
+[]|\TU/TimesNewRoman(0)/m/n/11 NXP_FATFS_FreeRTOS| 
+
+Overfull \hbox (10.56947pt too wide) in paragraph at lines 72--73
+[]|\TU/TimesNewRoman(0)/m/n/11 NXP_I2C_BareMetal| 
+
+Overfull \hbox (10.95082pt too wide) in paragraph at lines 73--74
+[]|\TU/TimesNewRoman(0)/m/n/11 NXP_I2C_FreeRTOS| 
+
+Overfull \hbox (18.51332pt too wide) in paragraph at lines 74--75
+[]|\TU/TimesNewRoman(0)/m/n/11 NXP_LwIP_BareMetal| 
+
+Overfull \hbox (18.89467pt too wide) in paragraph at lines 75--76
+[]|\TU/TimesNewRoman(0)/m/n/11 NXP_LwIP_FreeRTOS| 
+
+Overfull \hbox (23.35268pt too wide) in paragraph at lines 76--77
+[]|\TU/TimesNewRoman(0)/m/n/11 NXP_UART_BareMetal| 
+
+Overfull \hbox (23.73402pt too wide) in paragraph at lines 77--78
+[]|\TU/TimesNewRoman(0)/m/n/11 NXP_UART_FreeRTOS| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 78--79
+[]|\TU/TimesNewRoman(0)/m/n/11 imxrt1052-nxp-
+
+Underfull \hbox (badness 10000) in paragraph at lines 79--80
+[]|\TU/TimesNewRoman(0)/m/n/11 imxrt1060-nxp-
+
+Overfull \hbox (32.30629pt too wide) in paragraph at lines 80--81
+[]|\TU/TimesNewRoman(0)/m/n/11 BLE_HeartRateFreeRTOS| 
+
+Overfull \hbox (19.53383pt too wide) in paragraph at lines 81--82
+[]|\TU/TimesNewRoman(0)/m/n/11 FatFs_USBDisk_RTOS| 
+
+Overfull \hbox (31.95717pt too wide) in paragraph at lines 82--83
+[]|\TU/TimesNewRoman(0)/m/n/11 LwIP_HTTP_Server_Raw| 
+
+Overfull \hbox (68.99086pt too wide) in paragraph at lines 83--84
+[]|\TU/TimesNewRoman(0)/m/n/11 LwIP_HTTP_Server_SocketRTOS| 
+
+Overfull \hbox (74.49086pt too wide) in paragraph at lines 84--85
+[]|\TU/TimesNewRoman(0)/m/n/11 LwIP_HTTP_Server_Socket_RTOS| 
+
+Overfull \hbox (74.49086pt too wide) in paragraph at lines 85--86
+[]|\TU/TimesNewRoman(0)/m/n/11 LwIP_HTTP_Server_Socket_RTOS| 
+
+Overfull \hbox (18.50795pt too wide) in paragraph at lines 86--87
+[]|\TU/TimesNewRoman(0)/m/n/11 LwIP_StreamingServer| 
+
+Overfull \hbox (29.44887pt too wide) in paragraph at lines 87--88
+[]|\TU/TimesNewRoman(0)/m/n/11 UART_Hyperterminal_IT| 
+
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[50]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[51]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[52]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[53]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[54]
+Underfull \hbox (badness 10000) in paragraph at lines 277--277
+[]|\TU/TimesNewRoman(0)/m/n/11 NXP/FreeRTOS/FatFS/NXP
+
+Underfull \hbox (badness 10000) in paragraph at lines 280--280
+[]|\TU/TimesNewRoman(0)/m/n/11 NXP/\TU/SimSun.ttf(0)/m/n/11 裸 机\TU/TimesNewRoma
+n(0)/m/n/11 /ETH/LwIP/NXP
+
+Overfull \hbox (6.60124pt too wide) in paragraph at lines 281--281
+[]|\TU/TimesNewRoman(0)/m/n/11 NXP/FreeRTOS/ETH/LwIP/NXP
+
+Underfull \hbox (badness 10000) in paragraph at lines 283--283
+[]|\TU/TimesNewRoman(0)/m/n/11 NXP/FreeRTOS/UART/NXP
+
+Underfull \hbox (badness 10000) in paragraph at lines 284--284
+[]|\TU/TimesNewRoman(0)/m/n/11 STM32/FreeRTOS/\TU/SimSun.ttf(0)/m/n/11 多 外
+
+Underfull \hbox (badness 10000) in paragraph at lines 285--285
+[]|\TU/TimesNewRoman(0)/m/n/11 STM32/FreeRTOS/\TU/SimSun.ttf(0)/m/n/11 多 外
+
+Overfull \hbox (56.12227pt too wide) in paragraph at lines 272--288
+ [][] 
+
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[55]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[56]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[57]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[58]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[59]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[60]
+Overfull \hbox (9.94394pt too wide) in paragraph at lines 461--470
+ [][] 
+
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[61]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[62]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[63]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[64])
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[65] (./body/conclusion.tex
+Chapter 5.
+
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[66]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[67]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[68]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[69])
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[70] (./body/ack.tex)
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[71] (./main.bbl
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\sihao' on input line 1.
+
+
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[72]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[73]) (./body/publications.tex
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[74])
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[75] (./main.aux (./body/chap01.aux) (./body/chap02.aux) (./body/chap03.aux)
+(./body/chap04.aux) (./body/conclusion.aux) (./body/ack.aux))
+
+LaTeX Warning: There were multiply-defined labels.
+
+ )
+(see the transcript file for additional information)
+Output written on main.pdf (83 pages).
+Transcript written on main.log.

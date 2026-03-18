@@ -1,0 +1,173 @@
+\chapter{实验设计与结果分析}
+\label{chap:exp}
+
+本章通过系统性的实验验证本文提出的基于驱动程序替换的固件仿真方法的有效性。实验从多个维度对方法进行评估，包括静态分析模块的识别准确率、运行正确性、方法对比以及应用验证。
+
+\section{实验设计}
+\label{sec:design}
+
+为了全面评估本文方法的有效性和实用性，本节介绍实验的整体设计，包括实验目标、测试固件的选择、实验环境的搭建以及评估指标的定义。
+
+\subsection{实验目标}
+
+本章实验旨在验证以下研究问题：
+
+\textbf{RQ1（识别准确性）}：静态分析模块能否准确识别固件中的硬件依赖代码？识别的准确率和召回率如何？该指标反映了静态分析模块对固件硬件依赖的感知能力，是后续智能替换的基础。如果静态分析模块无法准确识别硬件依赖代码，将导致驱动函数替换的不完整或不准确，影响整个方法的自动化效果。
+
+\textbf{RQ2（运行正确性）}：替换后的固件能否在仿真环境中正确运行？能否正常启动、执行主要功能、保持语义一致性等？该指标是验证系统核心能力的关键，即"替换后的固件能否正常运行"。运行正确性包括编译正确性、启动正确性、功能完整性和运行稳定性四个方面。如果替换后的固件无法在仿真环境中正确运行，那么本文方法就无法支持后续的安全测试和漏洞挖掘任务。
+
+\textbf{RQ3（方法对比）}：与现有的固件仿真方法相比，本文方法在效果和效率上有何优势？该指标用于评估本文方法的创新点和实用价值。与 Halucinator 和 Para-rehosting 等现有方法相比，本文方法通过 LLM 驱动的智能替换机制，在自动化程度、准备时间和可扩展性方面应该具有显著优势。
+
+\textbf{RQ4（应用验证）}：本文方法能否有效支持后续的模糊测试和漏洞挖掘任务？该指标用于验证本文方法的实际应用价值。如果替换后的固件能够在仿真环境中稳定运行并支持模糊测试，那么本文方法就能够为物联网设备固件的安全测试提供有效的技术途径。
+
+\subsection{测试固件选择}
+
+为了验证方法的通用性和有效性，本研究选择了多种典型的物联网设备固件作为测试案例，涵盖不同的芯片平台、操作系统、驱动复杂度和应用场景。
+
+\textbf{（1）芯片平台选择}
+
+测试固件覆盖了物联网设备中常见的两类主流 MCU 平台：STM32F4 系列（ARM Cortex-M4）和 NXP i.MX RT 系列（ARM Cortex-M7）。
+
+\textbf{（2）操作系统选择}
+
+测试固件覆盖了三种典型的嵌入式软件架构：FreeRTOS、RT-Thread 和裸机。FreeRTOS 是全球使用最广泛的开源实时操作系统，具有内核精简、易于移植的特点，支持任务管理、队列、信号量等功能。RT-Thread 是国产开源实时操作系统，提供完整的设备驱动框架和丰富的软件包生态，在国内物联网领域应用广泛。裸机是指无操作系统支持的固件，所有驱动和应用代码直接运行在硬件上，常见于资源极度受限的物联网设备。
+
+\textbf{（3）外设类型选择}
+
+测试固件涵盖了物联网设备中常见的四类外设驱动，详细信息如表~\ref{tab:peripherals}所示。
+
+\begin{table}[htbp]
+\centering
+\caption{外设类型分类}
+\label{tab:peripherals}
+\begin{tabular}{ll}
+\toprule
+\textbf{类别} & \textbf{外设类型} \\
+\midrule
+通信外设 & UART（串口通信）、I2C（总线通信）、SPI（串行外设接口）、ETH（以太网控制器） \\
+存储外设 & Flash（闪存控制器）、SDIO（SD 卡接口） \\
+定时器外设 & TIM（通用定时器）、RTC（实时时钟）、WDT（看门狗定时器） \\
+其他外设 & BLE（蓝牙）、FatFS（文件系统） \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{（4）测试固件构建}
+
+本研究测试固件来源于官方示例与开源项目，从 STM32CubeMX 和 NXP MCUXpresso SDK 提取的官方示例程序代表规范的驱动代码编写风格，而从 GitHub 和 Gitee 收集的开源的物联网设备固件项目涵盖智能照明、环境监测、工业控制等多种应用场景。这种来源选择确保了测试固件的多样性和代表性。
+
+经过筛选和整理，最终构建了包含 20 个固件的测试集，详细信息如表~\ref{tab:firmware}所示。
+
+\begin{table}[htbp]
+\centering
+\caption{测试固件详细信息}
+\label{tab:firmware}
+\footnotesize
+\begin{tabular}{llllp{3cm}}
+\toprule
+\textbf{编号} & \textbf{MCU型号} & \textbf{OS} & \textbf{外设/驱动库} & \textbf{Demo名称} \\
+\midrule
+F01 & STM32F407 & FreeRTOS & UART, I2C, STM32 HAL & NXP\_FATFS\_BareMetal \\
+F02 & STM32F407 & FreeRTOS & SPI, ETH, LwIP, FreeRTOS & NXP\_FATFS\_FreeRTOS \\
+F03 & STM32F407 & RT-Thread & UART, ADC, RT-Thread & NXP\_I2C\_BareMetal \\
+F04 & STM32F407 & 裸机 & UART, GPIO, STM32 HAL & NXP\_I2C\_FreeRTOS \\
+F05 & STM32F407 & 裸机 & I2C, TIM, STM32 HAL & NXP\_LwIP\_BareMetal \\
+F06 & STM32F429 & FreeRTOS & UART, ETH, LwIP, FreeRTOS & NXP\_LwIP\_FreeRTOS \\
+F07 & STM32F429 & FreeRTOS & SPI, Flash, STM32 HAL & NXP\_UART\_BareMetal \\
+F08 & STM32F429 & RT-Thread & I2C, ADC, RT-Thread & NXP\_UART\_FreeRTOS \\
+F09 & STM32F429 & 裸机 & UART, DAC, STM32 HAL & imxrt1052-nxp-evk \\
+F10 & STM32F429 & 裸机 & TIM, WDT, STM32 HAL & imxrt1060-nxp-evk \\
+F11 & RT1052 & FreeRTOS & UART, ETH, LwIP, FreeRTOS & BLE\_HeartRateFreeRTOS \\
+F12 & RT1052 & FreeRTOS & SPI, SDIO, NXP HAL & FatFs\_USBDisk\_RTOS \\
+F13 & RT1052 & RT-Thread & I2C, RTC, RT-Thread & LwIP\_HTTP\_Server\_Raw \\
+F14 & RT1052 & RT-Thread & UART, Flash, RT-Thread & LwIP\_HTTP\_Server\_SocketRTOS \\
+F15 & RT1052 & 裸机 & GPIO, ADC, NXP HAL & LwIP\_HTTP\_Server\_Socket\_RTOS \\
+F16 & RT1052 & 裸机 & UART, TIM, NXP HAL & LwIP\_HTTP\_Server\_Socket\_RTOS \\
+F17 & STM32F407 & FreeRTOS & 多外设 & LwIP\_StreamingServer \\
+F18 & STM32F429 & RT-Thread & 多外设 & UART\_Hyperterminal\_IT \\
+F19 & RT1052 & FreeRTOS & 多外设 & - \\
+F20 & RT1052 & RT-Thread & 多外设 & - \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{实验环境}
+
+实验在以下软硬件环境中进行：
+
+\textbf{（1）硬件环境}
+
+\begin{table}[htbp]
+\centering
+\caption{硬件环境配置}
+\label{tab:hw_env}
+\small
+\begin{tabular}{ll}
+\toprule
+\textbf{配置项} & \textbf{规格} \\
+\midrule
+主机 & Intel Xeon Platinum 8350C 处理器（128核心），503GB 内存，869GB SSD \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{（2）软件环境}
+
+\begin{table}[htbp]
+\centering
+\caption{软件环境配置}
+\label{tab:sw_env}
+\small
+\begin{tabular}{ll}
+\toprule
+\textbf{配置项} & \textbf{规格} \\
+\midrule
+操作系统 & Ubuntu 22.04 LTS \\
+编译工具链 & ARM GCC 10.3.1、CMake 3.21.4 \\
+仿真环境 & Unicorn 2.0.2、UnicornAFL（基于Unicorn的模糊测试扩展） \\
+模糊测试 & AFL++ 4.08c+（基于v4.08c的开发版本） \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{（3）框架集成}
+
+本文方法的各个模块通过 Python 脚本进行集成，形成完整的自动化工具链。静态分析模块使用 CodeQL 查询驱动函数，LLM 替换模块通过 API 调用大语言模型，编译修复模块使用 ARM GCC 进行编译验证，动态反馈模块通过 Unicorn 监控固件运行状态，仿真执行基于 Unicorn 引擎实现，支持 ARM Cortex-M 架构的指令级仿真。
+
+\subsection{评估指标}
+
+本研究定义以下评估指标：
+
+\textbf{（1）静态分析模块指标}
+
+\begin{itemize}
+    \item \textbf{识别准确率（Precision）}：正确识别的驱动函数数量 / 识别出的驱动函数总数
+    \item \textbf{识别召回率（Recall）}：正确识别的驱动函数数量 / 实际存在的驱动函数总数
+    \item \textbf{F1 分数}：准确率和召回率的调和平均数
+\end{itemize}
+
+\textbf{（2）运行正确性指标}
+
+\begin{itemize}
+    \item \textbf{编译正确性}：最终编译成功率、平均修复轮次
+    \item \textbf{启动正确性}：启动成功率、关键节点匹配率
+    \item \textbf{功能完整性}：功能验证结果、关键节点覆盖度
+    \item \textbf{运行稳定性}：崩溃次数、运行时间、稳定性评价
+    \item \textbf{通用性}：驱动库种类、平台数量、操作系统数量
+\end{itemize}
+
+\textbf{（3）方法对比指标}
+
+\begin{itemize}
+    \item \textbf{准备时间}：替换层编写/移植、端到端自动化执行时间
+    \item \textbf{自动化程度}：手工编写 vs 完全自动化
+    \item \textbf{运行正确性}：编译成功率、启动成功率、运行稳定性
+    \item \textbf{可扩展性}：人力资源依赖、源代码依赖、冷启动成本
+\end{itemize}
+
+\textbf{（4）模糊测试指标}
+
+\begin{itemize}
+    \item \textbf{基本块覆盖率}：被测试覆盖的代码块占所有代码块的比例
+    \item \textbf{执行速度}：每秒执行的测试用例数量（exec/s）
+\end{itemize}
