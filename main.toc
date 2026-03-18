@@ -46,12 +46,11 @@
 \contentsline {section}{\numberline {3.1}整体架构设计}{23}{section.3.1}%
 \contentsline {section}{\numberline {3.2}驱动函数接口静态分析与识别模块}{24}{section.3.2}%
 \contentsline {subsection}{\numberline {3.2.1}MMIO 访问模式识别}{25}{subsection.3.2.1}%
-\contentsline {subsubsection}{\numberline {3.2.1.1}CodeQL 查询实现}{26}{subsubsection.3.2.1.1}%
-\contentsline {subsection}{\numberline {3.2.2}驱动函数定位准则}{26}{subsection.3.2.2}%
-\contentsline {subsection}{\numberline {3.2.3}数据流追踪}{27}{subsection.3.2.3}%
-\contentsline {subsubsection}{\numberline {3.2.3.1}追踪目标}{27}{subsubsection.3.2.3.1}%
-\contentsline {subsubsection}{\numberline {3.2.3.2}数据流分析实现}{27}{subsubsection.3.2.3.2}%
-\contentsline {subsection}{\numberline {3.2.4}统一数据模型}{27}{subsection.3.2.4}%
+\contentsline {subsection}{\numberline {3.2.2}静态分析实现}{26}{subsection.3.2.2}%
+\contentsline {subsubsection}{\numberline {3.2.2.1}查询规则设计}{26}{subsubsection.3.2.2.1}%
+\contentsline {subsubsection}{\numberline {3.2.2.2}驱动函数定位}{27}{subsubsection.3.2.2.2}%
+\contentsline {subsubsection}{\numberline {3.2.2.3}数据流追踪}{27}{subsubsection.3.2.2.3}%
+\contentsline {subsubsection}{\numberline {3.2.2.4}统一数据模型}{28}{subsubsection.3.2.2.4}%
 \contentsline {section}{\numberline {3.3}驱动函数分析、替换与编译模块}{28}{section.3.3}%
 \contentsline {subsection}{\numberline {3.3.1}智能体工作流设计}{29}{subsection.3.3.1}%
 \contentsline {subsubsection}{\numberline {3.3.1.1}LangGraph 工作流框架}{29}{subsubsection.3.3.1.1}%
