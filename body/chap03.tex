@@ -405,18 +405,18 @@ class FunctionInfo:
 \centering
 \caption{驱动函数分类体系}
 \label{tab:function-categories}
-\begin{tabular}{lllp{8cm}}
+\begin{tabular}{llp{9cm}}
 \toprule
-\textbf{类别} & \textbf{缩写} & \textbf{描述} & \textbf{典型函数} \\
+\textbf{缩写} & \textbf{描述} & \textbf{典型函数} \\
 \midrule
-接收类 & RECV & 从硬件/寄存器读取数据 & \texttt{HAL\_UART\_Receive}, \texttt{HAL\_SPI\_Receive} \\
-发送类 & SEND & 将数据写入寄存器/外设 & \texttt{HAL\_UART\_Transmit}, \texttt{HAL\_SPI\_Transmit} \\
-中断类 & IRQ & 中断处理函数/回调 & \texttt{HAL\_UART\_IRQHandler}, \texttt{USART1\_IRQHandler} \\
-初始化类 & INIT & 外设初始化 & \texttt{HAL\_UART\_Init}, \texttt{MX\_USART1\_UART\_Init} \\
-控制类 & CTRL & 启停、模式切换 & \texttt{HAL\_UART\_Start}, \texttt{HAL\_UART\_Stop} \\
-轮询类 & POLL & 轮询状态位 & \texttt{HAL\_UART\_GetState}, \texttt{\_\_HAL\_UART\_GET\_FLAG} \\
-DMA 配置类 & DMA & 配置 DMA 传输 & \texttt{HAL\_UART\_Transmit\_DMA} \\
-非驱动 & NODRIVER & 不需要替换的函数 & 纯业务逻辑函数 \\
+RECV & 从硬件/寄存器读取数据 & \texttt{HAL\_UART\_Receive} \\
+SEND & 将数据写入寄存器/外设 & \texttt{HAL\_UART\_Transmit} \\
+IRQ & 中断处理函数/回调 & \texttt{HAL\_UART\_IRQHandler} \\
+INIT & 外设初始化 & \texttt{HAL\_UART\_Init} \\
+CTRL & 启停、模式切换 & \texttt{HAL\_UART\_Start} \\
+POLL & 轮询状态位 & \texttt{HAL\_UART\_GetState} \\
+DMA & 配置 DMA 传输 & \texttt{HAL\_UART\_Transmit\_DMA} \\
+NODRIVER & 不需要替换的函数 & 纯业务逻辑函数 \\
 \bottomrule
 \end{tabular}
 \end{table}
