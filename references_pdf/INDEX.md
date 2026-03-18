@@ -1,7 +1,7 @@
 # 参考文献 PDF 索引
 
-> 生成时间: 2026-03-17
-> 总计: 33 篇
+> 生成时间: 2026-03-18
+> 总计: 54 篇
 
 ---
 
@@ -75,8 +75,29 @@
 
 | 文件名 | Bib Key | 标题 | 作者 | 年份 |
 |--------|---------|------|------|------|
-| firmadyne2016.pdf | firmadyne | Firmadyne: Towards Automated Dynamic Firmware Analysis (arXiv version) | Chen et al. | 2016 |
+| firmadyne2016.pdf | firmadyne | Firmadyne: Towards Automated Dynamic Firmware Analysis | Chen et al. | 2016 |
+| avatar2015.pdf | avatar | Avatar: A Framework to Support Dynamic Security Analysis of Embedded Firmware Binaries | Kamilov et al. | 2015 |
+| firmalice2015.pdf | firmalice | Firmalice: Automatic Detection of Authentication Bypass Vulnerabilities in Binary Firmware | Shoshitaishvili et al. | 2015 |
+| driller2016.pdf | driller | Driller: Augmenting Fuzzing Through Selective Symbolic Execution | Stephens et al. | 2016 |
 | angora2018.pdf | angora | Angora: Efficient Fuzzing by Principled Search | Chen & Chen | 2018 |
+| qsym2018.pdf | qsym | QSYM: A Practical Concolic Execution Engine Tailored for Hybrid Fuzzing | Yun et al. | 2018 |
+| avatar22018.pdf | avatar2 | Avatar²: A Multi-target Orchestration Platform | Muench et al. | 2018 |
+| mirai2018.pdf | mirai2018 | Analysis of the Mirai Botnet | Antonakakis et al. | 2018 |
+| iotfuzzer2018.pdf | iotfuzzer | IoTFuzzer: Discovering Memory Corruptions in IoT Through App-based Fuzzing | Chen et al. | 2018 |
+| pretender2019.pdf | pretender | Pretender: High-Fidelity Peripheral Emulation for Firmware | Gustafson et al. | 2019 |
+| firmafl2019.pdf | firmafl | FirmAFL: High-Throughput Greybox Fuzzing of IoT Firmware via Augmented Process Emulation | Zheng et al. | 2019 |
+| clements2020halucinator.pdf | clements2020halucinator | HALucinator: Firmware Re-hosting Through Abstraction Layer Emulation | Clements et al. | 2020 |
+| fengp2020p2im.pdf | fengp2020p2im | P2IM: Scalable and Hardware-independent Firmware Testing via Automatic Peripheral Interface Modeling | Feng et al. | 2020 |
+| laelaps2021.pdf | laelaps | Laelaps: An Efficient and Fast Dynamic Analysis Tool for IoT Firmware | Cao et al. | 2021 |
+| uemu2021.pdf | uemu | uEmu: A Framework for Firmware Emulation and Vulnerability Discovery | Zhou et al. | 2021 |
+| industroyer2017.pdf | industroyer2017 | Win32/Industroyer: A new threat for industrial control systems | Cherepanov | 2017 |
+| pararehosting2022.pdf | pararehosting | Para-rehosting: Automatic Payload Generation for Embedded Inter-Process Communication | Li et al. | 2022 |
+| fuzzware2022.pdf | fuzzware | Fuzzware: Using Precise MMIO Modeling for Effective Firmware Fuzzing | Scharnowski et al. | 2022 |
+| zhangyuqing2017iotsurvey.pdf | zhangyuqing2017iotsurvey | 物联网安全综述 | 张玉清等 | 2017 |
+| yang2021iotsurvey.pdf | yang2021iotsurvey | 物联网安全研究综述:威胁,检测与防御 | 杨毅宇等 | 2021 |
+| li2022iotfirmwaresurvey.pdf | li2022iotfirmwaresurvey | 物联网固件漏洞安全检测综述 | 李涛等 | 2022 |
+| maxiaocheng2025iotfirmwaresurvey.pdf | maxiaocheng2025iotfirmwaresurvey | 物联网设备固件安全分析现状研究综述 | 马晓成等 | 2025 |
+| liuhangtian2025iotfuzzer.pdf | liuhangtian2025iotfuzzer | 物联网设备固件自动化漏洞挖掘技术研究综述 | 刘航天等 | 2025 |
 
 ---
 
@@ -84,31 +105,8 @@
 
 以下文献暂未找到 PDF，需要手动下载或通过图书馆获取：
 
-### USENIX Security 论文
-- `fengp2020p2im` - P2IM: Scalable and Hardware-independent Firmware Testing via Automatic Peripheral Interface Modeling (2020)
-- `firmafl` - FirmAFL: High-Throughput Greybox Fuzzing of IoT Firmware via Augmented Process Emulation (2019)
-- `avatar2` - Avatar²: A Multi-target Orchestration Platform (2018)
-- `fuzzware` - Fuzzware: Using Precise MMIO Modeling for Effective Firmware Fuzzing (2022)
-- `pretender` - Pretender: High-Fidelity Peripheral Emulation for Firmware (2019)
-- `qsym` - QSYM: A Practical Concolic Execution Engine Tailored for Hybrid Fuzzing (2018)
-- `mirai2018` - Analysis of the Mirai Botnet (2018)
-- `pararehosting` - Para-rehosting: Automatic Payload Generation for Embedded Inter-Process Communication (2022)
-- `clements2020halucinator` - HALucinator: Firmware Re-hosting Through Abstraction Layer Emulation (2020)
-
-### NDSS 论文
-- `avatar` - Avatar: A Framework to Support Dynamic Security Analysis of Embedded Firmware Binaries (2015)
-- `iotfuzzer` - IoTFuzzer: Discovering Memory Corruptions in IoT Through App-based Fuzzing (2018)
-- `firmalice` - Firmalice: Automatic Detection of Authentication Bypass Vulnerabilities in Binary Firmware (2015)
-- `driller` - Driller: Augmenting Fuzzing Through Selective Symbolic Execution (2016)
-
 ### 中文期刊
-- `yang2021iotsurvey` - 物联网安全研究综述:威胁,检测与防御 (通信学报)
 - `iotpot` - IoTPOT: Analysing and Detecting Malware in IoT (Journal of Computer Virology)
-
-### 其他
-- `laelaps` - Laelaps: An Efficient and Fast Dynamic Analysis Tool for IoT Firmware (2021)
-- `uemu` - uEmu: A Framework for Firmware Emulation and Vulnerability Discovery (2021)
-- `industroyer` - Win32/Industroyer: A new threat for industrial control systems (2017)
 
 ### 工具和项目 (无需 PDF)
 - `qemu` - QEMU, the FAST! processor emulator (https://www.qemu.org/)
@@ -147,6 +145,6 @@
 ---
 
 **统计信息**:
-- 已下载: 33 篇
-- 未下载: ~20 篇
-- 总大小: 69 MB
+- 已下载: 54 篇
+- 未下载: 1 篇
+- 总大小: 108 MB
