@@ -532,73 +532,47 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 }
 \end{lstlisting}
 
-\subsection{智能体协作工作流设计}
+采用多智能体协作的工作流设计具有多方面优势：首先是职责分离与专业化，每个智能体专注于特定领域的任务；其次是可扩展性与灵活性，智能体通过工具接口进行交互；再次是状态管理与错误恢复，LangGraph 架构提供了强大的状态管理能力；最后是质量保障的多重验证，工作流通过代码审查、编译验证和修复验证三重质量保障机制，确保替换代码的正确性和可靠性。
 
-本研究采用多智能体协作的方式，将驱动函数分析、替换和编译的复杂任务分解为多个专门化的智能体，通过 LangGraph 框架构建图式工作流实现智能体之间的协作。智能体协作工作流的核心是将"分类-替换-验证-编译-修复"的完整流程自动化，通过智能体之间的信息传递和状态共享，实现端到端的驱动函数替换和编译验证。
+\subsection{工作流执行过程}
 
-\subsubsection{智能体角色与职责}
-
-工作流中包含三个主要智能体：Classifier Agent、VerifyReplacement 和 BuildFixer Agent，每个智能体承担不同的职责，通过工具调用进行协作。
-
-\textbf{Classifier Agent} 是工作流的主导者，负责驱动函数的语义分类和替换代码生成。该智能体接收函数源码、静态分析结果和上下文信息，根据函数的语义特征选择适当的替换策略，生成替换代码。Classifier Agent 采用 LangGraph 框架构建图式工作流，包含推理节点、工具调用节点和结果汇总节点三个核心组件。推理节点由大语言模型驱动，负责进行语义分析和决策；工具调用节点在推理节点需要补充信息时执行工具调用；结果汇总节点对输出进行结构化解析并写入缓存。
-
-\textbf{VerifyReplacement} 是代码审查工具，负责验证替换代码的正确性。该工具接收函数名和替换代码，通过代码审查和可选的编译验证两个层次进行检查。代码审查使用大语言模型扮演代码审查者的角色，根据预定义的规则判断替换代码是否保留了原函数的核心行为，是否引入了潜在的问题。编译验证通过临时应用替换代码并执行编译来验证其语法正确性和链接兼容性。VerifyReplacement 的设计遵循"验证即拒绝"原则，如果代码审查或编译验证失败，直接返回失败结果，拒绝将问题代码持久化到代码库中。
-
-\textbf{BuildFixer Agent} 是编译错误修复工具，负责处理替换代码在编译过程中出现的错误。当 VerifyReplacement 的编译验证失败时，或者 Classifier Agent 生成的替换代码直接导致编译失败时，BuildFixer Agent 接收编译错误信息和替换代码，分析错误原因并生成修复方案。BuildFixer Agent 具备解析编译器输出的能力，能够提取错误类型、错误位置和错误原因，并根据错误类型选择适当的修复策略。修复成功后，Agent 会将修复后的替换代码写入代码库并执行编译验证，确保修复的有效性。
-
-\subsubsection{工作流执行过程}
-
-智能体协作工作流的执行过程是一个多轮迭代的"分类-验证-修复"循环。工作流从 Classifier Agent 开始，首先对目标函数进行语义分类，确定函数类别和推荐的替换策略。对于需要替换的函数，Classifier Agent 生成替换代码后，会调用 VerifyReplacement 进行代码审查和编译验证。
-
-如果 VerifyReplacement 的验证通过，工作流直接采纳该替换代码，完成当前函数的处理。如果验证失败，工作流根据失败类型采取不同的处理策略。对于代码审查失败的情况，表明替换代码存在明显的语义或逻辑问题，工作流会清空未经验证的替换代码，避免问题代码进入代码库。对于编译验证失败的情况，VerifyReplacement 会返回编译错误信息，工作流会触发 BuildFixer Agent 进行错误修复。
-
-BuildFixer Agent 接收编译错误信息和替换代码后，会使用工具获取函数的上下文信息（包括静态分析结果、其他替换代码等），然后分析错误原因并生成修复方案。修复方案生成后，Agent 会将修复后的替换代码写入代码库，并再次执行编译验证。编译验证采用"临时应用+恢复"的机制，确保验证过程不会污染工作树。如果修复后的代码编译成功，工作流采纳该替换代码；如果仍然失败，工作流记录错误信息，并根据重试策略决定是否继续尝试修复。
-
-工作流的最终采纳逻辑采用优先级策略。优先级从高到低依次为：VerifyReplacement 验证通过的代码、BuildFixer Agent 修复成功的代码、未验证的替换代码。这种优先级策略确保只有经过验证的替换代码才会被最终采纳，避免了问题代码进入代码库的风险。对于未经验证的替换代码，如果没有任何验证通过的版本，工作流会直接清空，避免在缺乏验证的情况下采纳不安全的代码。
+智能体协作工作流的执行过程是一个多轮迭代的"分类-验证-修复"循环，其整体流程如图~\ref{fig:workflow-execution}所示。工作流从 Classifier Agent 开始，首先对目标函数进行语义分类，确定函数类别和推荐的替换策略。对于需要替换的函数，Classifier Agent 生成替换代码后，会调用 VerifyReplacement 进行代码审查和编译验证。
 
 \begin{figure}[htbp]
 \centering
 \begin{tikzpicture}[
     node distance=1.5cm,
     box/.style={rectangle, draw, rounded corners, minimum width=2.5cm, minimum height=0.8cm, align=center, font=\small},
-    decision/.style={diamond, draw, aspect=1.5, minimum width=2cm, align=center, font=\small},
+    decision/.style={diamond, draw, aspect=2, minimum width=2cm, align=center, font=\small},
     arrow/.style={->, thick, >=stealth}
 ]
     \node[box, fill=blue!20] (start) {开始：\\Classifier Agent};
-    \node[box, fill=green!20, right of=start, xshift=1cm] (classify) {函数分类与\\替换代码生成};
-    \node[box, fill=orange!20, right of=classify, xshift=1cm] (verify) {VerifyReplacement\\验证};
-    \node[decision, fill=yellow!20, right of=verify, xshift=1.5cm] (pass) {验证通过?};
-    \node[box, fill=red!20, above right of=pass, xshift=0.5cm] (fixer) {BuildFixer Agent\\错误修复};
-    \node[decision, fill=yellow!20, below right of=pass, xshift=0.5cm] (fix) {修复成功?};
-    \node[box, fill=gray!20, right of=fixer, xshift=1cm] (accept) {采纳替换\\代码};
-    \node[box, fill=gray!20, below of=fixer] (reject) {清空未验证\\代码};
-    \node[box, fill=gray!20, right of=pass, xshift=1cm] (end) {结束};
+    \node[box, fill=green!20, right of=start, xshift=0.5cm] (classify) {函数分类与\\替换代码生成};
+    \node[decision, fill=yellow!20, right of=classify, xshift=0.8cm] (has_replacement) {需要\\替换?};
+    \node[box, fill=orange!20, right of=has_replacement, xshift=0.8cm] (verify) {VerifyReplacement\\验证};
+    \node[decision, fill=yellow!20, right of=verify, xshift=0.8cm] (pass) {验证\\通过?};
+    \node[box, fill=red!20, above right of=pass, xshift=0.4cm] (fixer) {BuildFixer\\修复};
+    \node[decision, fill=yellow!20, below right of=pass, xshift=0.4cm] (fix) {修复\\成功?};
+    \node[box, fill=gray!20, right of=fixer, xshift=0.8cm] (accept) {采纳替换\\代码};
+    \node[box, fill=gray!20, right of=pass, xshift=0.8cm] (end) {完成};
     
     \draw[arrow] (start) -- (classify);
-    \draw[arrow] (classify) -- (verify);
+    \draw[arrow] (classify) -- (has_replacement);
+    \draw[arrow] (has_replacement) -- node[above, font=\scriptsize] {否} (end);
+    \draw[arrow] (has_replacement) -- node[below, font=\scriptsize] {是} (verify);
     \draw[arrow] (verify) -- (pass);
     \draw[arrow] (pass) -- node[above, font=\scriptsize] {是} (accept);
     \draw[arrow] (pass) -- node[below, font=\scriptsize] {否} (fixer);
     \draw[arrow] (fixer) -- (fix);
     \draw[arrow] (fix) -- node[above, font=\scriptsize] {是} (accept);
-    \draw[arrow] (fix) -- node[below, font=\scriptsize] {否} (reject);
+    \draw[arrow] (fix) -- node[below, font=\scriptsize] {否} (end);
     \draw[arrow] (accept) -- (end);
 \end{tikzpicture}
-\caption{智能体协作工作流图}
-\label{fig:agent-collaboration-workflow}
+\caption{智能体协作工作流执行流程图}
+\label{fig:workflow-execution}
 \end{figure}
 
-\subsubsection{智能体协作的优势}
-
-采用多智能体协作的工作流设计具有多方面优势。首先是\textbf{职责分离与专业化}，每个智能体专注于特定领域的任务，Classifier Agent 专注于函数语义分析和替换策略选择，VerifyReplacement 专注于代码审查和验证，BuildFixer Agent 专注于编译错误修复，这种职责分离使得每个智能体的实现更加简洁，功能更加聚焦。
-
-其次是\textbf{可扩展性与灵活性}，智能体通过工具接口进行交互，新的智能体可以容易地加入工作流，现有的智能体也可以独立升级。当需要支持新的替换策略或新的编译器时，可以通过添加新的工具或智能体来实现，而不需要修改现有的工作流逻辑。
-
-再次是\textbf{状态管理与错误恢复}，LangGraph 框架提供了强大的状态管理能力，能够跟踪工作流的执行状态，支持错误恢复和重试机制。当某个智能体执行失败时，工作流能够捕获错误信息，并根据预定义的策略决定是重试还是继续执行其他路径，确保工作流的鲁棒性。
-
-最后是\textbf{质量保障的多重验证}，工作流通过代码审查、编译验证和修复验证三重质量保障机制，确保替换代码的正确性和可靠性。代码审查在早期阶段过滤掉明显有问题的代码，编译验证在代码集成前验证其语法和链接正确性，修复验证确保修复方案的有效性，形成完整的质量保障闭环。
-
-\subsection{分析替换与编译工作流设计}
+\subsection{智能体角色与职责}
 
 替换代码生成后，系统需要进行质量验证，确保生成的代码能够在编译和运行阶段正常工作。本研究设计了两个层次的验证机制：代码审查和编译测试，形成"轻量检查→完整验证"的渐进式质量保障体系。
 
