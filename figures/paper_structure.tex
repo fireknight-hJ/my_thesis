@@ -1,0 +1,115 @@
+\documentclass[border=10pt]{standalone}
+\usepackage{tikz}
+\usetikzlibrary{shapes, arrows, positioning, fit, calc, shadows}
+
+\tikzset{
+    chapter/.style={
+        rectangle,
+        draw=blue!60,
+        fill=blue!10,
+        thick,
+        minimum width=3cm,
+        minimum height=1.2cm,
+        rounded corners,
+        align=center,
+        font=\small\bfseries,
+        drop shadow
+    },
+    section/.style={
+        rectangle,
+        draw=green!60,
+        fill=green!5,
+        thick,
+        minimum width=2.5cm,
+        minimum height=0.8cm,
+        rounded corners,
+        align=center,
+        font=\footnotesize,
+        drop shadow
+    },
+    arrow/.style={
+        ->,
+        >=stealth,
+        thick,
+        color=blue!70
+    }
+}
+
+\begin{document}
+\begin{tikzpicture}[node distance=1.5cm and 2cm]
+
+% Chapters
+\node[chapter] (chap1) {第一章\\绪论};
+\node[chapter, right=of chap1] (chap2) {第二章\\背景知识\\与相关技术};
+\node[chapter, right=of chap2] (chap3) {第三章\\系统设计\\与实现};
+\node[chapter, right=of chap3] (chap4) {第四章\\实验设计\\与结果分析};
+\node[chapter, right=of chap4] (chap5) {第五章\\总结\\与展望};
+
+% Sections for Chapter 1
+\node[section, below=0.8cm of chap1, xshift=-1.2cm] (sec11) {研究背景\\与意义};
+\node[section, below=0.6cm of sec11] (sec12) {国内外\\研究现状};
+\node[section, below=0.6cm of sec12] (sec13) {研究内容\\与贡献};
+\node[section, below=0.6cm of sec13] (sec14) {论文组织\\结构};
+
+% Sections for Chapter 2
+\node[section, below=0.8cm of chap2, xshift=-0.8cm] (sec21) {物联网设备\\硬件基础};
+\node[section, below=0.6cm of sec21] (sec22) {物联网操作\\系统与驱动};
+\node[section, below=0.6cm of sec22] (sec23) {大模型代码\\分析框架};
+\node[section, below=0.6cm of sec23] (sec24) {静态分析\\技术};
+\node[section, below=0.6cm of sec24] (sec25) {固件仿真与\\模糊测试};
+
+% Sections for Chapter 3
+\node[section, below=0.8cm of chap3, xshift=-0.8cm] (sec31) {系统整体\\架构设计};
+\node[section, below=0.6cm of sec31] (sec32) {硬件依赖\\代码识别};
+\node[section, below=0.6cm of sec32] (sec33) {驱动函数\\分析与替换};
+\node[section, below=0.6cm of sec33] (sec34) {动态测试\\反馈闭环};
+
+% Sections for Chapter 4
+\node[section, below=0.8cm of chap4, xshift=-0.6cm] (sec41) {实验环境\\配置};
+\node[section, below=0.6cm of sec41] (sec42) {实验设计\\方案};
+\node[section, below=0.6cm of sec42] (sec43) {实验结果\\与分析};
+\node[section, below=0.6cm of sec43] (sec44) {实验讨论\\与分析};
+
+% Sections for Chapter 5
+\node[section, below=0.8cm of chap5, xshift=-0.4cm] (sec51) {工作\\总结};
+\node[section, below=0.6cm of sec51] (sec52) {不足与\\局限性};
+\node[section, below=0.6cm of sec52] (sec53) {未来\\展望};
+
+% Arrows connecting chapters
+\draw[arrow] (chap1) -- (chap2);
+\draw[arrow] (chap2) -- (chap3);
+\draw[arrow] (chap3) -- (chap4);
+\draw[arrow] (chap4) -- (chap5);
+
+% Dashed lines from chapters to sections
+\draw[dashed, gray, thick] (chap1) -- (sec11);
+\draw[dashed, gray, thick] (chap1) -- (sec12);
+\draw[dashed, gray, thick] (chap1) -- (sec13);
+\draw[dashed, gray, thick] (chap1) -- (sec14);
+
+\draw[dashed, gray, thick] (chap2) -- (sec21);
+\draw[dashed, gray, thick] (chap2) -- (sec22);
+\draw[dashed, gray, thick] (chap2) -- (sec23);
+\draw[dashed, gray, thick] (chap2) -- (sec24);
+\draw[dashed, gray, thick] (chap2) -- (sec25);
+
+\draw[dashed, gray, thick] (chap3) -- (sec31);
+\draw[dashed, gray, thick] (chap3) -- (sec32);
+\draw[dashed, gray, thick] (chap3) -- (sec33);
+\draw[dashed, gray, thick] (chap3) -- (sec34);
+
+\draw[dashed, gray, thick] (chap4) -- (sec41);
+\draw[dashed, gray, thick] (chap4) -- (sec42);
+\draw[dashed, gray, thick] (chap4) -- (sec43);
+\draw[dashed, gray, thick] (chap4) -- (sec44);
+
+\draw[dashed, gray, thick] (chap5) -- (sec51);
+\draw[dashed, gray, thick] (chap5) -- (sec52);
+\draw[dashed, gray, thick] (chap5) -- (sec53);
+
+% Title
+\node[above=0.5cm of chap1, font=\large\bfseries, color=blue!80] (title) {论文组织结构};
+\draw[dotted, blue!80, thick] (title) -- (chap1);
+
+\end{tikzpicture}
+\end{document}
