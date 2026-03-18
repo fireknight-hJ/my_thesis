@@ -75,8 +75,8 @@ F05 & STM32F407 & 裸机 & I2C, TIM, STM32 HAL & NXP\_LwIP\_BareMetal \\
 F06 & STM32F429 & FreeRTOS & UART, ETH, LwIP, FreeRTOS & NXP\_LwIP\_FreeRTOS \\
 F07 & STM32F429 & FreeRTOS & SPI, Flash, STM32 HAL & NXP\_UART\_BareMetal \\
 F08 & STM32F429 & RT-Thread & I2C, ADC, RT-Thread & NXP\_UART\_FreeRTOS \\
-F09 & STM32F429 & 裸机 & UART, DAC, STM32 HAL & imxrt1052-nxp-evk-uart \\
-F10 & STM32F429 & 裸机 & TIM, WDT, STM32 HAL & imxrt1060-nxp-evk-timer \\
+F09 & STM32F429 & 裸机 & UART, DAC, STM32 HAL & imxrt1052\_nxp\_evk\_uart \\
+F10 & STM32F429 & 裸机 & TIM, WDT, STM32 HAL & imxrt1060\_nxp\_evk\_timer \\
 F11 & RT1052 & FreeRTOS & UART, ETH, LwIP, FreeRTOS & BLE\_HeartRateFreeRTOS \\
 F12 & RT1052 & FreeRTOS & SPI, SDIO, NXP HAL & FatFs\_USBDisk\_RTOS \\
 F13 & RT1052 & RT-Thread & I2C, RTC, RT-Thread & LwIP\_HTTP\_Server\_Raw \\
@@ -92,7 +92,7 @@ F18 & STM32F429 & 裸机 & UART, GPIO, STM32 HAL & UART\_Hyperterminal\_IT \\
 
 \subsection{实验环境}
 
-本研究搭建了完整的实验环境以支持固件分析、代码替换、编译验证、仿真执行和模糊测试等多个环节的实验需求。实验环境从硬件平台、软件系统、工具链集成三个维度进行了精心配置，确保能够高效、稳定地完成各类实验任务。
+实验在以下软硬件环境中进行：
 
 \begin{table}[htbp]
 \centering
@@ -125,14 +125,6 @@ F18 & STM32F429 & 裸机 & UART, GPIO, STM32 HAL & UART\_Hyperterminal\_IT \\
 \bottomrule
 \end{tabular}
 \end{table}
-
-硬件平台配备了高性能服务器，搭载 Intel Xeon Platinum 8350C 处理器，拥有 128 个计算核心和 503GB 大容量内存，能够满足大规模固件并行处理和模糊测试的高计算资源需求。869GB 的高速固态硬盘为固件存储、编译输出和测试数据提供了充足的存储空间，确保实验过程中数据读写的高效性和稳定性。
-
-软件系统基于 Ubuntu 22.04 LTS 操作系统构建，该系统版本稳定可靠，提供了完整的开发工具链和软件包管理机制，为各类实验工具的安装和运行提供了良好的基础环境。编译工具链采用 ARM GCC 10.3.1，这是 ARM 官方推荐的稳定版本，能够准确编译 ARM Cortex-M 系列处理器的代码。CMake 3.21.4 作为跨平台构建工具，用于管理复杂项目的编译依赖关系，提高编译效率和可维护性。
-
-仿真环境采用 Unicorn 2.0.2 引擎，这是一款轻量级、高性能的 CPU 模拟器，支持 ARM、MIPS、X86 等多种架构，本研究主要使用其 ARM Cortex-M 模式进行固件仿真。UnicornAFL 是基于 Unicorn 开发的模糊测试扩展，实现了 AFL 模糊测试器的 fork 服务器机制，能够在仿真环境中实现高效的模糊测试。模糊测试工具采用 AFL++ 4.08c+，这是 AFL 的高级版本，集成了多种优化策略和变异算法，能够大幅提高模糊测试的效率和覆盖率。
-
-大模型模块采用 DeepSeek V3.2，这是最新版本的大型语言模型，具有强大的代码理解、代码生成和代码推理能力。该模型通过 API 接口与本文系统集成，在驱动函数分析、代码替换和编译错误修复等关键环节发挥重要作用。DeepSeek V3.2 在代码理解方面表现出色，能够准确分析驱动函数的语义和控制流，生成的代码质量高、编译错误率低，显著提升了系统的自动化程度和替换质量。
 
 \subsection{评估指标}
 
