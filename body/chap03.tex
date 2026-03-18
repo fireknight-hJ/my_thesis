@@ -110,11 +110,11 @@ USART_TypeDef *USART1 = (USART_TypeDef *)USART1_BASE;
 
 定位 MMIO 结构体实例是识别硬件相关代码的关键步骤。本研究总结出三种典型的 MMIO 实例定位模式：
 
-\textbf{模式一：直接地址强转}。将固定地址强制转换为外设结构体指针，常见于寄存器定义的头文件中。识别特征是出现类似 \texttt{((XXX\_TypeDef *)XXX\_BASE)} 的宏或赋值，后续对该指针做字段访问如 \texttt{XXX->REG}。
+\textbf{模式一：直接地址强转}。这类代码将固定外设基地址强制转换为外设寄存器结构体指针，常见于寄存器定义的头文件中。在代码中呈现为类似 \texttt{\#define USART1 ((USART\_TypeDef *)USART1\_BASE)} 的宏定义，后续代码直接对该指针进行字段访问如 \texttt{USART1->DR}、\texttt{USART1->CR1}。
 
-\textbf{模式二：间接初始化}。通过句柄（handle）/配置表（descriptor/config table）等间接结构，把外设基地址赋值给某个"寄存器块指针成员"，后续通过该成员完成寄存器访问。STM32 HAL 生态中常见成员名为 \texttt{Instance}。识别特征是存在结构体指针类型成员（通常命名为 \texttt{Instance}），该成员被赋值为外设基地址宏、外设实例数组项或配置表中的 \texttt{Instance} 字段，寄存器访问呈现为多级解引用如 \texttt{hxxx->Instance->REG}。
+\textbf{模式二：间接初始化}。这类代码通过句柄（handle）、配置表（descriptor/config table）等间接结构，将外设基地址赋值给某个"寄存器块指针成员"，后续通过该成员完成寄存器访问。在 STM32 HAL 生态中，这类成员常命名为 \texttt{Instance}。在代码中呈现为初始化时的赋值语句如 \texttt{huart->Instance = COM\_USART[COM]}，后续寄存器访问呈现为多级解引用如 \texttt{huart->Instance->DR}。在基于配置表的驱动中，也可能呈现为 \texttt{handle.Instance = spi\_config[i].Instance} 这种从配置表复制的形式。
 
-\textbf{模式三：常量指针参数}。函数通过参数接收 MMIO 结构体指针（寄存器块基址），常见于底层驱动/通用外设操作函数。识别特征是函数形参类型为某个寄存器结构体指针，函数体内部通过该参数访问寄存器字段。调用者可以来自模式一（直接传 \texttt{USART1}）或模式二（传 \texttt{huart->Instance}）。
+\textbf{模式三：常量指针参数}。这类代码通过函数参数接收 MMIO 结构体指针（寄存器块基址），常见于底层驱动或通用外设操作函数。在代码中呈现为函数定义的形参类型是某个寄存器结构体指针，函数体内部通过该参数访问寄存器字段，如 \texttt{void mmio\_uart\_init(USART\_TypeDef *uart) \{ uart->CR1 = 0x2000; \}}。调用者可以将模式一或模式二中的 MMIO 实例作为实参传入，如直接调用 \texttt{mmio\_uart\_init(USART1)} 或传入句柄成员 \texttt{mmio\_uart\_init(huart->Instance)}。
 
 三种定位模式的对比如表~\ref{tab:mmio-patterns}所示。
 
@@ -124,7 +124,7 @@ USART_TypeDef *USART1 = (USART_TypeDef *)USART1_BASE;
 \label{tab:mmio-patterns}
 \begin{tabular}{lp{5cm}l}
 \toprule
-\textbf{模式} & \textbf{描述} & \textbf{识别特征} \\
+\textbf{模式} & \textbf{描述} & \textbf{代码呈现} \\
 \midrule
 直接地址强转 & 将固定地址强制转换为外设结构体指针 & 整数常量→结构体指针类型转换 \\
 间接初始化 & 通过配置表将外设基地址赋值给句柄 & 结构体成员赋值为外设宏 \\
@@ -139,9 +139,13 @@ USART_TypeDef *USART1 = (USART_TypeDef *)USART1_BASE;
 
 \subsubsection{查询规则设计}
 
-针对三种 MMIO 定位模式，本研究设计了相应的查询规则。查询从 CodeQL 数据库中提取所有符合 MMIO 结构体特征的变量及其初始化表达式。查询文件位于 \texttt{queries/collectors/mmio/} 目录，典型查询会 \texttt{import libraries.MMIOAnalyzer} 并输出"表达式字符串 + 所属函数 + 文件 + 行号 + 类型检查结果"等字段。
+针对三种 MMIO 定位模式，本研究设计了相应的查询规则。查询从 CodeQL 数据库中提取所有符合 MMIO 结构体特征的变量及其初始化表达式。查询的核心设计思想是将"寄存器字段访问"追溯到一个可被 CodeQL 稳定描述的基对象表达式。
 
-对于"间接初始化"和"常量指针参数"模式，采用类似的查询策略，通过追踪赋值语句和函数参数来识别 MMIO 实例。常量基址的追踪利用 CodeQL DataFlow/TaintTracking 将"常量大值表达式（外设基址）"追踪到后续的变量访问/解引用位置，对于"函数第 0 个参数是指针类型，实参是常量大值表达式"的情况，用于定位"把常量基址传给接受结构体指针的驱动函数"的调用点。
+对于"间接初始化"和"常量指针参数"模式，查询采用数据流追踪策略，通过追踪赋值语句和函数参数来识别 MMIO 实例。常量基址的追踪利用 CodeQL 提供的数据流和污点追踪能力，将"常量大值表达式（外设基址）"追踪到后续的变量访问/解引用位置。
+
+以常量基址追踪为例，查询中定义了数据流节点和污点流约束，将作为源点的常量大值表达式追踪到作为汇点的变量访问或指针解引用位置。查询的逻辑可形式化表示为：当存在一个常量大值表达式作为数据流源点，经过数据流传播到达某个变量访问或解引用操作时，该操作即为 MMIO 相关的表达式。
+
+对于"函数第 0 个参数是指针类型，实参是常量大值表达式"的情况，查询通过函数调用关系和参数类型匹配，定位"把常量基址传给接受结构体指针的驱动函数"的调用点。查询的逻辑可表示为：当函数调用的第 0 个参数类型为结构体指针，且该参数对应的实参是经过数据流追踪的 MMIO 常量表达式时，该调用点即为候选的 MMIO 使用点。
 
 \subsubsection{驱动函数定位}
 
