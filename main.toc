@@ -54,61 +54,60 @@
 \contentsline {subsection}{\numberline {3.3.1}驱动函数替换策略设计}{35}{subsection.3.3.1}%
 \contentsline {subsubsection}{\numberline {3.3.1.1}函数分类策略}{35}{subsubsection.3.3.1.1}%
 \contentsline {subsubsection}{\numberline {3.3.1.2}替换策略体系}{35}{subsubsection.3.3.1.2}%
-\contentsline {subsection}{\numberline {3.3.2}智能体工作流设计}{38}{subsection.3.3.2}%
-\contentsline {subsubsection}{\numberline {3.3.2.1}工作流执行过程}{38}{subsubsection.3.3.2.1}%
-\contentsline {subsubsection}{\numberline {3.3.2.2}智能体角色与职责}{38}{subsubsection.3.3.2.2}%
-\contentsline {paragraph}{代码审查}{38}{section*.13}%
-\contentsline {paragraph}{编译测试}{39}{section*.14}%
-\contentsline {subsection}{\numberline {3.3.3}具体实现}{40}{subsection.3.3.3}%
-\contentsline {subsubsection}{\numberline {3.3.3.1}LangGraph 工作流框架}{40}{subsubsection.3.3.3.1}%
-\contentsline {subsubsection}{\numberline {3.3.3.2}状态机设计}{40}{subsubsection.3.3.3.2}%
-\contentsline {section}{\numberline {3.4}动态测试反馈闭环模块}{41}{section.3.4}%
-\contentsline {subsection}{\numberline {3.4.1}动态执行环境}{41}{subsection.3.4.1}%
-\contentsline {subsubsection}{\numberline {3.4.1.1}固件仿真子模块架构}{42}{subsubsection.3.4.1.1}%
-\contentsline {subsubsection}{\numberline {3.4.1.2}规则引擎与配置化外设模拟}{42}{subsubsection.3.4.1.2}%
-\contentsline {subsubsection}{\numberline {3.4.1.3}执行监控与反馈}{43}{subsubsection.3.4.1.3}%
-\contentsline {subsection}{\numberline {3.4.2}动态测试反馈闭环}{43}{subsection.3.4.2}%
-\contentsline {subsubsection}{\numberline {3.4.2.1}多智能体架构设计}{44}{subsubsection.3.4.2.1}%
-\contentsline {subsubsection}{\numberline {3.4.2.2}闭环协同工作流}{44}{subsubsection.3.4.2.2}%
-\contentsline {subsubsection}{\numberline {3.4.2.3}数据传递与状态管理}{45}{subsubsection.3.4.2.3}%
-\contentsline {subsubsection}{\numberline {3.4.2.4}终止条件与错误处理}{46}{subsubsection.3.4.2.4}%
-\contentsline {section}{\numberline {3.5}本章小结}{47}{section.3.5}%
-\contentsline {chapter}{\numberline {4}实验设计与结果分析}{48}{chapter.4}%
-\contentsline {section}{\numberline {4.1}实验设计}{48}{section.4.1}%
-\contentsline {subsection}{\numberline {4.1.1}实验目标}{48}{subsection.4.1.1}%
-\contentsline {subsection}{\numberline {4.1.2}测试固件选择}{49}{subsection.4.1.2}%
-\contentsline {subsection}{\numberline {4.1.3}实验环境}{50}{subsection.4.1.3}%
-\contentsline {subsection}{\numberline {4.1.4}评估指标}{51}{subsection.4.1.4}%
-\contentsline {section}{\numberline {4.2}静态分析模块评估}{52}{section.4.2}%
-\contentsline {subsection}{\numberline {4.2.1}基准数据集构建}{52}{subsection.4.2.1}%
+\contentsline {subsection}{\numberline {3.3.2}智能体工作流设计}{40}{subsection.3.3.2}%
+\contentsline {subsubsection}{\numberline {3.3.2.1}工作流执行过程}{40}{subsubsection.3.3.2.1}%
+\contentsline {subsubsection}{\numberline {3.3.2.2}智能体角色与职责}{40}{subsubsection.3.3.2.2}%
+\contentsline {paragraph}{代码审查}{40}{section*.13}%
+\contentsline {paragraph}{编译测试}{41}{section*.14}%
+\contentsline {subsection}{\numberline {3.3.3}具体实现}{42}{subsection.3.3.3}%
+\contentsline {subsubsection}{\numberline {3.3.3.1}LangGraph 工作流框架}{42}{subsubsection.3.3.3.1}%
+\contentsline {subsubsection}{\numberline {3.3.3.2}状态机设计}{42}{subsubsection.3.3.3.2}%
+\contentsline {section}{\numberline {3.4}动态测试反馈闭环模块}{43}{section.3.4}%
+\contentsline {subsection}{\numberline {3.4.1}动态执行环境}{43}{subsection.3.4.1}%
+\contentsline {subsubsection}{\numberline {3.4.1.1}固件仿真子模块架构}{44}{subsubsection.3.4.1.1}%
+\contentsline {subsubsection}{\numberline {3.4.1.2}规则引擎与配置化外设模拟}{44}{subsubsection.3.4.1.2}%
+\contentsline {subsubsection}{\numberline {3.4.1.3}执行监控与反馈}{45}{subsubsection.3.4.1.3}%
+\contentsline {subsection}{\numberline {3.4.2}动态测试反馈闭环}{45}{subsection.3.4.2}%
+\contentsline {subsubsection}{\numberline {3.4.2.1}多智能体架构设计}{46}{subsubsection.3.4.2.1}%
+\contentsline {subsubsection}{\numberline {3.4.2.2}闭环协同工作流}{46}{subsubsection.3.4.2.2}%
+\contentsline {subsubsection}{\numberline {3.4.2.3}数据传递与状态管理}{47}{subsubsection.3.4.2.3}%
+\contentsline {subsubsection}{\numberline {3.4.2.4}终止条件与错误处理}{48}{subsubsection.3.4.2.4}%
+\contentsline {section}{\numberline {3.5}本章小结}{49}{section.3.5}%
+\contentsline {chapter}{\numberline {4}实验设计与结果分析}{50}{chapter.4}%
+\contentsline {section}{\numberline {4.1}实验设计}{50}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}实验目标}{50}{subsection.4.1.1}%
+\contentsline {subsection}{\numberline {4.1.2}测试固件选择}{51}{subsection.4.1.2}%
+\contentsline {subsection}{\numberline {4.1.3}实验环境}{52}{subsection.4.1.3}%
+\contentsline {section}{\numberline {4.2}静态分析模块评估}{53}{section.4.2}%
+\contentsline {subsection}{\numberline {4.2.1}基准数据集构建}{53}{subsection.4.2.1}%
 \contentsline {subsection}{\numberline {4.2.2}识别准确性评估}{53}{subsection.4.2.2}%
-\contentsline {subsection}{\numberline {4.2.3}错误分析}{53}{subsection.4.2.3}%
+\contentsline {subsection}{\numberline {4.2.3}错误分析}{54}{subsection.4.2.3}%
 \contentsline {section}{\numberline {4.3}运行正确性评估}{54}{section.4.3}%
-\contentsline {subsection}{\numberline {4.3.1}验证方法}{54}{subsection.4.3.1}%
-\contentsline {subsection}{\numberline {4.3.2}验证实施}{55}{subsection.4.3.2}%
+\contentsline {subsection}{\numberline {4.3.1}验证方法}{55}{subsection.4.3.1}%
+\contentsline {subsection}{\numberline {4.3.2}验证实施}{56}{subsection.4.3.2}%
 \contentsline {subsection}{\numberline {4.3.3}验证结果}{57}{subsection.4.3.3}%
-\contentsline {subsection}{\numberline {4.3.4}结果讨论}{58}{subsection.4.3.4}%
+\contentsline {subsection}{\numberline {4.3.4}结果讨论}{59}{subsection.4.3.4}%
 \contentsline {subsection}{\numberline {4.3.5}本节小结}{60}{subsection.4.3.5}%
-\contentsline {section}{\numberline {4.4}与现有方法的对比}{60}{section.4.4}%
-\contentsline {subsection}{\numberline {4.4.1}对比方法}{60}{subsection.4.4.1}%
+\contentsline {section}{\numberline {4.4}与现有方法的对比}{61}{section.4.4}%
+\contentsline {subsection}{\numberline {4.4.1}对比方法}{61}{subsection.4.4.1}%
 \contentsline {subsection}{\numberline {4.4.2}对比实验设计}{61}{subsection.4.4.2}%
-\contentsline {subsection}{\numberline {4.4.3}对比结果}{61}{subsection.4.4.3}%
-\contentsline {subsection}{\numberline {4.4.4}讨论}{62}{subsection.4.4.4}%
-\contentsline {section}{\numberline {4.5}模糊测试应用验证}{63}{section.4.5}%
+\contentsline {subsection}{\numberline {4.4.3}对比结果}{62}{subsection.4.4.3}%
+\contentsline {subsection}{\numberline {4.4.4}讨论}{63}{subsection.4.4.4}%
+\contentsline {section}{\numberline {4.5}模糊测试应用验证}{64}{section.4.5}%
 \contentsline {subsection}{\numberline {4.5.1}实验设计}{64}{subsection.4.5.1}%
-\contentsline {subsection}{\numberline {4.5.2}实验结果}{64}{subsection.4.5.2}%
-\contentsline {section}{\numberline {4.6}本章小结}{64}{section.4.6}%
-\contentsline {chapter}{\numberline {5}总结与展望}{66}{chapter.5}%
-\contentsline {section}{\numberline {5.1}工作总结}{66}{section.5.1}%
-\contentsline {section}{\numberline {5.2}论文创新点}{67}{section.5.2}%
-\contentsline {section}{\numberline {5.3}论文贡献}{68}{section.5.3}%
-\contentsline {section}{\numberline {5.4}局限性与不足}{68}{section.5.4}%
-\contentsline {section}{\numberline {5.5}未来工作展望}{69}{section.5.5}%
-\contentsline {chapter}{致\ 谢}{71}{chapter*.29}%
+\contentsline {subsection}{\numberline {4.5.2}实验结果}{65}{subsection.4.5.2}%
+\contentsline {section}{\numberline {4.6}本章小结}{65}{section.4.6}%
+\contentsline {chapter}{\numberline {5}总结与展望}{67}{chapter.5}%
+\contentsline {section}{\numberline {5.1}工作总结}{67}{section.5.1}%
+\contentsline {section}{\numberline {5.2}论文创新点}{68}{section.5.2}%
+\contentsline {section}{\numberline {5.3}论文贡献}{69}{section.5.3}%
+\contentsline {section}{\numberline {5.4}局限性与不足}{69}{section.5.4}%
+\contentsline {section}{\numberline {5.5}未来工作展望}{70}{section.5.5}%
+\contentsline {chapter}{致\ 谢}{72}{chapter*.29}%
 \ttl@change@i {\@ne }{chapter}{0.0em}{\vspace {0.3em}\bfseries \hei \sihao \addvspace {6bp minus6bp}}{\thecontentslabel \hspace {1em}}{}{\normalfont \dotfill \textrm {\contentspage [(\thecontentspage )]}}\relax 
 \ttl@change@v {chapter}{}{}{}\relax 
-\contentsline {chapter}{\sihao 参考文献}{72}{section*.30}%
+\contentsline {chapter}{\sihao 参考文献}{73}{section*.30}%
 \ttl@change@i {\@ne }{chapter}{0.0em}{\vspace {0.45em}\bfseries \hei \sihao \addvspace {6bp minus6bp}}{\appendixname ~\thecontentslabel \hspace {1em}}{}{\normalfont \dotfill \textrm {\contentspage [(\thecontentspage )]}}\relax 
 \ttl@change@v {chapter}{}{}{}\relax 
-\contentsline {chapter}{攻读硕士学位期间发表的学术论文}{75}{appendix*.32}%
+\contentsline {chapter}{攻读硕士学位期间发表的学术论文}{76}{appendix*.32}%
 \contentsfinish 
