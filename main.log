@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2022/dev/Debian) (preloaded format=xelatex 2026.3.5)  19 MAR 2026 02:04
+This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2022/dev/Debian) (preloaded format=xelatex 2026.3.5)  19 MAR 2026 04:29
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1358,7 +1358,7 @@ Package: xkeyval 2020/11/20 v2.8 package option processing (HA)
 File: xkeyval.tex 2014/12/03 v2.7a key=value parser (HA)
 ))
 \verbatim@out=\write4
-runsystem(echo 'write18-test-2026319124'>"main.w18")...disabled (restricted).
+runsystem(echo 'write18-test-2026319269'>"main.w18")...disabled (restricted).
 
 
 
@@ -1497,11 +1497,7 @@ Package translations Info: No language package found. I am going to use `englis
 h' as default language. on input line 60.
  (./main.aux
 (./body/chap01.aux) (./body/chap02.aux) (./body/chap03.aux) (./body/chap04.aux)
-(./body/conclusion.aux
-
-LaTeX Warning: Label `sec:contribution' multiply defined.
-
-) (./body/ack.aux))
+)
 \openout1 = `main.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 60.
@@ -1835,24 +1831,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[3] (./main.toc
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
- []
-
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
- []
-
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
- []
-
-[4
-
-])
+[3] (./main.toc)
 \tf@toc=\write6
 \openout6 = `main.toc'.
 
@@ -1871,11 +1850,40 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[5]
+[4
+
+]
 \openout2 = `body/chap01.aux'.
 
  (./body/chap01.tex
 Chapter 1.
+
+Package natbib Warning: Citation `gsma2020mobile' on page 1 undefined on input 
+line 7.
+
+
+Package natbib Warning: Citation `openharmony' on page 1 undefined on input lin
+e 7.
+
+
+Package natbib Warning: Citation `freertos' on page 1 undefined on input line 7
+.
+
+
+Package natbib Warning: Citation `zephyr' on page 1 undefined on input line 7.
+
+
+Package natbib Warning: Citation `yang2021iotsurvey' on page 1 undefined on inp
+ut line 7.
+
+
+Package natbib Warning: Citation `mirai2018' on page 1 undefined on input line 
+7.
+
+
+Package natbib Warning: Citation `firmadyne' on page 1 undefined on input line 
+9.
+
 
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
@@ -1911,6 +1919,26 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [2]
+
+Package natbib Warning: Citation `firmadyne' on page 3 undefined on input line 
+20.
+
+
+Package natbib Warning: Citation `fuzzware' on page 3 undefined on input line 2
+0.
+
+
+Package natbib Warning: Citation `qemu' on page 3 undefined on input line 25.
+
+
+Package natbib Warning: Citation `avatar' on page 3 undefined on input line 27.
+
+
+
+Package natbib Warning: Citation `avatar2' on page 3 undefined on input line 27
+.
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -1926,6 +1954,38 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [3]
+
+Package natbib Warning: Citation `pretender' on page 4 undefined on input line 
+33.
+
+
+Package natbib Warning: Citation `fengp2020p2im' on page 4 undefined on input l
+ine 39.
+
+
+Package natbib Warning: Citation `laelaps' on page 4 undefined on input line 39
+.
+
+
+Package natbib Warning: Citation `uemu' on page 4 undefined on input line 39.
+
+
+Package natbib Warning: Citation `fuzzware' on page 4 undefined on input line 3
+9.
+
+
+Package natbib Warning: Citation `firmadyne' on page 4 undefined on input line 
+45.
+
+
+Package natbib Warning: Citation `pararehosting' on page 4 undefined on input l
+ine 45.
+
+
+Package natbib Warning: Citation `clements2020halucinator' on page 4 undefined 
+on input line 45.
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -1983,6 +2043,22 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [5]
+
+Package natbib Warning: Citation `iotfuzzer' on page 6 undefined on input line 
+81.
+
+
+Package natbib Warning: Citation `fuzzware' on page 6 undefined on input line 8
+5.
+
+
+Package natbib Warning: Citation `uemu' on page 6 undefined on input line 85.
+
+
+Package natbib Warning: Citation `clements2020halucinator' on page 6 undefined 
+on input line 85.
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -1998,6 +2074,43 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [6]
+
+Package natbib Warning: Citation `openai2023gpt4' on page 7 undefined on input 
+line 90.
+
+
+Package natbib Warning: Citation `roziere2023code' on page 7 undefined on input
+ line 90.
+
+
+Package natbib Warning: Citation `li2023starcoder' on page 7 undefined on input
+ line 90.
+
+
+Package natbib Warning: Citation `wei2022finetuned' on page 7 undefined on inpu
+t line 96.
+
+
+Package natbib Warning: Citation `dolphcoder2024' on page 7 undefined on input 
+line 96.
+
+
+Package natbib Warning: Citation `codelsi2024' on page 7 undefined on input lin
+e 96.
+
+
+Package natbib Warning: Citation `chen2023teaching' on page 7 undefined on inpu
+t line 98.
+
+
+Package natbib Warning: Citation `rlcf2024' on page 7 undefined on input line 9
+8.
+
+
+Package natbib Warning: Citation `codedpo2024' on page 7 undefined on input lin
+e 98.
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -2013,6 +2126,43 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [7]
+
+Package natbib Warning: Citation `wei2022cot' on page 8 undefined on input line
+ 100.
+
+
+Package natbib Warning: Citation `motcoder2024' on page 8 undefined on input li
+ne 100.
+
+
+Package natbib Warning: Citation `schick2023toolformer' on page 8 undefined on 
+input line 102.
+
+
+Package natbib Warning: Citation `mccoder2024' on page 8 undefined on input lin
+e 102.
+
+
+Package natbib Warning: Citation `rgd2024' on page 8 undefined on input line 10
+2.
+
+
+Package natbib Warning: Citation `gpiot2024' on page 8 undefined on input line 
+106.
+
+
+Package natbib Warning: Citation `spec2code2024' on page 8 undefined on input l
+ine 110.
+
+
+Package natbib Warning: Citation `improvingllm2024' on page 8 undefined on inpu
+t line 112.
+
+
+Package natbib Warning: Citation `agents4plc2024' on page 8 undefined on input 
+line 114.
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -2128,6 +2278,19 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [14]
+
+Package natbib Warning: Citation `freertos' on page 15 undefined on input line 
+71.
+
+
+Package natbib Warning: Citation `zephyr' on page 15 undefined on input line 71
+.
+
+
+Package natbib Warning: Citation `rtthread' on page 15 undefined on input line 
+71.
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -2158,6 +2321,15 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [16]
+
+Package natbib Warning: Citation `Yao_2022' on page 17 undefined on input line 
+94.
+
+
+Package natbib Warning: Citation `dong2024selfcollaboration' on page 17 undefin
+ed on input line 98.
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -2173,6 +2345,11 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [17]
+
+Package natbib Warning: Citation `Yao_2022' on page 18 undefined on input line 
+113.
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -2203,6 +2380,11 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [19]
+
+Package natbib Warning: Citation `qemu' on page 20 undefined on input line 142.
+
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -2232,7 +2414,11 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[21])
+[21]
+
+Package natbib Warning: Citation `afl' on page 22 undefined on input line 152.
+
+)
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -2605,7 +2791,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[44])
+[44]
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -2621,6 +2807,51 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [45]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+ []
+
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+ []
+
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+ []
+
+[46]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+ []
+
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+ []
+
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+ []
+
+[47])
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+ []
+
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+ []
+
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+ []
+
+[48]
 \openout2 = `body/chap04.aux'.
 
  (./body/chap04.tex
@@ -2640,7 +2871,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[46
+[49
 
 
 
@@ -2665,7 +2896,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[47]
+[50]
 Overfull \hbox (25.04994pt too wide) in paragraph at lines 70--71
 []|\TU/TimesNewRoman(0)/m/n/11 NXP_FATFS_BareMetal| 
  []
@@ -2770,62 +3001,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[48]
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
- []
-
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
- []
-
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
- []
-
-[49])
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
- []
-
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
- []
-
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
- []
-
-[50]
-\openout2 = `body/conclusion.aux'.
-
- (./body/conclusion.tex
-Chapter 5.
-
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
- []
-
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
- []
-
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
- []
-
-[51
-
-
-
-
-]
+[51]
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -2870,7 +3046,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[54])
+[54]
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -2886,119 +3062,22 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [55]
-\openout2 = `body/ack.aux'.
 
- (./body/ack.tex)
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
- []
+LaTeX Warning: Reference `tab:testcases' on page 56 undefined on input line 266
+.
 
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
- []
-
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
- []
-
-[56
-
-
-
-
-] (./main.bbl
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\sihao' on input line 1.
-
-
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
- []
-
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
- []
-
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
- []
-
-[57
-
-
-
-
-]
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
- []
-
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
- []
-
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
- []
-
-[58]) (./body/publications.tex
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
- []
-
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
- []
-
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
- []
-
-[59])
-\tf@thm=\write7
-\openout7 = `main.thm'.
-
-
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
- []
-
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
- []
-
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
- []
-
-[60
-
-] (./main.aux (./body/chap01.aux) (./body/chap02.aux) (./body/chap03.aux)
-(./body/chap04.aux) (./body/conclusion.aux) (./body/ack.aux))
-
-LaTeX Warning: There were multiply-defined labels.
-
-Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 696250E574219FCB183972447BE28F29;3888.
- ) 
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.275 ...textbf{Demo 名称} & \textbf{平台/OS/外设/驱动库} &
+                                                   \textbf{关键节点} \\ 
 Here is how much of TeX's memory you used:
- 43276 strings out of 477728
- 947852 string characters out of 5842239
- 1695587 words of memory out of 5000000
- 63043 multiletter control sequences out of 15000+600000
+ 43135 strings out of 477728
+ 943925 string characters out of 5842239
+ 1690631 words of memory out of 5000000
+ 62931 multiletter control sequences out of 15000+600000
  488867 words of font info for 183 fonts, out of 8000000 for 9000
  264 hyphenation exceptions out of 8191
  99i,15n,102p,1208b,2344s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on main.pdf (68 pages).
+Output written on main.pdf (62 pages).
