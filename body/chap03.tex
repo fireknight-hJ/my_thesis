@@ -143,9 +143,9 @@ USART_TypeDef *USART1 = (USART_TypeDef *)USART1_BASE;
 
 $$D = \{f \in F \mid \exists m \in M: A(f, m)\}$$
 
-\subsection{静态分析实现}
+\subsection{分析与识别模块实现}
 
-本节阐述静态分析模块的具体实现技术。模块采用 CodeQL 静态分析引擎作为底层支撑，CodeQL 通过构建包含语法树、控制流图、数据流图的综合数据库，为语义级代码分析提供了强大的查询能力。
+本节阐述分析与识别模块的具体实现技术。模块采用 CodeQL 静态分析引擎作为底层支撑，CodeQL 通过构建包含语法树、控制流图、数据流图的综合数据库，为语义级代码分析提供了强大的查询能力。
 
 \subsubsection{查询规则设计}
 
@@ -155,17 +155,57 @@ $$D = \{f \in F \mid \exists m \in M: A(f, m)\}$$
 
 以常量基址追踪为例，查询中定义了数据流节点和污点流约束，将作为源点的常量大值表达式追踪到作为汇点的变量访问或指针解引用位置。查询的逻辑可形式化表示为：当存在一个常量大值表达式作为数据流源点，经过数据流传播到达某个变量访问或解引用操作时，该操作即为 MMIO 相关的表达式。
 
+\begin{lstlisting}[style=CStyle,language=C]
+// 示例：常量基址在代码中的传播
+#define USART1_BASE 0x40011000UL
+USART_TypeDef *USART1 = (USART_TypeDef *)USART1_BASE;  // 基址强转
+huart->Instance = USART1;                              // 赋值给Instance成员
+huart->Instance->DR = data;                            // 最终的字段访问点
+\end{lstlisting}
+
+查询通过污点追踪，将上述代码中的 \texttt{USART1\_BASE}（源点）追踪到最终的 \texttt{huart->Instance->DR}（汇点），从而识别出整个 MMIO 使用链路。
+
 对于"函数第 0 个参数是指针类型，实参是常量大值表达式"的情况，查询通过函数调用关系和参数类型匹配，定位"把常量基址传给接受结构体指针的驱动函数"的调用点。查询的逻辑可表示为：当函数调用的第 0 个参数类型为结构体指针，且该参数对应的实参是经过数据流追踪的 MMIO 常量表达式时，该调用点即为候选的 MMIO 使用点。
 
-\subsubsection{数据流追踪}
+\begin{lstlisting}[style=CStyle,language=C]
+// 示例：常量指针参数传递
+void uart_send_data(USART_TypeDef *uart, uint8_t *data, uint16_t len);
 
-数据流追踪是静态分析的重要环节，其目标是建立 MMIO 访问与函数接口（参数、返回值）之间的关联关系。数据流追踪能够确定参数影响（识别哪些函数参数最终影响了 MMIO 访问）、识别逻辑边界（区分需要保留的业务逻辑与需要替换的硬件操作）、提供定位信息（为替换模块提供精确的语句定位信息，包括需要替换的代码行号、涉及的变量和表达式等）。
+// 调用时传递MMIO实例
+uart_send_data(USART1, buffer, len);     // 直接传强转实例
+uart_send_data(huart->Instance, buffer, len);  // 传Instance成员
+\end{lstlisting}
 
-本研究利用 CodeQL 提供的数据流分析框架实现 MMIO 数据流追踪。数据流配置定义了从 MMIO 字段访问（源点）到函数参数（汇点）的污点追踪路径，通过污点追踪建立寄存器访问与函数参数之间的关联。
+查询通过参数类型匹配（\texttt{USART\_TypeDef *}）和实参的数据流追踪，识别出上述调用点中的 MMIO 参数传递关系。
 
 \subsubsection{统一数据模型}
 
-为便于后续模块使用，静态分析结果被组织为统一的数据模型。数据模型采用 Python 数据类（dataclass）定义，支持序列化和反序列化。数据模型包括函数信息模型（包含函数名、文件路径、行号、签名、返回类型、参数列表、分类、源码、调用关系等信息）、MMIO 访问点模型（包含结构体类型、字段名、访问类型、行号、所在函数、上下文代码等）和项目分析结果模型（包含项目路径、CodeQL 数据库路径、所有函数、MMIO 访问点、函数调用图、驱动函数列表、分析时间戳等）。这些数据模型通过 JSON 序列化存储在缓存层，供后续模块查询和使用。
+为便于后续模块使用，静态分析结果被组织为统一的数据模型。数据模型采用 Python 数据类（dataclass）定义，支持序列化和反序列化。
+
+\begin{lstlisting}[style=Python,language=Python]
+# 示例：数据模型定义
+from dataclasses import dataclass
+from typing import List, Dict
+
+@dataclass
+class MmioAccessInfo:
+    struct_type: str      # 结构体类型，如"USART_TypeDef"
+    field_name: str       # 字段名，如"DR"
+    access_type: str      # 访问类型：READ/WRITE
+    line_number: int      # 行号
+    function_name: str    # 所在函数名
+    context_code: str     # 上下文代码
+
+@dataclass
+class FunctionInfo:
+    name: str             # 函数名
+    file_path: str        # 文件路径
+    line_number: int      # 行号
+    signature: str         # 函数签名
+    mmio_accesses: List[MmioAccessInfo]  # MMIO访问列表
+\end{lstlisting}
+
+数据模型包括函数信息模型（包含函数名、文件路径、行号、签名、返回类型、参数列表、分类、源码、调用关系等信息）、MMIO 访问点模型（包含结构体类型、字段名、访问类型、行号、所在函数、上下文代码等）和项目分析结果模型（包含项目路径、CodeQL 数据库路径、所有函数、MMIO 访问点、函数调用图、驱动函数列表、分析时间戳等）。这些数据模型通过 JSON 序列化存储在缓存层，供后续模块查询和使用。
 
 % ============================================================
 % 3.3 驱动函数分析、替换与编译模块
