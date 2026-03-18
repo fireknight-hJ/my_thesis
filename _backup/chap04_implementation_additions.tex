@@ -1,0 +1,562 @@
+% === 第四章补充内容 ===
+
+% --- 4.2 驱动函数分析、替换与编译模块实现 ---
+
+\section{驱动函数分析、替换与编译模块实现}
+\label{sec:builder_impl}
+
+\subsection{LangGraph 智能体工作流实现}
+
+\subsubsection{AgentState 数据结构}
+
+系统使用 LangGraph 框架的 MessagesState 作为基础状态类，并扩展为包含特定功能的状态类型。AgentState 的定义如下：
+
+\begin{lstlisting}[style=Python,abovecaptionskip=0pt,belowcaptionskip=0pt]
+class AgentState(MessagesState):
+    """智能体状态数据结构"""
+    # 最终的结构化响应
+    final_response: FunctionClassifyResponse
+    # 当前处理的函数名
+    function_name: str
+\end{lstlisting}
+
+该状态类继承自 MessagesState，自动包含 messages 字段用于维护对话历史。final\_response 字段存储 LLM 生成的结构化分类结果，function\_name 字段用于标识当前正在分析的函数。
+
+\subsubsection{工作流构建与执行}
+
+系统采用异步方式构建和执行 LangGraph 工作流。build\_graph() 函数负责创建工作流图，并配置所有必要的组件。
+
+\begin{lstlisting}[style=Python,abovecaptionskip=0pt,belowcaptionskip=0pt]
+async def build_graph():
+    """构建函数分类智能体工作流"""
+    global _graph, _client, _graph_db_path
+    db_path = getattr(globs, "db_path", None) or ""
+    
+    # 缓存机制：如果数据库路径变化，重建工作流
+    if _graph is not None and _graph_db_path != db_path:
+        _graph = None
+        _graph_db_path = None
+    
+    if _graph is not None:
+        return _graph
+
+    # 创建 MCP 客户端，连接到 CodeQL 服务器
+    _client = MultiServerMCPClient({
+        "lcmhal_collector": {
+            "command": "python",
+            "args": [
+                "-m", "tools.collector.mcp_server",
+                "--db-path", db_path,
+                "--transport", "stdio"
+            ],
+            "transport": "stdio"
+        },
+    })
+    
+    # 获取工具列表（包括 CodeQL 查询工具和验证工具）
+    from tools.builder.tool import verify_replacement as verify_replacement_tool
+    from agents.builder_fixer_agent import builder_fixer_agent
+    tools = await _client.get_tools()
+    tools = tools + [verify_replacement_tool, builder_fixer_agent]
+    
+    # 绑定工具到模型
+    model_with_tools = model.bind_tools(tools)
+    # 设置结构化输出
+    model_with_structured_output = model.with_structured_output(FunctionClassifyResponse)
+    
+    # 创建工具节点
+    tool_node = ToolNode(tools)
+    
+    # 定义工作流节点函数
+    async def agent_node(state: AgentState):
+        """推理节点：LLM 分析并决策"""
+        messages = state["messages"]
+        response = await model_with_structured_output.ainvoke(messages)
+        return {"messages": [response], "final_response": response}
+    
+    async def should_continue(state: AgentState) -> Literal["tools", "respond", "__end__"]:
+        """判断是否需要继续调用工具"""
+        messages = state["messages"]
+        last_message = messages[-1]
+        
+        # 如果 LLM 请求调用工具
+        if hasattr(last_message, "tool_calls") and last_message.tool_calls:
+            return "tools"
+        # 如果有最终响应
+        elif "final_response" in state and state["final_response"]:
+            return "respond"
+        else:
+            return "__end__"
+    
+    # 构建图
+    workflow = StateGraph(AgentState)
+    workflow.add_node("agent", agent_node)
+    workflow.add_node("tools", tool_node)
+    workflow.add_node("respond", lambda state: state)
+    
+    # 添加边和条件边
+    workflow.add_edge(START, "agent")
+    workflow.add_conditional_edges(
+        "agent",
+        should_continue,
+        {
+            "tools": "tools",
+            "respond": "respond",
+            "__end__": END,
+        }
+    )
+    workflow.add_edge("tools", "agent")
+    workflow.add_edge("respond", END)
+    
+    _graph = workflow.compile()
+    _graph_db_path = db_path
+    return _graph
+\end{lstlisting}
+
+工作流的执行流程如图~\ref{fig:workflow-execution}所示。系统从 START 状态开始，首先进入 agent 节点进行 LLM 推理。如果 LLM 决定调用工具，转移到 tools 节点执行工具调用，然后返回 agent 节点继续推理。如果 LLM 给出最终答案，转移到 respond 节点进行结果汇总，最后进入 END 状态。
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    node distance=2cm,
+    state/.style={rectangle, draw, rounded corners, minimum width=2.5cm, minimum height=1cm, align=center, font=\small},
+    start/.style={ellipse, draw, fill=green!20, minimum width=1.5cm},
+    end/.style={ellipse, draw, fill=red!20, minimum width=1.5cm},
+    arrow/.style={->, thick, >=stealth}
+]
+    \node[start] (start) {START};
+    \node[state, fill=blue!20] (agent) {Agent\\LLM推理};
+    \node[state, fill=orange!20, right of=agent] (tools) {Tools\\工具执行};
+    \node[state, fill=yellow!20, right of=agent, xshift=1cm] (respond) {Respond\\结果汇总};
+    \node[end, right of=respond] (end) {END};
+    
+    \draw[arrow] (start) -- (agent);
+    \draw[arrow] (agent) -- node[above] {有工具调用?} (decision);
+    \draw[arrow] (decision) -- node[above] {是} (tools);
+    \draw[arrow] (decision) -- node[above] {否} (respond);
+    \draw[arrow] (tools) |- (agent);
+    \draw[arrow] (respond) -- (end);
+\end{tikzpicture}
+\caption{LangGraph 工作流执行流程}
+\label{fig:workflow-execution}
+\end{figure}
+
+\subsection{提示词工程}
+
+\subsubsection{函数分类提示词}
+
+函数分类提示词采用系统提示（system prompting）的方式，定义了完整的角色、任务、分类标准和输出格式。提示词的核心组件包括：
+
+\textbf{（1）角色定义}
+
+明确 LLM 的角色为嵌入式软件工程师，任务是替换驱动库函数以消除外设硬件依赖。
+
+\textbf{（2）分类优先级}
+
+定义了严格的分类优先级顺序：CORE > RECV > IRQ > INIT > LOOP > RETURNOK > SKIP > NEEDCHECK > NODRIVER。这个优先级确保了分类的一致性和可预测性。
+
+\textbf{（3）可用工具列表}
+
+详细列出了所有可用的工具及其使用场景：
+\begin{itemize}
+    \item \texttt{GetFunctionInfo}: 获取函数源码和基本信息
+    \item \texttt{GetMMIOFunctionInfo}: 检查函数是否包含 MMIO 操作
+    \item \texttt{GetStructOrEnumInfo}: 获取数据结构或枚举信息
+    \item \texttt{GetFunctionCallStack}: 获取函数调用关系
+    \item \texttt{GetDriverInfo}: 获取驱动模块信息
+    \item \texttt{VerifyReplacement}: 验证替换代码
+    \item \texttt{FixFunctionBuildErrors}: 委托编译错误修复给子智能体
+\end{itemize}
+
+\textbf{（4）代码生成规则}
+
+引用外部的 \texttt{code\_generation\_rules.md} 文件，定义了严格的代码生成约束：
+
+\begin{itemize}
+    \item \textbf{信息源限制}：只能使用工具返回或项目头文件中存在的类型、成员、宏或函数
+    \item \textbf{函数签名一致性}：必须与原始函数或头文件声明完全匹配
+    \item \textbf{无伪造}：不能发明类型、结构体成员、宏、地址或全局变量
+    \item \textbf{HAL/结构体成员}：只能使用原始函数或目标芯片 HAL 中存在的成员
+    \item \textbf{其他不变量}：不改变函数返回类型，不修改 OS 相关调用
+\end{itemize}
+
+\subsubsection{Builder Agent 提示词}
+
+Builder Agent 负责项目构建和错误修复，其提示词重点在于：
+
+\textbf{（1）构建环境配置}：确保使用正确的编译工具链和构建脚本
+
+\textbf{（2）错误解析能力}：能够理解 GCC/Clang 的错误输出格式
+
+\textbf{（3）增量构建策略}：只重新编译修改过的文件，提高效率
+
+\textbf{（4）集成验证流程}：构建成功后调用 VerifyReplacement 进行验证
+
+\subsubsection{Fixer Agent 提示词}
+
+Fixer Agent 负责修复编译错误，其提示词包括：
+
+\textbf{（1）错误分类}：识别错误类型（语法错误、类型错误、链接错误）
+
+\textbf{（2）修复策略}：针对不同错误类型采用不同的修复方法
+
+\textbf{（3）保持一致性}：修复后的代码必须遵循代码生成规则
+
+\textbf{（4）验证机制}：修复后重新调用 VerifyReplacement 确保问题解决
+
+\subsection{替换策略的具体实现}
+
+\subsubsection{Skip 策略实现}
+
+Skip 策略适用于初始化类和控制类函数，实现逻辑如下：
+
+\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt]
+/**
+ * Skip 策略：跳过硬件副作用
+ * 适用场景：初始化函数、控制函数
+ *
+ * 实现要点：
+ * 1. 移除所有 MMIO 寄存器访问
+ * 2. 保留函数签名和返回值
+ * 3. 保留状态变量更新
+ * 4. 添加注释说明跳过的操作
+ */
+
+// 原始代码示例
+HAL_StatusTypeDef HAL_UART_Enable(UART_HandleTypeDef *huart) {
+    // 使能 UART 时钟
+    __HAL_RCC_USART1_CLK_ENABLE();
+    // 配置 UART 寄存器
+    huart->Instance->CR1 |= USART_CR1_UE;
+    // 设置状态
+    huart->gState = HAL_UART_STATE_READY;
+    return HAL_OK;
+}
+
+// Skip 策略替换代码
+HAL_StatusTypeDef HAL_UART_Enable(UART_HandleTypeDef *huart) {
+    // [SKIP] 硬件寄存器配置在仿真中不需要
+    (void)huart;  // 避免未使用参数警告
+    
+    // 保留状态更新
+    huart->gState = HAL_UART_STATE_READY;
+    return HAL_OK;
+}
+\end{lstlisting}
+
+\subsubsection{Strip 策略实现}
+
+Strip 策略适用于发送类函数，需要保留状态管理逻辑但移除寄存器操作：
+
+\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt]
+/**
+ * Strip 策略：剥离硬件代码、保留控制逻辑
+ * 适用场景：发送数据函数
+ *
+ * 实现要点：
+ * 1. 识别并删除所有寄存器读写操作
+ * 2. 保留状态变量更新（gState, TxXferCount等）
+ * 3. 保留错误处理逻辑
+ * 4. 使用虚拟设备接口替代数据传输
+ */
+
+// 原始代码示例
+HAL_StatusTypeDef HAL_UART_Transmit(UART_HandleTypeDef *huart,
+                                     uint8_t *pData, uint16_t Size) {
+    huart->gState = HAL_UART_STATE_BUSY_TX;
+    for (int i = 0; i < Size; i++) {
+        // [STRIP] 寄存器写入将被移除
+        huart->Instance->DR = pData[i];
+        // 轮询发送完成标志
+        while (!(huart->Instance->SR & USART_SR_TXE));
+    }
+    huart->gState = HAL_UART_STATE_READY;
+    return HAL_OK;
+}
+
+// Strip 策略替换代码
+HAL_StatusTypeDef HAL_UART_Transmit(UART_HandleTypeDef *huart,
+                                     uint8_t *pData, uint16_t Size) {
+    huart->gState = HAL_UART_STATE_BUSY_TX;
+    
+    // [STRIP] 使用虚拟设备接口替代寄存器写入
+    HAL_BE_Out(pData, Size);  // 将数据输出到虚拟设备
+    
+    huart->gState = HAL_UART_STATE_READY;
+    return HAL_OK;
+}
+\end{lstlisting}
+
+\subsubsection{Redirect 策略实现}
+
+Redirect 策略适用于接收类函数，将操作重定向到仿真平台的虚拟设备接口：
+
+\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt]
+/**
+ * Redirect 策略：替换为仿真 I/O
+ * 适用场景：接收数据函数、轮询状态函数
+ *
+ * 实现要点：
+ * 1. 使用 LCMHal 虚拟设备接口替代寄存器访问
+ * 2. 对于固定长度接收，使用 HAL_BE_In
+ * 3. 对于可变长度接收，使用 HAL_BE_ENET_ReadFrame
+ * 4. 保留超时参数处理逻辑
+ */
+
+// 原始代码示例
+HAL_StatusTypeDef HAL_UART_Receive(UART_HandleTypeDef *huart,
+                                    uint8_t *pData, uint16_t Size,
+                                    uint32_t Timeout) {
+    uint32_t tickstart = HAL_GetTick();
+    for (int i = 0; i < Size; i++) {
+        // 轮询接收标志
+        while (!(huart->Instance->SR & USART_SR_RXNE)) {
+            // 超时检查
+            if ((HAL_GetTick() - tickstart) > Timeout) {
+                return HAL_TIMEOUT;
+            }
+        }
+        // [REDIRECT] 寄存器读取将被替换
+        pData[i] = (uint8_t)(huart->Instance->DR & 0xFF);
+    }
+    huart->RxXferCount = Size;
+    return HAL_OK;
+}
+
+// Redirect 策略替换代码
+HAL_StatusTypeDef HAL_UART_Receive(UART_HandleTypeDef *huart,
+                                    uint8_t *pData, uint16_t Size,
+                                    uint32_t Timeout) {
+    // [REDIRECT] 使用虚拟设备接口替代寄存器读取
+    return HAL_BE_In(pData, Size);  // 从虚拟设备读取数据
+    
+    // 保留状态更新（如果原函数有）
+    huart->RxXferCount = Size;
+}
+\end{lstlisting}
+
+\subsubsection{Event 策略实现}
+
+Event 策略适用于中断处理函数，引入事件触发机制：
+
+\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt]
+/**
+ * Event 策略：事件驱动模拟
+ * 适用场景：中断处理函数（IRQHandler）
+ *
+ * 实现要点：
+ * 1. 移除硬件寄存器写入（中断标志清除）
+ * 2. 保留中断标志检查逻辑
+ * 3. 保留 OS 相关调用（信号量、任务通知）
+ * 4. 确保数据处理的执行路径可达
+ */
+
+// 原始代码示例
+void UART0_IRQHandler(void) {
+    if ((UART0->S1 & UART_S1_RDRF_MASK) != 0U) {
+        uint8_t data = UART0->D;
+        process_received_data(data);
+        
+        // 通知 RTOS 任务
+        BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+        xSemaphoreGiveFromISR(semaphore, &xHigherPriorityTaskWoken);
+        portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+    }
+    // [EVENT] 清除中断标志
+    UART0->S1 |= UART_S1_RDRF_MASK;
+}
+
+// Event 策略替换代码
+void UART0_IRQHandler(void) {
+    // [EVENT] 模拟中断标志被设置（从虚拟设备接收数据）
+    uint8_t data;
+    HAL_BE_In(&data, 1);  // 从虚拟设备接收数据
+    
+    if ((UART0->S1 & UART_S1_RDRF_MASK) != 0U) {
+        process_received_data(data);
+        
+        // 保留 OS 相关调用
+        BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+        xSemaphoreGiveFromISR(semaphore, &xHigherPriorityTaskWoken);
+        portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+    }
+    // [EVENT] 无需清除硬件中断标志，由仿真器管理
+}
+\end{lstlisting}
+
+\subsection{编译集成实现}
+
+\subsubsection{Builder Agent 核心流程}
+
+Builder Agent 负责将替换代码集成回工程并执行编译。其核心流程如下：
+
+\begin{lstlisting}[style=Python,abovecaptionskip=0pt,belowcaptionskip=0pt]
+class BuilderAgent:
+    """项目构建智能体"""
+    
+    def __init__(self, script_path: str, project_path: str):
+        self.script_path = script_path
+        self.project_path = project_path
+        self._graph = None
+    
+    async def build_graph(self):
+        """构建 Builder Agent 工作流"""
+        if self._graph is not None:
+            return self._graph
+        
+        # MCP 客户端连接 CodeQL 服务器
+        client = MultiServerMCPClient({...})
+        
+        # 获取工具：编译、文件写入、函数信息查询等
+        tools = await client.get_tools()
+        
+        # 定义工作流节点
+        async def build_node(state: AgentState):
+            """构建节点：执行编译"""
+            messages = state["messages"]
+            response = await model_with_structured_output.ainvoke(messages)
+            return {"messages": [response], "final_response": response}
+        
+        # 构建图
+        workflow = StateGraph(AgentState)
+        workflow.add_node("build", build_node)
+        workflow.add_edge(START, "build")
+        workflow.add_edge("build", END)
+        
+        self._graph = workflow.compile()
+        return self._graph
+    
+    async def run(self, build_config: dict) -> BuildOutput:
+        """执行构建流程"""
+        graph = await self.build_graph()
+        initial_state = {
+            "messages": [
+                {"role": "system", "content": system_prompting_en},
+                {"role": "user", "content": f"Build project: {build_config}"}
+            ]
+        }
+        
+        result = await graph.ainvoke(initial_state)
+        return result["final_response"]
+\end{lstlisting}
+
+\subsubsection{错误解析器实现}
+
+错误解析器负责解析编译器输出，提取错误类型、位置和原因：
+
+\begin{lstlisting}[style=Python,abovecaptionskip=0pt,belowcaptionskip=0pt]
+class BuildErrorParser:
+    """编译错误解析器"""
+    
+    # GCC 错误格式正则表达式
+    GCC_ERROR_PATTERN = re.compile(
+        r'(?P<file>.*?):(?P<line>\d+):(?P<col>\d+):\s*'
+        r'(?P<type>error|warning):\s*'
+        r'(?P<message>.*?)$'
+    )
+    
+    # Clang 错误格式正则表达式
+    CLANG_ERROR_PATTERN = re.compile(
+        r'(?P<file>.*?):(?P<line>\d+):(?P<col>\d+):\s*'
+        r'(?P<type>error|warning):\s*'
+        r'(?P<message>.*?)$'
+    )
+    
+    def parse(self, stderr: str) -> List[BuildError]:
+        """解析编译错误输出"""
+        errors = []
+        lines = stderr.split('\n')
+        
+        for line in lines:
+            # 尝试 GCC 格式
+            match = self.GCC_ERROR_PATTERN.match(line)
+            if not match:
+                # 尝试 Clang 格式
+                match = self.CLANG_ERROR_PATTERN.match(line)
+            
+            if match:
+                error = BuildError(
+                    file=match.group('file'),
+                    line=int(match.group('line')),
+                    col=int(match.group('col')),
+                    type=match.group('type'),
+                    message=match.group('message')
+                )
+                errors.append(error)
+        
+        return errors
+    
+    def classify_error(self, error: BuildError) -> str:
+        """错误分类"""
+        if "undeclared" in error.message:
+            return "SYNTAX"
+        elif "incompatible" in error.message:
+            return "TYPE"
+        elif "undefined reference" in error.message:
+            return "LINK"
+        else:
+            return "OTHER"
+\end{lstlisting}
+
+\subsubsection{自动修复循环}
+
+自动修复循环是编译集成的关键机制，其伪代码如下：
+
+\begin{lstlisting}[style=Python,abovecaptionskip=0pt,belowcaptionskip=0pt]
+Algorithm: Auto-Fix Loop
+Input: function_name, replacement_code, max_retries=3
+
+for retry in range(max_retries):
+    // 尝试编译
+    build_result = compile_project()
+    
+    if build_result.success:
+        // 编译成功，退出循环
+        return SUCCESS
+    
+    // 编译失败，解析错误
+    errors = parse_build_errors(build_result.stderr)
+    
+    // 按错误类型分类
+    for error in errors:
+        error_type = classify_error(error)
+        
+        if error_type == "SYNTAX":
+            // 语法错误：调用 Fixer Agent 修复
+            fix_result = await FixerAgent.fix(
+                function_name, error, replacement_code
+            )
+        elif error_type == "TYPE":
+            // 类型错误：调整类型定义
+            fix_result = adjust_types(error, replacement_code)
+        else:
+            // 其他错误：标记为需要人工检查
+            return NEEDCHECK
+    
+    // 应用修复后的代码
+    replacement_code = fix_result.fixed_code
+    
+    // 继续下一轮编译
+    if retry == max_retries - 1:
+        // 达到重试上限，失败
+        return FAILED
+
+return SUCCESS
+\end{lstlisting}
+
+\section{本章小结（实现部分）}
+\label{sec:implementation_summary_impl}
+
+本章详细介绍了基于驱动程序替换的固件仿真系统的具体实现。系统的实现主要特点包括：
+
+\textbf{（1）模块化架构}：各组件通过标准接口交互，便于扩展和维护
+
+\textbf{（2）LangGraph 智能体}：基于 LangGraph 实现了具有状态管理能力的智能体工作流，支持工具调用和条件分支
+
+\textbf{（3）严格的代码生成规则}：通过 code\_generation\_rules.md 确保生成的代码只使用工具返回或项目头文件中存在的符号
+
+\textbf{（4）完整的验证机制}：包括 Rubric 检查、编译验证和动态测试，形成多层次的代码质量保障
+
+\textbf{（5）自动错误修复}：通过 Fixer Agent 实现编译错误的自动检测和修复，减少人工干预
+
+这些实现细节与第三章的设计紧密对应，验证了系统设计的可行性和有效性。

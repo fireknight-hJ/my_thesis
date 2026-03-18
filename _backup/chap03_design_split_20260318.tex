@@ -1,0 +1,614 @@
+\chapter{系统设计}
+\label{chap:design}
+
+本章详细阐述基于驱动程序替换的固件仿真系统的设计。系统采用"静态识别→智能替换→构建验证→动态反馈"的分层架构，通过 CodeQL 静态分析和大语言模型智能体技术，实现固件驱动函数的自动识别、语义分析和代码替换，最终在仿真环境中运行并支持模糊测试。
+
+\section{整体架构设计}
+\label{sec:arch}
+
+\subsection{设计目标与核心思想}
+
+物联网设备固件的安全测试面临硬件依赖性强、外设建模成本高、测试环境搭建困难等挑战。本研究提出的"基于驱动程序替换的固件仿真技术"旨在解决上述问题，其核心目标是：在缺少真实硬件外设、外设建模成本过高或外设规格不可得的情况下，使固件仍可在通用仿真环境中稳定运行，并进一步支持自动化测试与模糊测试。
+
+\textbf{核心思想}是将固件中与具体硬件强绑定的驱动代码（包括寄存器读写、HAL/外设库调用、中断与 DMA 配置等）识别出来，并用可在仿真环境中执行的替代实现进行等价替换，从而实现"固件逻辑与硬件依赖解耦"。这种方法的本质是在源码层面进行程序变换，将硬件依赖代码替换为与仿真环境兼容的等价实现，而非在硬件层面进行外设建模。
+
+具体而言，系统设计需要满足以下目标：
+
+\textbf{（1）自动化程度高}
+
+传统固件仿真方法需要安全研究人员手工分析固件代码，理解硬件交互逻辑，编写外设模型或驱动替代代码，这一过程耗时且容易出错。本系统通过静态分析和大语言模型技术，尽量减少人工干预，实现从源码到可仿真固件的端到端自动化流程，确保自动化程度高。
+
+\textbf{（2）可扩展性好}
+
+物联网设备的硬件平台和软件架构具有高度多样性。硬件平台涵盖 STM32、NXP、Nordic 等厂商的多种 MCU 芯片，软件架构包括 FreeRTOS、RT-Thread、Zephyr 等实时操作系统以及无操作系统的裸机程序。系统设计需要支持多种硬件平台和操作系统，具有良好的可扩展性。
+
+\textbf{（3）语义保持性好}
+
+驱动函数替换的核心挑战在于如何保证替换后的代码在语义上与原代码等价。替换后的代码应保留原有业务逻辑，正确维护驱动状态，避免引入新的缺陷。系统需要通过静态验证和动态测试双重保障替换的语义正确性，确保语义保持性好。
+
+\textbf{（4）反馈闭环完整}
+
+代码替换是一个迭代优化的过程，初始生成的替换代码可能存在编译错误或运行时问题。系统需要建立完整的反馈闭环，通过动态测试验证替换效果，并将反馈信息用于指导代码修复和重新生成，确保反馈闭环完整。
+
+\subsection{系统分层架构}
+
+系统采用分层架构设计，按"静态识别→智能替换→构建验证→动态测试反馈"的链路组织为四个核心模块，如图~\ref{fig:arch}所示。每一层模块承担明确的职责，通过标准化的数据接口进行交互，形成完整的处理流水线。
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    module/.style={rectangle, draw=black!60, rounded corners=8pt, minimum width=10cm, minimum height=1.4cm, align=center, font=\small\bfseries, line width=1pt},
+    layer/.style={rectangle, draw=black!40, rounded corners=6pt, minimum width=10cm, minimum height=1.2cm, align=center, font=\small, line width=0.8pt, dashed},
+    flow/.style={->, >=stealth, line width=1.2pt, draw=black!70},
+    note/.style={font=\scriptsize, text=black!60}
+]
+    % 动态测试反馈闭环模块
+    \node[module, fill=red!15] (feedback) at (0, 4.5) {动态测试反馈闭环模块};
+    \node[note, right] at (5.5, 4.5) {仿真运行 | 日志采集 | 错误分析 | 反馈回流};
+
+    % 箭头1
+    \draw[flow, draw=blue!60] (0, 3.7) -- (0, 3.1) node[midway, right, note] {运行结果};
+
+    % 驱动函数分析、替换与编译模块
+    \node[module, fill=green!15] (replace) at (0, 2.4) {驱动函数分析、替换与编译模块};
+    \node[note, right] at (5.5, 2.4) {LLM分类 | 替换策略 | 代码生成 | 编译集成};
+
+    % 箭头2
+    \draw[flow, draw=blue!60] (0, 1.6) -- (0, 1.0) node[midway, right, note] {驱动函数列表};
+
+    % 驱动函数接口静态分析与识别模块
+    \node[module, fill=orange!15] (static) at (0, 0.3) {驱动函数接口静态分析与识别模块};
+    \node[note, right] at (5.5, 0.3) {CodeQL分析 | MMIO识别 | 函数定位 | 数据模型};
+
+    % 箭头3（反馈闭环）
+    \draw[flow, draw=red!60, dashed] (-5.5, 2.4) -- (-5.5, 4.5) -- (-5.2, 4.5) node[midway, above, note, sloped] {错误反馈};
+
+    % 数据与缓存层
+    \node[layer, fill=gray!10] (data) at (0, -1.2) {数据与缓存层：分析缓存 | 生成结果 | 编译产物 | 运行日志};
+
+    % 数据层连接线
+    \draw[draw=gray!50, dashed] (static.south) -- (0, -0.6);
+    \draw[draw=gray!50, dashed] (replace.south) -- (0, 0.9) -- (0, -0.6);
+    \draw[draw=gray!50, dashed] (feedback.south) -- (0, 3.7) -- (0, -0.6);
+    \draw[draw=gray!50, dashed] (0, -0.6) -- (data.north);
+
+    % 标题
+    \node[font=\footnotesize\bfseries, text=black!70] at (-5.5, 0.3) {静态分析};
+    \node[font=\footnotesize\bfseries, text=black!70] at (-5.5, 2.4) {智能替换};
+    \node[font=\footnotesize\bfseries, text=black!70] at (-5.5, 4.5) {动态验证};
+\end{tikzpicture}
+\caption{系统整体架构图}
+\label{fig:arch}
+\end{figure}
+
+架构的顶层是\textbf{动态测试反馈闭环模块}，负责在仿真环境中运行替换后的固件，采集运行日志、崩溃信息与覆盖率等指标，并将失败样例与错误信息结构化回流，触发重新分析与再生成。该模块是系统质量保障的关键环节。
+
+中间层是\textbf{驱动函数分析、替换与编译模块}，这是系统的核心智能层。该模块基于上游静态分析结果，使用大语言模型对驱动函数进行类型分类与语义保留分析，生成可替代实现，同时将替代实现集成回工程并驱动构建。该模块采用 LangGraph 智能体框架实现复杂的推理和决策流程。
+
+底层是\textbf{驱动函数接口静态分析与识别模块}，这是整个方案的基础支撑层。该模块对固件源码进行静态分析，定位硬件相关代码，抽取驱动函数、MMIO 访问点、依赖数据结构、调用关系等信息，并以统一的数据模型对外提供查询接口。模块基于 CodeQL 静态分析引擎实现，通过预定义的查询规则从固件源码中提取驱动相关信息。
+
+贯穿上述三层的是\textbf{数据与缓存层}，统一管理静态分析缓存、生成结果缓存、编译产物与运行日志，支持断点续跑和结果复用。该层确保系统在长时间运行过程中能够保存中间状态，避免重复计算，提高处理效率。
+
+\subsection{核心模块职责}
+
+系统架构中的四个核心模块各司其职，协同工作，共同完成从固件源码到可仿真固件的自动化转换。本节详细阐述各模块的职责定位、设计考量和技术挑战。
+
+\subsubsection{驱动函数接口静态分析与识别模块}
+
+驱动函数接口静态分析与识别模块是整个系统的"感知器官"，负责从固件源码中提取硬件依赖信息，构建固件的"硬件依赖画像"。该模块的设计面临着嵌入式代码的多样性和复杂性挑战：不同厂商的 HAL 库采用不同的抽象层次和编程风格，寄存器访问模式千差万别，驱动函数与业务逻辑的边界往往模糊不清。
+
+模块的核心职责是建立从源码到硬件依赖信息的映射。具体而言，模块需要回答以下关键问题：固件中哪些函数与硬件交互？这些函数通过何种方式访问硬件（直接寄存器访问、HAL 库调用、还是间接的句柄操作）？函数之间是否存在调用依赖关系？这些信息构成了后续智能替换的基础，其准确性直接决定了替换的质量和可靠性。
+
+为实现这一目标，模块采用 CodeQL 静态分析引擎作为底层支撑。CodeQL 通过构建包含语法树、控制流图、数据流图的综合数据库，为语义级代码分析提供了强大的查询能力。模块首先为固件源码构建 CodeQL 数据库，然后通过精心设计的查询规则识别 MMIO 结构体实例和字段访问，进而对涉及硬件访问的函数进行语义分类。数据流追踪是该模块的关键技术，它通过污点追踪建立寄存器访问与函数参数之间的关联，为替换模块提供精确的语句定位信息。
+
+模块输出的"硬件依赖画像"不仅包含驱动函数列表和 MMIO 访问点，还包括函数调用关系图和数据流信息。这些结构化的分析结果被存储在统一的数据模型中，为下游模块提供可查询的知识库。
+
+\subsubsection{驱动函数分析、替换与编译模块}
+
+驱动函数分析、替换与编译模块是系统的"大脑"，承担着语义理解和代码生成的核心任务。如果说静态分析模块解决了"是什么"的问题（哪些代码与硬件相关），那么替换模块需要解决"怎么做"的问题（如何生成语义等价的替代代码）。
+
+模块面临的核心挑战是语义保持性。驱动函数的替换不能简单地进行代码删除或占位，而需要在保留业务逻辑的同时，将硬件依赖部分替换为与仿真环境兼容的实现。例如，一个 UART 发送函数不仅包含寄存器写入操作，还包含状态管理、错误处理、超时控制等业务逻辑，替换时需要准确识别并保留这些逻辑。这要求替换模块具备深层的代码理解能力，能够区分"必须替换的硬件操作"和"必须保留的业务逻辑"。
+
+为实现这一目标，模块采用大语言模型驱动的智能体架构。与传统基于规则或模板的代码生成方法不同，LLM 具备理解代码语义的能力，能够根据函数的具体实现和上下文生成定制化的替换代码。模块使用 LangGraph 框架构建图式工作流，通过"推理-工具调用-结果汇总"的迭代过程，逐步完成函数分类、策略选择、代码生成和验证等工作。
+
+模块设计了四种替换策略（Skip、Strip、Redirect、Event），每种策略适用于特定类型的驱动函数。策略的选择不是硬编码的规则匹配，而是由 LLM 根据函数的语义特征自主决定。生成替换代码后，模块通过语法检查和语义规则检查（Rubric）进行质量验证，确保替换代码的可靠性。
+
+编译集成是模块的最后一个环节。模块将替换代码写回源文件，调用构建系统执行编译，并处理可能出现的编译错误。当编译失败时，模块通过 Fixer Agent 进行自动修复，形成"编译-错误解析-修复-重新编译"的闭环，直至编译成功。
+
+\subsubsection{动态测试反馈闭环模块}
+
+动态测试反馈闭环模块是系统的"验证官"，负责在仿真环境中检验替换效果，并将发现的问题反馈给上游模块。该模块体现了软件工程中"测试驱动"的思想：静态分析和代码替换的正确性最终需要通过实际运行来验证。
+
+模块的职责包括仿真环境搭建、固件运行监控和反馈信息结构化三个方面。仿真环境搭建涉及 Unicorn 引擎的配置，包括选择合适的 CPU 架构模式、配置内存映射和寄存器参数等。为支持替换后的驱动代码与仿真环境交互，模块设计了 LCMHal（Lightweight Communication and Hardware Abstraction Layer）虚拟外设接口层。LCMHal 定义了统一的外设操作接口（init、read、write、ioctl、deinit），每种外设类型实现该接口并注册到框架中。替换后的驱动代码通过调用 LCMHal 接口与仿真环境交互，而不直接访问硬件寄存器。
+
+固件运行监控是该模块的核心任务。模块通过 Emulator Runner Agent 执行仿真，实时采集运行日志、覆盖率数据和异常信息。监控的重点包括程序崩溃（如段错误、断言失败）、运行超时（如死循环、阻塞等待）、以及功能异常（如输出结果与预期不符）。当检测到问题时，模块需要对原始日志进行结构化处理，提取关键信息（错误类型、异常地址、关联函数、调用栈等），生成反馈摘要。
+
+反馈闭环是该模块的关键设计。当运行失败时，反馈摘要被传递给 Fixer Agent，触发重新分析或修复流程。Fixer Agent 根据错误类型和位置，定位问题函数，生成修复代码，然后重新进入"替换-编译-运行"的循环。这个闭环机制确保系统能够通过迭代优化不断提高替换质量，直到固件能够在仿真环境中稳定运行。
+
+\subsubsection{数据与缓存层}
+
+数据与缓存层是系统的"记忆系统"，贯穿整个处理流程，提供数据持久化和缓存服务。虽然该层不直接参与核心的代码分析和替换工作，但其对于系统的可靠性、效率和可维护性至关重要。
+
+固件仿真是一个计算密集型的过程，涉及静态分析、LLM 推理、编译构建等多个耗时环节。如果每次运行都从头开始，不仅效率低下，而且成本高昂。数据与缓存层通过缓存中间结果，支持断点续跑和增量处理。例如，CodeQL 数据库的构建通常需要数分钟，缓存后后续查询可以直接复用；LLM 生成的替换代码和分类结果被缓存后，当处理相同函数时可以直接使用，无需重复调用模型。
+
+该层管理的数据包括四个类别：静态分析缓存（CodeQL 数据库、查询结果、函数信息等）、生成结果缓存（LLM 分类结果、替换代码、验证报告等）、编译产物管理（不同版本的 ELF 文件、构建日志等）和运行日志存储（仿真运行日志、崩溃信息、覆盖率数据等）。所有数据采用统一的命名规范和目录结构，支持按项目、按任务、按时间戳进行组织。
+
+数据与缓存层还承担着系统可观测性的职责。通过分析缓存数据，可以追溯系统的处理历史，了解每个固件经历了哪些分析、替换和修复步骤，这对于问题诊断和系统优化具有重要价值。
+
+\subsection{数据流与控制流}
+
+系统的数据流从源码出发，经静态分析产生"硬件依赖画像"，随后驱动替换模块在该画像约束下生成替代代码并集成构建，最后由动态执行产生反馈数据回流。整个数据流是有向的、可追溯的，每个处理阶段的输出都成为下一阶段的输入。
+
+关键控制流以"任务"（Task）为单位组织。每个任务对应一个固件工程、一个构建配置与一组待替换函数列表。系统对每个任务维持明确的状态机，状态转移如图~\ref{fig:state-machine}所示。
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    state/.style={rectangle, draw, rounded corners, minimum width=2cm, minimum height=0.8cm, align=center, font=\small},
+    arrow/.style={->, thick, >=stealth}
+]
+    \node[state] (init) at (0, 0) {未分析};
+    \node[state] (analyzed) at (3, 0) {已分析};
+    \node[state] (generated) at (6, 0) {已生成};
+    \node[state] (built) at (9, 0) {已构建};
+    \node[state] (running) at (12, 0) {已运行};
+    \node[state] (retry) at (6, -2) {需重试};
+
+    \draw[arrow] (init) -- (analyzed);
+    \draw[arrow] (analyzed) -- (generated);
+    \draw[arrow] (generated) -- (built);
+    \draw[arrow] (built) -- (running);
+    \draw[arrow] (running) -- (retry) node[midway, right, font=\scriptsize] {运行失败};
+    \draw[arrow] (retry) -- (generated) node[midway, above, font=\scriptsize] {重新生成};
+\end{tikzpicture}
+\caption{任务状态机}
+\label{fig:state-machine}
+\end{figure}
+
+状态机的初始状态为"未分析"，表示任务已创建但尚未开始处理。经过静态分析后进入"已分析"状态，此时驱动函数已被识别和分类。智能体完成代码生成后进入"已生成"状态，替换代码已生成并验证。编译构建成功后进入"已构建"状态，ELF 文件已生成。仿真运行完成后进入"已运行"状态，表示任务成功完成。
+
+如果在运行阶段检测到问题（如运行崩溃、功能异常），任务进入"需重试"状态，系统会根据反馈信息重新分析问题函数，生成新的替换代码，然后重新进入"已生成"状态，开始新一轮的构建和测试。这个闭环机制确保系统能够通过迭代优化不断提高替换质量。
+
+\section{驱动函数接口静态分析与识别模块设计}
+\label{sec:collector}
+
+本模块是整个方案的基础支撑层，负责自动、精准地定位固件中与硬件交互的代码，并将其抽象为标准化的"可查询知识库"。模块基于第二章介绍的 CodeQL 静态分析框架实现，通过预定义的查询规则从固件源码中提取驱动相关信息。本节重点阐述 MMIO 访问模式识别、驱动函数分类和数据流追踪的设计方法。
+
+\subsection{MMIO 访问模式识别}
+
+MMIO 访问模式识别是驱动函数分析的首要任务，其目标是定位代码中所有与硬件寄存器交互的位置。识别的准确性直接影响后续驱动函数分类和替换的质量。本研究设计"结构体定位→字段访问→函数关联"的三阶段识别方法。
+
+\subsubsection{MMIO 实例定位方法}
+
+MMIO（Memory-Mapped I/O）结构体是嵌入式厂商定义的寄存器映射结构，每个字段对应一个硬件寄存器，字段的偏移量与硬件规范中的寄存器地址偏移一致。定位 MMIO 结构体实例是识别硬件相关代码的关键步骤，本研究总结出三种典型的定位模式。
+
+\textbf{（1）MMIO 结构体识别特征}
+
+MMIO 结构体具有三个典型特征。命名模式上，MMIO 结构体通常采用规范化的命名模式，如 STM32 HAL 库使用 \texttt{\_TypeDef} 后缀（\texttt{USART\_TypeDef}、\texttt{GPIO\_TypeDef}），NXP SDK 使用 \texttt{\_Type} 后缀（\texttt{USART\_Type}、\texttt{GPIO\_Type}）。字段类型上，字段类型为 \texttt{volatile uint32\_t} 或类似的 volatile 整型，确保编译器不优化对寄存器的访问。常见的宏定义包括 \texttt{\_\_IO}（读写）、\texttt{\_\_I}（只读）、\texttt{\_\_O}（只写）。字段命名上，字段名通常为寄存器缩写，遵循厂商的命名规范，例如控制寄存器命名为 \texttt{CR1}、\texttt{CR2}、\texttt{CR3}，状态寄存器命名为 \texttt{SR}、\texttt{ISR}，数据寄存器命名为 \texttt{DR}、\texttt{TDR}、\texttt{RDR}，配置寄存器命名为 \texttt{BRR}（波特率）、\texttt{DIER}（中断使能）等。
+
+\textbf{（2）MMIO 实例定位模式}
+
+基于上述结构体特征，本研究总结出三种典型的 MMIO 实例定位模式：
+
+\textbf{模式一：直接地址强转}
+
+将固定地址强制转换为外设结构体指针，这是最直接的方式。该模式常见于寄存器定义的头文件中：
+
+\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt]
+#define USART1_BASE    0x40011000U
+#define USART1         ((USART_TypeDef *)USART1_BASE)
+
+// 使用时直接通过宏访问
+USART1->DR = data;  // 写入数据寄存器
+status = USART1->SR;  // 读取状态寄存器
+\end{lstlisting}
+
+识别特征：存在整数常量到结构体指针的强制类型转换，地址常量位于外设地址范围（如 STM32 的 \texttt{0x40000000-0x5FFFFFFF}）。
+
+\textbf{模式二：间接初始化}
+
+通过配置表或描述符将外设基地址赋值给句柄，常见于 HAL 库的句柄结构：
+
+\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt]
+typedef struct {
+    USART_TypeDef *Instance;  // 外设基址
+    UART_InitTypeDef Init;    // 配置参数
+    HAL_LockTypeDef Lock;     // 锁状态
+    // ... 其他字段
+} UART_HandleTypeDef;
+
+UART_HandleTypeDef huart1;
+huart1.Instance = USART1;  // 间接赋值
+\end{lstlisting}
+
+识别特征：存在结构体指针类型的成员变量（通常命名为 \texttt{Instance}），该成员被赋值为外设基地址宏。
+
+\textbf{模式三：常量指针参数}
+
+函数以常量指针形式接收外设基址，常见于底层驱动函数：
+
+\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt]
+void HAL_UART_Transmit(USART_TypeDef *huart,
+                       uint8_t *pData, uint16_t Size);
+\end{lstlisting}
+
+识别特征：函数参数类型为 MMIO 结构体指针，函数内部通过该参数访问寄存器字段。
+
+三种定位模式的对比如表~\ref{tab:mmio-patterns}所示。
+
+\begin{table}[htbp]
+\centering
+\caption{MMIO 结构体实例定位模式对比}
+\label{tab:mmio-patterns}
+\begin{tabular}{lp{5cm}l}
+\toprule
+\textbf{模式} & \textbf{描述} & \textbf{识别特征} \\
+\midrule
+直接地址强转 & 将固定地址强制转换为外设结构体指针 & 整数常量→结构体指针类型转换 \\
+间接初始化 & 通过配置表将外设基地址赋值给句柄 & 成员变量赋值为外设宏 \\
+常量指针参数 & 函数以常量指针形式接收外设基址 & 参数类型为 MMIO 结构体指针 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{驱动函数定位准则}
+
+静态分析模块的核心任务是识别固件中的驱动函数，为后续的智能替换提供目标列表。本研究采用简单直接的定位准则：\textbf{凡是包含 MMIO 访问的函数，均定义为驱动函数}。
+
+这一定位准则基于以下考虑：
+
+\textbf{（1）硬件交互的直接性}：MMIO 访问是固件与硬件交互的最底层方式，包含寄存器读写的函数必然与硬件强相关，需要在仿真环境中进行替换处理。
+
+\textbf{（2）分析的可靠性}：MMIO 访问可以通过静态分析方法准确识别（如前文所述的结构体特征和定位模式），分析结果可靠且可验证。
+
+\textbf{（3）替换的必要性}：对于不包含 MMIO 访问的函数，通常是纯软件逻辑（数据处理、协议解析、状态管理等），在仿真环境中可以直接运行，无需替换。
+
+基于这一定位准则，驱动函数识别的流程如下：
+
+\textbf{步骤一：识别 MMIO 结构体实例}
+
+通过前文所述的三种定位模式（直接地址强转、间接初始化、常量指针参数），识别代码中的所有 MMIO 结构体实例。记录每个实例的变量名、类型、作用域和初始化位置。
+
+\textbf{步骤二：追踪 MMIO 字段访问}
+
+对每个 MMIO 结构体实例，追踪其字段访问（field access）表达式。记录访问的字段名、访问类型（读/写）、所在语句和所在函数。
+
+\textbf{步骤三：汇总驱动函数列表}
+
+对所有包含 MMIO 字段访问的函数进行汇总，形成驱动函数列表。列表中的每个条目包含函数名、位置、签名、MMIO 访问点列表等信息。
+
+\textbf{步骤四：构建函数调用关系}
+
+分析驱动函数之间的调用关系，构建函数调用图。调用关系用于后续的替换策略选择：如果函数 A 调用函数 B，且两者都是驱动函数，需要考虑替换的一致性。
+
+驱动函数定位的形式化定义如下：
+
+设 $F$ 为固件中的函数集合，$M$ 为 MMIO 结构体实例集合，$A(f, m)$ 为谓词"函数 $f$ 访问 MMIO 实例 $m$ 的字段"，则驱动函数集合 $D$ 定义为：
+
+$$D = \{f \in F \mid \exists m \in M: A(f, m)\}$$
+
+该定义确保所有与硬件交互的函数都被纳入驱动函数集合，为后续的语义分类和代码替换提供完整的候选集。需要注意的是，驱动函数的语义分类（如初始化、发送、接收等）不是由静态分析模块完成的，而是由后续的 LLM 智能体根据函数源码和上下文进行判断。静态分析模块只负责"定位"，不负责"分类"。
+
+\subsection{数据流追踪}
+
+\subsubsection{追踪目标}
+
+数据流追踪是静态分析的重要环节，其目标是建立 MMIO 访问与函数接口（参数、返回值）之间的关联关系。本模块以"MMIO 字段访问"为源点（source），以"函数参数、局部变量、返回值、关键分支条件"为汇点（sink），构建数据流配置并追踪路径。
+
+数据流追踪的目的包括：
+
+\textbf{（1）确定参数影响}：识别哪些函数参数最终影响了 MMIO 访问。例如，在 \texttt{HAL\_UART\_Transmit} 函数中，\texttt{pData} 参数通过数据流影响 \texttt{DR} 寄存器的写入值。
+
+\textbf{（2）识别逻辑边界}：区分需要保留的业务逻辑与需要替换的硬件操作。例如，在发送函数中，状态变量更新是业务逻辑需要保留，而寄存器写入是硬件操作需要替换。
+
+\textbf{（3）提供定位信息}：为替换模块提供精确的语句定位信息，包括需要替换的代码行号、涉及的变量和表达式等。
+
+\subsubsection{数据流分析方法}
+
+数据流分析采用污点追踪（Taint Tracking）方法。污点追踪从源点开始，标记受污染的数据，然后沿着数据流传播污点标记，直到汇点。本研究采用 CodeQL 的 TaintTracking 配置类实现数据流追踪。
+
+追踪的关键步骤包括：定义源点集合（MMIO 字段访问）、定义汇点集合（函数参数等）、定义污点传播规则（如赋值、函数调用、指针解引用等）、执行追踪并记录路径。
+
+\subsection{统一数据模型}
+
+为便于后续模块使用，静态分析结果被组织为统一的数据模型。数据模型采用 Python 数据类（dataclass）定义，支持序列化和反序列化。
+
+\textbf{（1）函数信息模型}
+
+\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt]
+@dataclass
+class FunctionInfo:
+    """函数基本信息"""
+    name: str                    # 函数名
+    file_path: str               # 所在文件路径
+    line_start: int              # 起始行号
+    line_end: int                # 结束行号
+    signature: str               # 函数签名
+    return_type: str             # 返回类型
+    parameters: List[Parameter]  # 参数列表
+    category: str                # 函数分类（CORE/RECV/IRQ/INIT/...）
+    source_code: str             # 函数源码
+    caller_functions: List[str]  # 调用该函数的函数列表
+    callee_functions: List[str]  # 该函数调用的函数列表
+\end{lstlisting}
+
+需要说明的是，上述数据模型是设计阶段的概念性模型。在实际实现中，为适应 CodeQL 查询结果和 Pydantic 结构化输出的需求，数据模型的字段定义会有所调整。例如，实际的 \texttt{FunctionInfo} 使用 \texttt{location\_line} 而非 \texttt{line\_start/line\_end}，函数类型通过 \texttt{FunctionClassifyResponse} 的 \texttt{Literal} 类型约束来保证类型安全。第四章将详细阐述实际实现中的数据模型定义。
+
+\textbf{（2）MMIO 访问点模型}
+
+\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt]
+@dataclass
+class MMIOAccess:
+    """MMIO 访问点"""
+    struct_type: str             # 结构体类型（如 USART_TypeDef）
+    field_name: str              # 字段名（如 DR, SR）
+    access_type: str             # 访问类型（read/write）
+    line_number: int             # 行号
+    enclosing_function: str      # 所在函数
+    context_code: str            # 上下文代码片段
+\end{lstlisting}
+
+\textbf{（3）项目分析结果模型}
+
+\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt]
+@dataclass
+class ProjectAnalysisResult:
+    """项目分析结果"""
+    project_path: str                  # 项目路径
+    codeql_db_path: str                # CodeQL 数据库路径
+    functions: List[FunctionInfo]      # 所有识别的函数
+    mmio_accesses: List[MMIOAccess]    # 所有 MMIO 访问点
+    call_graph: Dict[str, List[str]]   # 函数调用图
+    driver_functions: List[str]        # 驱动函数列表（需要替换）
+    analysis_timestamp: str            # 分析时间戳
+\end{lstlisting}
+
+这些数据模型通过 JSON 序列化存储在缓存层，供后续模块查询和使用。
+
+\section{驱动函数分析、替换与编译模块设计}
+\label{sec:builder}
+
+本模块是系统的核心智能层，负责基于静态分析结果对驱动函数进行语义理解和代码替换。模块采用大语言模型（LLM）驱动的智能体（Agent）架构，通过工具调用和工作流编排实现自动化的函数分析与替换。
+
+\subsection{智能体工作流设计}
+
+\subsubsection{LangGraph 工作流框架}
+
+系统采用 LangGraph 框架构建图式工作流。LangGraph 是 LangChain 生态中用于构建有状态、可循环的智能体工作流的库，支持复杂的状态管理和条件分支。
+
+智能体工作流的核心包含三个逻辑节点，如图~\ref{fig:agent-workflow}所示：
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    box/.style={rectangle, draw, rounded corners, minimum width=3cm, minimum height=1.5cm, align=center, font=\small},
+    arrow/.style={->, thick, >=stealth}
+]
+    % 推理与决策节点在上方中间
+    \node[box, fill=blue!20] (reason) at (5, 2) {推理与决策\\节点};
+    % 工具调用节点在左下
+    \node[box, fill=green!20] (tool) at (0, 0) {工具调用\\节点};
+    % 结果汇总节点在右下
+    \node[box, fill=orange!20] (summary) at (10, 0) {结果汇总\\节点};
+
+    % 推理 → 工具（需要工具）
+    \draw[arrow] (reason.south west) -- (tool.north east) node[midway, above, font=\scriptsize, sloped] {需要工具};
+    % 工具 → 推理（返回结果）
+    \draw[arrow] (tool.north) -- (reason.south) node[midway, left, font=\scriptsize] {返回结果};
+    % 推理 → 结果（给出答案）
+    \draw[arrow] (reason.south east) -- (summary.north west) node[midway, above, font=\scriptsize, sloped] {给出答案};
+\end{tikzpicture}
+\caption{智能体工作流架构图}
+\label{fig:agent-workflow}
+\end{figure}
+
+\textbf{推理与决策节点}：这是智能体的核心，由大语言模型驱动。该节点负责分析驱动函数的源码，判断函数类别，选择替换策略，决定是否需要调用工具获取补充信息。当 LLM 认为已有足够信息时，输出最终的分类和替换结果。
+
+\textbf{工具调用节点}：当推理节点需要补充信息时，会请求调用工具。系统提供多种工具，包括：查询函数源码、获取调用关系、查询 MMIO 访问点、获取函数签名等。工具执行完毕后，结果返回给推理节点，继续推理。
+
+\textbf{结果汇总节点}：当推理节点给出最终答案时，进入结果汇总节点。该节点对 LLM 的输出进行结构化解析，验证输出格式，将结果写入缓存。
+
+\subsubsection{状态机设计}
+
+LangGraph 的核心是状态（State）对象，它在工作流的各个节点之间传递和更新。状态机的设计需要考虑智能体在执行过程中需要维护的信息，以及状态之间的转移逻辑。状态模型需要维护智能体执行过程中的关键信息，包括对话历史、最终响应、当前处理的函数名和重试次数。状态转移逻辑控制智能体的执行流程。
+
+智能体从 START 状态开始，首先进入推理节点（agent），LLM 根据当前状态决定下一步行动。如果 LLM 请求调用工具（如查询函数源码、获取调用关系），则转移到工具节点（tools），工具执行完毕后返回推理节点继续处理。如果 LLM 认为已经获得足够信息并给出最终答案，则转移到结果节点（respond），对输出进行结构化解析后进入 END 状态。如果在执行过程中发生错误（如工具调用失败、输出格式错误），且重试次数未超过上限，则返回推理节点重新尝试；否则进入错误处理流程。
+
+状态转移的图形化表示如图~\ref{fig:agent-state-machine}所示。
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    node distance=1.8cm,
+    state/.style={rectangle, draw, rounded corners, minimum width=2cm, minimum height=0.8cm, align=center, font=\small},
+    decision/.style={diamond, draw, aspect=2, minimum width=1.5cm, align=center, font=\small},
+    arrow/.style={->, thick, >=stealth}
+]
+    \node[state, fill=gray!20] (start) {START};
+    \node[state, fill=blue!20, right of=start, xshift=1cm] (agent) {Agent\\推理};
+    \node[decision, fill=yellow!20, right of=agent, xshift=1.5cm] (decision) {有工具\\调用?};
+    \node[state, fill=green!20, above right of=decision, xshift=0.5cm, yshift=0.5cm] (tools) {Tools\\执行};
+    \node[state, fill=orange!20, below right of=decision, xshift=0.5cm, yshift=-0.5cm] (respond) {Respond\\响应};
+    \node[state, fill=red!20, right of=respond, xshift=1cm] (end) {END};
+
+    \draw[arrow] (start) -- (agent);
+    \draw[arrow] (agent) -- (decision);
+    \draw[arrow] (decision) -- node[above, font=\scriptsize] {是} (tools);
+    \draw[arrow] (decision) -- node[below, font=\scriptsize] {否} (respond);
+    \draw[arrow] (tools) -- ++(0,1.2) -| (agent);
+    \draw[arrow] (respond) -- (end);
+\end{tikzpicture}
+\caption{智能体状态机转移图}
+\label{fig:agent-state-machine}
+\end{figure}
+
+\subsection{驱动函数自动分类}
+
+\subsubsection{分类提示词设计}
+
+系统使用精心设计的提示词（Prompt）引导 LLM 进行函数分类。提示词的设计直接影响分类的准确性和一致性。本研究采用结构化的提示词模板，包含以下组成部分：
+
+\textbf{（1）角色定义}
+
+明确 LLM 扮演的角色是固件驱动分析专家，建立分析的上下文。
+
+\textbf{（2）分类标准}
+
+详细定义每个类别的判断标准，包括 CORE、RECV、IRQ、INIT、RETURNOK、SKIP、NEEDCHECK、LOOP、NODRIVER 等类别。其中，CORE 类表示 NVIC/OS 内核/VTOR 等关键函数，不允许替换；NEEDCHECK 表示需要进一步检查的函数；SKIP 表示可以直接跳过替换的函数；LOOP 表示包含轮询等待的函数。
+
+\textbf{（3）分析步骤}
+
+定义分析流程：阅读函数源码 → 识别 MMIO 访问 → 确定主要功能 → 分类 → 如需替换则生成代码 → 提供分类理由。
+
+\textbf{（4）输出格式}
+
+定义结构化的 JSON 输出格式，包括函数名、分类、是否需要替换、替换代码、替换策略、置信度和分类理由。
+
+\subsubsection{结构化输出模型}
+
+LLM 的分类结果被解析为 Python 数据类，确保类型安全和字段完整性。
+
+\subsection{替换策略体系}
+
+本研究总结出四种通用替换策略，每种策略适用于特定的函数类别和使用场景。策略的选择由 LLM 根据函数的语义特征自动决定。
+
+\subsubsection{策略一：跳过硬件副作用（Skip）}
+
+\textbf{适用场景}：初始化类、控制类函数，寄存器写入对仿真无实际影响。
+
+\textbf{策略说明}：将寄存器写操作替换为无副作用语句，保留函数签名和返回值。对于仿真环境而言，外设初始化和控制操作通常不需要真实执行，因为虚拟外设的状态由仿真器管理。
+
+\subsubsection{策略二：剥离硬件代码、保留控制逻辑（Strip）}
+
+\textbf{适用场景}：发送类函数，需要保留状态更新但移除寄存器操作。
+
+\textbf{策略说明}：删除寄存器访问代码，保留状态管理逻辑（如状态变量更新）。该策略确保驱动状态机正确运行，同时避免对不存在硬件的访问。
+
+\subsubsection{策略三：替换为仿真 I/O（Redirect）}
+
+\textbf{适用场景}：接收/发送类函数，将操作重定向到仿真平台。
+
+\textbf{策略说明}：使用 LCMHal 虚拟设备接口替代硬件访问。LCMHal 是本系统设计的虚拟外设抽象层，为替换后的驱动代码提供与仿真环境交互的标准接口。
+
+\subsubsection{策略四：事件驱动模拟（Event）}
+
+\textbf{适用场景}：中断回调类函数，引入事件触发机制。
+
+\textbf{策略说明}：通过事件队列模拟硬件中断触发。在仿真环境中，硬件中断由仿真器生成的事件触发，而非真实的硬件信号。该策略将中断回调函数转换为事件处理函数。
+
+不同函数类别对应的推荐策略如表~\ref{tab:replace-strategies}所示。需要注意的是，设计阶段的函数分类（如 SEND、CTRL、POLL、DMA）在实际实现中被抽象为更细粒度的类别（如 SKIP、LOOP、NEEDCHECK 等），以更好地处理边界情况和特殊函数。该表格展示了设计阶段的概念性分类与策略映射，实际实现中的分类体系在第四章中详细阐述。
+
+\begin{table}[htbp]
+\centering
+\caption{替换策略选择指南}
+\label{tab:replace-strategies}
+\begin{tabular}{lll}
+\toprule
+\textbf{函数类别} & \textbf{推荐策略} & \textbf{说明} \\
+\midrule
+CORE & N/A & NVIC/OS内核/VTOR关键函数，不允许替换 \\
+INIT & Skip & 初始化副作用在仿真中不重要 \\
+RECV & Redirect & 从虚拟设备读取数据，保留缓冲区管理 \\
+IRQ & Event & 通过事件机制模拟中断 \\
+RETURNOK & Skip & 直接返回OK，无副作用操作 \\
+SKIP & Skip & 可直接跳过替换的函数 \\
+NEEDCHECK & Check & 需要进一步检查的函数 \\
+LOOP & Redirect & 轮询等待返回虚拟设备状态 \\
+NODRIVER & N/A & 非驱动函数，无需替换 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{替换验证机制}
+
+替换代码生成后，系统需要进行质量验证，确保生成的代码能够在编译和运行阶段正常工作。本研究设计了两个层次的验证机制：替换规则检查（Rubric）和编译测试，形成"轻量检查→完整验证"的渐进式质量保障体系。
+
+\subsubsection{替换规则检查（Rubric）}
+
+替换规则检查在代码生成后立即进行，目的是在编译之前就过滤掉明显有问题的替换代码，避免浪费编译时间和资源。
+
+本研究采用 LLM 驱动的 Rubric 检查方法。该方法的核心思想是：将原函数代码和替换代码一起提交给 LLM，让 LLM 扮演代码审查者的角色，根据预定义的规则进行判断。LLM 具备理解代码语义的能力，能够识别替换代码是否保留了原函数的关键行为，是否引入了潜在的问题。
+
+Rubric 检查的规则通过提示词（Prompt）定义，主要包括以下方面：签名一致性规则、语义保持性规则、代码合理性规则、调用关系保持规则。系统通过 LangChain 的结构化输出功能强制 LLM 按照预定义的格式输出检查结果，确保结果可以被程序正确解析。如果检查未通过，系统将检查结果（包括未通过的具体原因）反馈给生成替换代码的 LLM，触发重新生成。
+
+\subsubsection{编译测试}
+
+Rubric 检查通过后，系统进行编译测试。编译测试是替换代码质量验证的关键环节，它将替换代码集成回工程，调用构建系统执行完整的编译链接流程，验证替换代码的语法正确性和链接兼容性。
+
+编译测试的流程包括四个阶段：代码集成、构建执行、错误解析、错误修复。
+
+编译测试能够发现两类问题：第一类是语法和类型错误，如替换代码中使用了未声明的变量、类型不匹配、缺少必要的头文件等；第二类是链接错误，如替换代码调用了工程中不存在的符号、符号重复定义等。
+
+编译测试通过后，系统生成 ELF 格式的固件文件，作为后续仿真测试的输入。
+
+\subsection{编译集成设计}
+
+编译集成是驱动函数分析、替换与编译模块的最后一个环节，负责将替换后的代码集成回工程并执行编译。这一环节由 Builder Agent 负责，它是系统中专门处理构建任务的智能体。
+
+Builder Agent 的核心能力包括构建环境配置、编译错误分析和自动修复。当 Builder Agent 遇到无法自动修复的错误时，它会调用 Fixer Agent 进行针对性修复。Fixer Agent 是系统中专门处理修复任务的智能体，它接收错误信息和上下文，然后生成修复方案。修复后，Builder Agent 重新执行编译，验证修复效果。
+
+\section{动态测试反馈闭环模块设计}
+\label{sec:feedback}
+
+\subsection{动态执行环境设计}
+
+动态阶段将替换后的固件部署到仿真平台执行，统一输出运行日志、崩溃信息、执行统计和覆盖率指标。动态测试是验证替换效果的关键环节，也是反馈闭环的数据来源。本系统的动态执行环境基于 Unicorn 模拟引擎构建。
+
+\subsubsection{模拟仿真平台架构}
+
+仿真平台的系统架构采用分层设计，包括配置层、模拟层、日志层、模型层、处理层和工具层。配置层负责解析和管理固件配置，包括内存映射、符号表、处理器配置等。模拟层基于 Unicorn 实现 ARM 指令集模拟，包括内存管理、外设模拟和中断处理。日志层提供多种日志输出通道，包括调试日志、函数调用日志和 LCMHal 专用日志。模型层实现了循环检测队列和函数调用跟踪器，用于优化执行效率和收集执行信息。处理层实现了各种 HAL 函数的处理器，特别是针对 LCMHal 的 \texttt{HAL\_BE\_*} 系列函数。工具层提供了配置生成、符号提取等辅助功能。
+
+\subsubsection{内存映射与执行初始化}
+
+仿真平台实现了精确的内存映射管理。系统定义了受保护的内存类型，包括 flash（代码存储区）、ram（随机访问存储器）和 peripheral\_ram（外设 RAM），这些区域不应相互合并，确保模拟的精确性。对于 Flash 基址的检测，系统采用智能识别机制，自动从代码段（如 .text、.ivt、.interrupts 等）而非数据段确定 Flash 基址，避免因链接脚本配置差异导致的地址错误。
+
+执行初始化阶段，仿真平台实现了智能入口点选择机制。系统优先使用 Reset\_Handler 作为入口点，通过解析 ELF 符号表查找 Reset\_Handler 的地址，确保从正确的启动代码开始执行。对于包含向量表的固件，系统会从向量表中提取初始栈指针（SP）和复位向量（PC），设置模拟器的初始状态。
+
+\subsubsection{循环检测与执行优化}
+
+针对嵌入式固件初始化代码中常见的大量循环，仿真平台实现了智能循环检测机制，防止初始化代码被误判为死循环，提高模拟执行效率。
+
+循环检测采用多种策略相结合的方式。首先是跳过前 N 个唯一基本块策略，在固件初始化阶段，系统跳过对前 N 个唯一基本块的循环检测，因为这些基本块通常包含必要的初始化代码，不会构成死循环。其次是循环白名单机制，系统维护一个函数白名单（\texttt{loop\_whitelist}），对于白名单中的函数，跳过循环检测。第三是最大循环次数限制，对于不在白名单中的函数，系统记录每个基本块的执行次数，当执行次数超过配置的阈值（\texttt{max\_loop\_times}，默认为 5000 次）时，判定为异常循环并终止执行。
+
+\subsubsection{LCMHal 仿真接口设计}
+
+LCMHal（Lightweight Communication and Hardware Abstraction Layer）是本系统设计的虚拟外设接口层，为替换后的驱动代码提供仿真 I/O 能力。LCMHal 的实现分为弱符号桩函数、符号表映射和 Python 处理器三个层次。
+
+LCMHal 定义了统一的外设操作接口（init、read、write、ioctl、deinit），每种外设类型实现该接口并注册到框架中。替换后的驱动代码通过调用 LCMHal 接口与仿真环境交互，而不直接访问硬件寄存器。
+
+\subsection{Emulator Runner Agent 设计}
+
+Emulator Runner Agent 是系统中负责执行仿真的智能体，它将编译后的固件部署到 Unicorn 引擎，监控运行状态，采集日志数据，并在出现问题时生成反馈信息。
+
+Agent 的核心职责包括：仿真环境准备、固件加载、执行监控、结果分析。
+
+Agent 的实现基于 LangGraph 框架，具有状态管理和循环执行的能力。Agent 通过工具调用与仿真环境交互，工具包括：启动仿真器、停止仿真器、读取日志、检查状态等。Agent 的决策逻辑由 LLM 驱动，LLM 根据当前的运行状态和日志信息，决定是否需要继续运行、是否需要调整仿真参数、是否需要生成反馈等。
+
+\subsection{反馈信息结构化设计}
+
+仿真运行产生的原始日志通常是大量的、非结构化的文本信息，包含大量的调试输出、警告信息、错误堆栈等。直接将这些原始信息反馈给上游模块（如 Fixer Agent）效果不佳，因为原始日志中包含大量无关信息，关键信息难以提取。因此，系统需要对原始日志进行结构化处理，提取关键信息，形成简洁、准确的反馈摘要。
+
+反馈摘要的数据结构设计考虑了信息完整性和可用性的平衡。摘要包含失败类型、关键证据、关联函数、复现输入和修复建议。这些信息为上游模块提供了足够的信息来定位和修复问题。
+
+错误类型分类是反馈结构化的第一步，不同类型的错误需要不同的处理策略。系统通过解析编译器输出、链接器输出和仿真器日志，自动判断错误类型，然后调用相应的处理策略。
+
+\subsection{迭代优化机制设计}
+
+动态测试反馈闭环的核心是迭代优化机制。当仿真运行发现问题时，系统不会简单地报告失败，而是启动一个迭代优化流程，通过多轮的"问题分析→代码修复→重新测试"，逐步解决运行时问题。
+
+迭代优化由 Fixer Agent 驱动。当 Emulator Runner Agent 检测到运行失败时，它将反馈摘要传递给 Fixer Agent。Fixer Agent 是系统中专门处理运行时修复的智能体，它接收反馈摘要、出错的替换代码、原函数代码等上下文信息，然后生成修复方案。Fixer Agent 的修复策略包括：调整等待条件的实现、修正状态管理逻辑、调整替换策略、重新生成替换代码等。修复代码生成后，系统将其应用到源文件，重新执行编译和仿真，验证修复效果。如果问题仍然存在，系统继续下一轮的迭代优化，直到问题解决或达到重试上限。
+
+\section{本章小结}
+\label{sec:design_summary}
+
+本章详细阐述了基于驱动程序替换的固件仿真系统的设计。系统采用分层模块化架构，实现了从静态识别到动态反馈的完整闭环。
+
+系统的主要设计包括：
+
+\textbf{（1）静态分析模块设计}：基于 CodeQL 实现驱动函数和 MMIO 访问的自动识别，支持三种 MMIO 定位模式和八类函数语义分类，为智能替换提供准确的"硬件依赖画像"。
+
+\textbf{（2）LLM 驱动的替换模块设计}：采用 LangGraph 智能体架构，实现驱动函数的自动分类和代码替换。系统设计了四种替换策略（Skip、Strip、Redirect、Event），支持不同类型驱动函数的语义保持替换。
+
+\textbf{（3）动态测试反馈闭环设计}：在 Unicorn 引擎中运行固件，通过 LCMHal 虚拟外设接口实现仿真 I/O。系统建立了完整的反馈机制，能够自动检测运行问题并触发修复流程。
+
+该设计实现了"静态识别→智能替换→构建验证→动态反馈"的完整闭环，为后续实现和实验验证奠定了坚实基础。第四章将详细介绍这些设计的具体实现。
