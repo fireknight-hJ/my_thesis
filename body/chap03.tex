@@ -198,13 +198,13 @@ void main(void) {
 
 \subsection{驱动函数定位}
 
-静态分析模块的核心任务是识别固件中的驱动函数，为后续的智能替换提供目标列表。本研究采用简单直接的定位准则：\textbf{凡是包含 MMIO 访问的函数，均定义为驱动函数}。这一定位准则基于硬件交互的直接性、分析的可靠性和替换的必要性三方面考虑。
-
-驱动函数识别的流程如下：首先通过三种定位模式识别代码中的所有 MMIO 结构体实例；然后对每个 MMIO 结构体实例，追踪其字段访问表达式，记录访问的字段名、访问类型（读/写）、所在语句和所在函数；接着对所有包含 MMIO 字段访问的函数进行汇总，形成驱动函数列表；最后分析驱动函数之间的调用关系，构建函数调用图。
+静态分析模块的核心任务是识别固件中的驱动函数，为后续的智能替换提供目标列表。本研究采用简单直接的定位准则：\textbf{凡是包含 MMIO 访问的函数，均定义为驱动函数}。这一定位准则的合理性在于：MMIO 访问是固件与硬件交互的最底层方式，包含寄存器读写的函数必然与硬件强相关，这类函数在仿真环境中无法直接执行，需要进行替换处理；而不包含 MMIO 访问的函数通常是纯软件逻辑，如数据处理、协议解析、状态管理等，在仿真环境中可以直接运行，无需替换。
 
 设 $F$ 为固件中的函数集合，$M$ 为 MMIO 结构体实例集合，$A(f, m)$ 为谓词"函数 $f$ 访问 MMIO 实例 $m$ 的字段"，则驱动函数集合 $D$ 定义为：
 
 $$D = \{f \in F \mid \exists m \in M: A(f, m)\}$$
+
+驱动函数识别的流程如下：首先通过三种定位模式识别代码中的所有 MMIO 结构体实例；然后对每个 MMIO 结构体实例，追踪其字段访问表达式，记录访问的字段名、访问类型（读/写）、所在语句和所在函数；接着对所有包含 MMIO 字段访问的函数进行汇总，形成驱动函数列表；最后分析驱动函数之间的调用关系，构建函数调用图。
 
 \subsection{分析与识别模块实现}
 
@@ -214,7 +214,7 @@ $$D = \{f \in F \mid \exists m \in M: A(f, m)\}$$
 
 针对三种 MMIO 定位模式，本研究设计了相应的查询规则。查询从 CodeQL 数据库中提取所有符合 MMIO 结构体特征的变量及其初始化表达式。查询的核心设计思想是将"寄存器字段访问"追溯到一个可被 CodeQL 稳定描述的基对象表达式。
 
-\begin{lstlisting}[style=Python,language=Python, caption={MMIO表达式收集查询示例}]
+\begin{lstlisting}[style=CodeQL,language=CodeQL, caption={MMIO表达式收集查询示例}]
 import cpp
 import libraries.MMIOAnalyzer
 
@@ -236,7 +236,7 @@ select expr.toString(),
 
 对于"间接初始化"和"常量指针参数"模式，查询采用数据流追踪策略，通过追踪赋值语句和函数参数来识别 MMIO 实例。常量基址的追踪利用 CodeQL 提供的数据流和污点追踪能力，将"常量大值表达式（外设基址）"追踪到后续的变量访问/解引用位置。
 
-\begin{lstlisting}[style=Python,language=Python, caption={常量基址数据流追踪查询示例}]
+\begin{lstlisting}[style=CodeQL,language=CodeQL, caption={常量基址数据流追踪查询示例}]
 predicate isMMIOConstantExpr(ConstantExpr src_mmio) {
     exists( DataFlow::Node source, DataFlow::Node sink, Expr varAccess, 
              PointerDereferenceExpr deref | 
@@ -264,7 +264,7 @@ predicate isMMIOTracedExpr(Expr e) {
 
 对于"函数第 0 个参数是指针类型，实参是常量大值表达式"的情况，查询通过函数调用关系和参数类型匹配，定位"把常量基址传给接受结构体指针的驱动函数"的调用点。
 
-\begin{lstlisting}[style=Python,language=Python, caption={函数参数类型匹配查询示例}]
+\begin{lstlisting}[style=CodeQL,language=CodeQL, caption={函数参数类型匹配查询示例}]
 predicate isMMIOStructure_MK(Struct s){
     exists( FunctionCall call, Expr e, TypedefType typeDef | 
         call.getTarget().getParameter(0).getType() instanceof PointerType and
