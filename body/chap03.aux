@@ -14,11 +14,11 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.2.1}MMIO 访问模式识别}{25}{subsection.3.2.1}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {3.1}{\ignorespaces MMIO 结构体实例定位模式对比\relax }}{26}{table.caption.8}\protected@file@percent }
 \newlabel{tab:mmio-patterns}{{3.1}{26}{MMIO 结构体实例定位模式对比\relax }{table.caption.8}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2.2}静态分析实现}{26}{subsection.3.2.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.2.1}查询规则设计}{26}{subsubsection.3.2.2.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.2.2}驱动函数定位}{27}{subsubsection.3.2.2.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.2.3}数据流追踪}{28}{subsubsection.3.2.2.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.2.4}统一数据模型}{28}{subsubsection.3.2.2.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2.2}驱动函数定位}{26}{subsection.3.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2.3}静态分析实现}{27}{subsection.3.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.3.1}查询规则设计}{27}{subsubsection.3.2.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.3.2}数据流追踪}{28}{subsubsection.3.2.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.3.3}统一数据模型}{28}{subsubsection.3.2.3.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {3.3}驱动函数分析、替换与编译模块}{28}{section.3.3}\protected@file@percent }
 \newlabel{sec:builder}{{3.3}{28}{驱动函数分析、替换与编译模块}{section.3.3}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.3.1}智能体工作流设计}{29}{subsection.3.3.1}\protected@file@percent }
@@ -33,19 +33,19 @@
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.2.2}结构化输出模型}{31}{subsubsection.3.3.2.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.3.3}替换策略体系}{31}{subsection.3.3.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.3.1}策略一：跳过硬件副作用（Skip）}{31}{subsubsection.3.3.3.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.3.2}策略二：剥离硬件代码、保留控制逻辑（Strip）}{32}{subsubsection.3.3.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.3.2}策略二：剥离硬件代码、保留控制逻辑（Strip）}{31}{subsubsection.3.3.3.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.3.3}策略三：替换为仿真 I/O（Redirect）}{32}{subsubsection.3.3.3.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.3.4}策略四：事件驱动模拟（Event）}{33}{subsubsection.3.3.3.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.3.4}策略四：事件驱动模拟（Event）}{32}{subsubsection.3.3.3.4}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {3.2}{\ignorespaces 替换策略选择指南\relax }}{33}{table.caption.11}\protected@file@percent }
 \newlabel{tab:replace-strategies}{{3.2}{33}{替换策略选择指南\relax }{table.caption.11}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.3.4}替换验证机制}{33}{subsection.3.3.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.4.1}替换规则检查（Rubric）}{34}{subsubsection.3.3.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.4.1}替换规则检查（Rubric）}{33}{subsubsection.3.3.4.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.4.2}编译测试}{34}{subsubsection.3.3.4.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.3.5}编译集成}{35}{subsection.3.3.5}\protected@file@percent }
 \@writefile{lof}{\contentsline {figure}{\numberline {3.4}{\ignorespaces 编译错误修复闭环\relax }}{35}{figure.caption.12}\protected@file@percent }
 \newlabel{fig:build-loop}{{3.4}{35}{编译错误修复闭环\relax }{figure.caption.12}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {3.4}动态测试反馈闭环模块}{36}{section.3.4}\protected@file@percent }
-\newlabel{sec:feedback}{{3.4}{36}{动态测试反馈闭环模块}{section.3.4}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3.4}动态测试反馈闭环模块}{35}{section.3.4}\protected@file@percent }
+\newlabel{sec:feedback}{{3.4}{35}{动态测试反馈闭环模块}{section.3.4}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.4.1}动态执行环境}{36}{subsection.3.4.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {3.4.1.1}内存映射与执行初始化}{36}{subsubsection.3.4.1.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {3.4.1.2}循环检测与执行优化}{37}{subsubsection.3.4.1.2}\protected@file@percent }
