@@ -9,44 +9,44 @@ A level-1 auxiliary file: body/conclusion.aux
 A level-1 auxiliary file: body/ack.aux
 The style file: HUSTThesis.bst
 Database file #1: ref/refs.bib
-You've used 39 entries,
+You've used 40 entries,
             2256 wiz_defined-function locations,
-            663 strings with 10149 characters,
-and the built_in function-call counts, 7654 in all, are:
-= -- 618
-> -- 644
+            672 strings with 10362 characters,
+and the built_in function-call counts, 7923 in all, are:
+= -- 644
+> -- 669
 < -- 0
-+ -- 306
-- -- 153
-* -- 318
-:= -- 1280
-add.period$ -- 78
-call.type$ -- 39
++ -- 318
+- -- 159
+* -- 340
+:= -- 1327
+add.period$ -- 80
+call.type$ -- 40
 change.case$ -- 0
 chr.to.int$ -- 0
-cite$ -- 39
-duplicate$ -- 295
-empty$ -- 616
-format.name$ -- 185
-if$ -- 1722
+cite$ -- 40
+duplicate$ -- 301
+empty$ -- 627
+format.name$ -- 192
+if$ -- 1780
 int.to.chr$ -- 0
-int.to.str$ -- 39
-missing$ -- 32
-newline$ -- 198
-num.names$ -- 39
-pop$ -- 175
+int.to.str$ -- 40
+missing$ -- 33
+newline$ -- 203
+num.names$ -- 40
+pop$ -- 174
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 0
-skip$ -- 351
+skip$ -- 361
 stack$ -- 0
-substring$ -- 36
-swap$ -- 20
+substring$ -- 51
+swap$ -- 19
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 0
 warning$ -- 0
-while$ -- 42
-width$ -- 41
-write$ -- 387
+while$ -- 44
+width$ -- 42
+write$ -- 398

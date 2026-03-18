@@ -5,10 +5,10 @@
 \newblock The Mobile Economy 2020.
 \newblock \url{https://www.gsma.com/mobileeconomy/}, 2020
 
-\bibitem{liteos}
-{Huawei}.
-\newblock Huawei LiteOS.
-\newblock \url{https://www.huawei.com/en/products/iot/operating-system}
+\bibitem{openharmony}
+{OpenHarmony Community}.
+\newblock OpenHarmony - Open Source Project.
+\newblock \url{https://www.openharmony.cn/mainPlay}
 
 \bibitem{freertos}
 {Amazon Web Services}.
@@ -101,13 +101,6 @@ Jiongyi Chen, Wenrui Diao, Qingchuan Zhao, Chaoshun Zuo, Zhiqiang Lin, XiaoFeng
 \newblock IoTFuzzer: Discovering Memory Corruptions in IoT Through App-based
   Fuzzing.
 \newblock In: NDSS, 2018
-
-\bibitem{firmalice}
-Yan Shoshitaishvili, Ruoyu Wang, Christophe Hauser, Christopher Kruegel,
-  Giovanni Vigna.
-\newblock Firmalice: Automatic Detection of Authentication Bypass
-  Vulnerabilities in Binary Firmware.
-\newblock In: NDSS, 2015
 
 \bibitem{openai2023gpt4}
 OpenAI.
@@ -220,6 +213,18 @@ Tianyu Wang, et~al.
 {RT-Thread Community}.
 \newblock RT-Thread: An Open Source Embedded Real-Time Operating System.
 \newblock \url{https://www.rt-thread.org/}
+
+\bibitem{Yao_2022}
+Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik Narasimhan,
+  et~al.
+\newblock ReAct: Synergizing Reasoning and Acting in Language Models.
+\newblock arXiv preprint arXiv:2210.03629, 2022
+
+\bibitem{dong2024selfcollaboration}
+Y.~Dong, X.~Jiang, Z.~Jin, G.~Li.
+\newblock Self-Collaboration Code Generation via ChatGPT.
+\newblock ACM Transactions on Software Engineering and Methodology, 2024,
+  33(7): 1--38
 
 \bibitem{afl}
 Michal Zalewski.
