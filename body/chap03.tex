@@ -391,31 +391,39 @@ class FunctionInfo:
 
 \subsubsection{函数分类策略}
 
-系统使用大语言模型对驱动函数进行自动分类，通过识别函数与硬件的交互模式，为后续的替换策略选择提供依据。函数分类是整个替换流程的基础，准确的分类能够确保每个函数采用最适合的替换策略，从而保证替换后代码的正确性和仿真环境的稳定性。
+驱动函数替换的核心挑战在于不同类型的驱动函数与硬件交互的方式和语义要求存在显著差异。采用"一刀切"的统一替换策略无法准确处理各类函数的特殊性，容易导致仿真异常或语义丢失。因此，系统在替换前先对驱动函数进行语义分类，根据函数类别选择最合适的替换策略，从而确保替换后代码的正确性和仿真环境的稳定性。
 
-分类策略基于对嵌入式驱动函数的硬件交互模式的分析，将函数划分为以下类别：
+函数分类策略的核心价值在于：
+1. \textbf{精确语义保持}：不同类型的函数需要保留的核心业务逻辑不同。例如，初始化类函数只需保留函数签名和返回值，而发送类函数需要保留状态管理逻辑。通过分类，系统可以针对每类函数的特点选择最合适的替换策略，确保关键语义不丢失。
+2. \textbf{提高替换准确性}：统一替换策略难以兼顾各类函数的特殊需求。例如，中断回调类函数需要引入事件触发机制，而轮询类函数需要返回虚拟设备状态。分类后，系统可以为每类函数选择专门的替换策略，大幅提高替换的准确性。
+3. \textbf{避免误删误改}：不进行分类直接替换容易误删重要的业务逻辑或保留不必要的硬件依赖。例如，纯软件函数（NODRIVER）不需要任何替换，而初始化函数（INIT）只需要跳过硬件副作用。分类确保每个函数都能得到恰到好处的处理。
+4. \textbf{优化仿真性能}：分类后的替换策略可以针对不同类型的函数进行优化。例如，对于不需要真实硬件操作的控制类函数，直接跳过可以避免无效的仿真开销；对于需要数据交互的收发类函数，通过重定向到虚拟设备可以实现高效的仿真 I/O。
 
-\textbf{RECV（接收类）}：从硬件寄存器读取数据的函数。这类函数通常负责读取外设的状态、接收数据缓冲区内容等，如 UART 接收函数、SPI 接收函数等。
+系统基于大语言模型实现驱动函数的自动分类。LLM 通过读取函数源码、识别 MMIO 访问模式、判断函数主要用途等步骤，将函数分类到预定义的类别。分类策略基于对嵌入式驱动函数硬件交互模式的分析，将函数划分为以下类别，如表~\ref{tab:function-categories}所示。
 
-\textbf{SEND（发送类）}：向硬件寄存器写入数据的函数。这类函数负责向外部设备发送数据，如 UART 发送函数、I2C 发送函数等。
-
-\textbf{IRQ（中断处理类）}：中断处理程序和中断回调函数。这类函数在硬件中断触发时被调用，处理中断事件，如 UART 接收完成中断回调、定时器中断处理函数等。
-
-\textbf{INIT（初始化类）}：外设初始化函数。这类函数负责配置外设的寄存器，使能外设功能，如 UART 初始化、GPIO 初始化等。
-
-\textbf{CTRL（控制类）}：控制函数，如启动、停止、模式切换等操作。这类函数对硬件执行控制命令，如 UART 启用/禁用、DMA 启动等。
-
-\textbf{POLL（轮询类）}：轮询函数，检查硬件状态位。这类函数通常在主循环或等待函数中使用，轮询外设的状态标志，如 UART 传输完成检查、DMA 传输完成检查等。
-
-\textbf{DMA（DMA 配置类）}：DMA 配置函数。这类函数负责配置 DMA 控制器，设置 DMA 传输参数，如 DMA 通道配置、DMA 传输启动等。
-
-\textbf{NODRIVER（纯软件函数）}：纯软件函数，不涉及硬件访问。这类函数不包含 MMIO 访问，在仿真环境中可以直接运行，无需替换。
+\begin{table}[htbp]
+\centering
+\caption{驱动函数分类体系}
+\label{tab:function-categories}
+\begin{tabular}{lllp{8cm}}
+\toprule
+\textbf{类别} & \textbf{缩写} & \textbf{描述} & \textbf{典型函数} \\
+\midrule
+接收类 & RECV & 从硬件/寄存器读取数据 & \texttt{HAL\_UART\_Receive}, \texttt{HAL\_SPI\_Receive} \\
+发送类 & SEND & 将数据写入寄存器/外设 & \texttt{HAL\_UART\_Transmit}, \texttt{HAL\_SPI\_Transmit} \\
+中断类 & IRQ & 中断处理函数/回调 & \texttt{HAL\_UART\_IRQHandler}, \texttt{USART1\_IRQHandler} \\
+初始化类 & INIT & 外设初始化 & \texttt{HAL\_UART\_Init}, \texttt{MX\_USART1\_UART\_Init} \\
+控制类 & CTRL & 启停、模式切换 & \texttt{HAL\_UART\_Start}, \texttt{HAL\_UART\_Stop} \\
+轮询类 & POLL & 轮询状态位 & \texttt{HAL\_UART\_GetState}, \texttt{\_\_HAL\_UART\_GET\_FLAG} \\
+DMA 配置类 & DMA & 配置 DMA 传输 & \texttt{HAL\_UART\_Transmit\_DMA} \\
+非驱动 & NODRIVER & 不需要替换的函数 & 纯业务逻辑函数 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \subsubsection{替换策略体系}
 
-本研究总结出四种通用替换策略，每种策略适用于特定的函数类别和使用场景。策略的选择由 LLM 根据函数的语义特征自动决定。
-
-不同函数类别对应的推荐策略如表~\ref{tab:replace-strategies}所示。
+本研究总结出四种通用替换策略，每种策略适用于特定的函数类别和使用场景。策略的选择由 LLM 根据函数的语义特征自动决定。不同函数类别对应的推荐策略如表~\ref{tab:replace-strategies}所示。
 
 \begin{table}[htbp]
 \centering
@@ -436,13 +444,13 @@ DMA & Redirect & 使用虚拟 DMA 接口 \\
 \end{tabular}
 \end{table}
 
-\textbf{策略一：跳过硬件副作用（Skip）}
+\textbf{策略1：跳过硬件副作用（Skip）}
 
-适用于：初始化类、控制类函数。
+适用于：初始化类、控制类函数，寄存器写入对仿真无实际影响。
 
 该策略将寄存器写操作替换为无副作用语句，保留函数签名和返回值。对于仿真环境而言，外设初始化和控制操作通常不需要真实执行，因为虚拟外设的状态由仿真器管理。
 
-以下代码展示了 Skip 策略的应用。原始函数 \texttt{HAL\_UART\_Enable} 通过设置控制寄存器使能 UART 外设。在仿真环境中，这个操作没有必要，因为虚拟 UART 的状态由仿真器管理。替换后的代码仅保留函数签名，并通过 \texttt{(void)huart;} 语句抑制编译器对未使用参数的警告。
+代码示例如下：
 
 \begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt]
 // 原始代码
@@ -450,34 +458,22 @@ void HAL_UART_Enable(UART_HandleTypeDef *huart) {
     huart->Instance->CR1 |= USART_CR1_UE;
 }
 
-// 替换代码（Skip 策略）
+// 替换代码
 void HAL_UART_Enable(UART_HandleTypeDef *huart) {
     (void)huart;
 }
 \end{lstlisting}
 
-\textbf{策略二：剥离硬件代码、保留控制逻辑（Strip）}
+\textbf{策略2：剥离硬件代码、保留控制逻辑（Strip）}
 
-适用于：发送类函数。
+适用于：发送类函数，需要保留状态更新但移除寄存器操作。
 
 该策略删除寄存器访问代码，保留状态管理逻辑（如状态变量更新）。该策略确保驱动状态机正确运行，同时避免对不存在硬件的访问。
 
-以下代码展示了 Strip 策略的应用。原始函数 \texttt{HAL\_UART\_Transmit} 通过循环将数据写入 UART 数据寄存器，并轮询等待发送完成。替换后的代码删除了寄存器写操作和轮询等待，保留了驱动状态机的状态更新（\texttt{gState}），将实际的发送操作委托给 \texttt{lcmhal\_uart\_transmit} 函数。
+代码示例如下：
 
 \begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt]
-// 原始代码
-HAL_StatusTypeDef HAL_UART_Transmit(UART_HandleTypeDef *huart, 
-                                     uint8_t *pData, uint16_t Size) {
-    huart->gState = HAL_UART_STATE_BUSY_TX;
-    for (int i = 0; i < Size; i++) {
-        huart->Instance->DR = pData[i];
-        while (!(huart->Instance->SR & USART_SR_TXE));
-    }
-    huart->gState = HAL_UART_STATE_READY;
-    return HAL_OK;
-}
-
-// 替换代码（Strip 策略）
+// 替换代码
 HAL_StatusTypeDef HAL_UART_Transmit(UART_HandleTypeDef *huart, 
                                      uint8_t *pData, uint16_t Size) {
     huart->gState = HAL_UART_STATE_BUSY_TX;
@@ -487,27 +483,16 @@ HAL_StatusTypeDef HAL_UART_Transmit(UART_HandleTypeDef *huart,
 }
 \end{lstlisting}
 
-\textbf{策略三：替换为仿真 I/O（Redirect）}
+\textbf{策略3：替换为仿真 I/O（Redirect）}
 
-适用于：接收/发送类函数。
+适用于：接收/发送类函数，将操作重定向到仿真平台。
 
-该策略使用 LCMHal 虚拟设备接口替代硬件访问。LCMHal 是本系统设计的虚拟外设抽象层，为替换后的驱动代码提供与仿真环境交互的标准接口。
+该策略使用 LCMHal 虚拟设备接口替代硬件访问，为替换后的驱动代码提供与仿真环境交互的标准接口。
 
-以下代码展示了 Redirect 策略的应用。原始函数 \texttt{HAL\_UART\_Receive} 通过轮询状态寄存器等待数据可用，然后从数据寄存器读取数据。替换后的代码直接调用 \texttt{lcmhal\_uart\_receive}，将 I/O 操作重定向到虚拟 UART 设备，避免了硬件等待逻辑。
+代码示例如下：
 
 \begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt]
-// 原始代码
-HAL_StatusTypeDef HAL_UART_Receive(UART_HandleTypeDef *huart, 
-                                    uint8_t *pData, uint16_t Size, 
-                                    uint32_t Timeout) {
-    for (int i = 0; i < Size; i++) {
-        while (!(huart->Instance->SR & USART_SR_RXNE));
-        pData[i] = (uint8_t)(huart->Instance->DR & 0xFF);
-    }
-    return HAL_OK;
-}
-
-// 替换代码（Redirect 策略）
+// 替换代码
 HAL_StatusTypeDef HAL_UART_Receive(UART_HandleTypeDef *huart, 
                                     uint8_t *pData, uint16_t Size, 
                                     uint32_t Timeout) {
@@ -515,26 +500,18 @@ HAL_StatusTypeDef HAL_UART_Receive(UART_HandleTypeDef *huart,
 }
 \end{lstlisting}
 
-\textbf{策略四：事件驱动模拟（Event）}
+\textbf{策略4：事件驱动模拟（Event）}
 
-适用于：中断回调类函数。
+适用于：中断回调类函数，引入事件触发机制。
 
 该策略通过事件队列模拟硬件中断触发。在仿真环境中，硬件中断由仿真器生成的事件触发，而非真实的硬件信号。
 
-以下代码展示了 Event 策略的应用。原始函数 \texttt{HAL\_UART\_RxCpltCallback} 是用户实现的中断回调，处理接收完成后的数据。替换后的代码在调用用户回调前，先通过 \texttt{lcmhal\_event\_post} 将事件发布到事件队列，触发后续的事件处理流程。
+代码示例如下：
 
 \begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt]
-// 原始代码
+// 替换代码
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
-    process_received_data(huart->pRxBuffPtr);
-}
-
-// 替换代码（Event 策略）
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
-    lcmhal_event_t event = {
-        .type = LCMHAL_EVENT_UART_RX_COMPLETE,
-        .handle = huart
-    };
+    lcmhal_event_t event = {.type = LCMHAL_EVENT_UART_RX_COMPLETE, .handle = huart};
     lcmhal_event_post(&event);
     process_received_data(huart->pRxBuffPtr);
 }
