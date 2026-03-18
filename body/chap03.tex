@@ -389,21 +389,27 @@ class FunctionInfo:
 
 为实现语义保持的驱动函数替换，本研究在替换前先对驱动函数进行语义分类，并基于分类结果选择对应替换策略，避免硬件依赖被误删或替换不足导致仿真异常。
 
-\subsubsection{分类提示词设计}
+\subsubsection{函数分类策略}
 
-系统使用精心设计的提示词（Prompt）引导 LLM 进行函数分类。提示词的设计直接影响分类的准确性和一致性。本研究采用结构化的提示词模板，包含以下组成部分：
+系统使用大语言模型对驱动函数进行自动分类，通过识别函数与硬件的交互模式，为后续的替换策略选择提供依据。函数分类是整个替换流程的基础，准确的分类能够确保每个函数采用最适合的替换策略，从而保证替换后代码的正确性和仿真环境的稳定性。
 
-\textbf{（1）角色定义}。明确 LLM 扮演的角色是固件驱动分析专家，建立分析的上下文。
+分类策略基于对嵌入式驱动函数的硬件交互模式的分析，将函数划分为以下类别：
 
-\textbf{（2）分类标准}。详细定义每个类别的判断标准，包括 RECV（读取数据）、SEND（发送数据）、IRQ（中断处理）、INIT（初始化）、CTRL（控制）、POLL（轮询）、DMA（DMA 配置）、NODRIVER（纯软件函数）等。
+\textbf{RECV（接收类）}：从硬件寄存器读取数据的函数。这类函数通常负责读取外设的状态、接收数据缓冲区内容等，如 UART 接收函数、SPI 接收函数等。
 
-\textbf{（3）分析步骤}。包括读取函数源码、识别 MMIO 访问、确定主要功能目的、分类并给出理由等步骤。
+\textbf{SEND（发送类）}：向硬件寄存器写入数据的函数。这类函数负责向外部设备发送数据，如 UART 发送函数、I2C 发送函数等。
 
-\textbf{（4）输出格式}。定义 JSON 格式，包含函数名、类别、是否需要替换、替换代码、替换策略、置信度和推理等字段。
+\textbf{IRQ（中断处理类）}：中断处理程序和中断回调函数。这类函数在硬件中断触发时被调用，处理中断事件，如 UART 接收完成中断回调、定时器中断处理函数等。
 
-\subsubsection{结构化输出模型}
+\textbf{INIT（初始化类）}：外设初始化函数。这类函数负责配置外设的寄存器，使能外设功能，如 UART 初始化、GPIO 初始化等。
 
-LLM 的分类结果被解析为 Python 数据类，包含函数名、分类、是否需要替换、替换代码、替换策略、置信度和推理等字段。系统使用 LangChain 的结构化输出功能，将 LLM 的 JSON 输出自动解析为该数据类，确保类型安全和字段完整性。
+\textbf{CTRL（控制类）}：控制函数，如启动、停止、模式切换等操作。这类函数对硬件执行控制命令，如 UART 启用/禁用、DMA 启动等。
+
+\textbf{POLL（轮询类）}：轮询函数，检查硬件状态位。这类函数通常在主循环或等待函数中使用，轮询外设的状态标志，如 UART 传输完成检查、DMA 传输完成检查等。
+
+\textbf{DMA（DMA 配置类）}：DMA 配置函数。这类函数负责配置 DMA 控制器，设置 DMA 传输参数，如 DMA 通道配置、DMA 传输启动等。
+
+\textbf{NODRIVER（纯软件函数）}：纯软件函数，不涉及硬件访问。这类函数不包含 MMIO 访问，在仿真环境中可以直接运行，无需替换。
 
 \subsubsection{替换策略体系}
 
@@ -430,30 +436,33 @@ DMA & Redirect & 使用虚拟 DMA 接口 \\
 \end{tabular}
 \end{table}
 
-\subsubsection{策略一：跳过硬件副作用（Skip）}
+\textbf{策略一：跳过硬件副作用（Skip）}
 
-\textbf{适用场景}：初始化类、控制类函数，寄存器写入对仿真无实际影响。
+适用于：初始化类、控制类函数。
 
-\textbf{策略说明}：将寄存器写操作替换为无副作用语句，保留函数签名和返回值。对于仿真环境而言，外设初始化和控制操作通常不需要真实执行，因为虚拟外设的状态由仿真器管理。
+该策略将寄存器写操作替换为无副作用语句，保留函数签名和返回值。对于仿真环境而言，外设初始化和控制操作通常不需要真实执行，因为虚拟外设的状态由仿真器管理。
+
+以下代码展示了 Skip 策略的应用。原始函数 \texttt{HAL\_UART\_Enable} 通过设置控制寄存器使能 UART 外设。在仿真环境中，这个操作没有必要，因为虚拟 UART 的状态由仿真器管理。替换后的代码仅保留函数签名，并通过 \texttt{(void)huart;} 语句抑制编译器对未使用参数的警告。
 
 \begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt]
 // 原始代码
 void HAL_UART_Enable(UART_HandleTypeDef *huart) {
-    huart->Instance->CR1 |= USART_CR1_UE;  // 使能 UART
+    huart->Instance->CR1 |= USART_CR1_UE;
 }
 
 // 替换代码（Skip 策略）
 void HAL_UART_Enable(UART_HandleTypeDef *huart) {
-    // Skip: Hardware side effect not needed in emulation
-    (void)huart;  // Suppress unused parameter warning
+    (void)huart;
 }
 \end{lstlisting}
 
-\subsubsection{策略二：剥离硬件代码、保留控制逻辑（Strip）}
+\textbf{策略二：剥离硬件代码、保留控制逻辑（Strip）}
 
-\textbf{适用场景}：发送类函数，需要保留状态更新但移除寄存器操作。
+适用于：发送类函数。
 
-\textbf{策略说明}：删除寄存器访问代码，保留状态管理逻辑（如状态变量更新）。该策略确保驱动状态机正确运行，同时避免对不存在硬件的访问。
+该策略删除寄存器访问代码，保留状态管理逻辑（如状态变量更新）。该策略确保驱动状态机正确运行，同时避免对不存在硬件的访问。
+
+以下代码展示了 Strip 策略的应用。原始函数 \texttt{HAL\_UART\_Transmit} 通过循环将数据写入 UART 数据寄存器，并轮询等待发送完成。替换后的代码删除了寄存器写操作和轮询等待，保留了驱动状态机的状态更新（\texttt{gState}），将实际的发送操作委托给 \texttt{lcmhal\_uart\_transmit} 函数。
 
 \begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt]
 // 原始代码
@@ -472,19 +481,19 @@ HAL_StatusTypeDef HAL_UART_Transmit(UART_HandleTypeDef *huart,
 HAL_StatusTypeDef HAL_UART_Transmit(UART_HandleTypeDef *huart, 
                                      uint8_t *pData, uint16_t Size) {
     huart->gState = HAL_UART_STATE_BUSY_TX;
-    // Strip: Remove register writes, keep state management
-    // In emulation, output goes to virtual UART device
     lcmhal_uart_transmit(huart->Instance, pData, Size);
     huart->gState = HAL_UART_STATE_READY;
     return HAL_OK;
 }
 \end{lstlisting}
 
-\subsubsection{策略三：替换为仿真 I/O（Redirect）}
+\textbf{策略三：替换为仿真 I/O（Redirect）}
 
-\textbf{适用场景}：接收/发送类函数，将操作重定向到仿真平台。
+适用于：接收/发送类函数。
 
-\textbf{策略说明}：使用 LCMHal 虚拟设备接口替代硬件访问。LCMHal 是本系统设计的虚拟外设抽象层，为替换后的驱动代码提供与仿真环境交互的标准接口。
+该策略使用 LCMHal 虚拟设备接口替代硬件访问。LCMHal 是本系统设计的虚拟外设抽象层，为替换后的驱动代码提供与仿真环境交互的标准接口。
+
+以下代码展示了 Redirect 策略的应用。原始函数 \texttt{HAL\_UART\_Receive} 通过轮询状态寄存器等待数据可用，然后从数据寄存器读取数据。替换后的代码直接调用 \texttt{lcmhal\_uart\_receive}，将 I/O 操作重定向到虚拟 UART 设备，避免了硬件等待逻辑。
 
 \begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt]
 // 原始代码
@@ -502,27 +511,26 @@ HAL_StatusTypeDef HAL_UART_Receive(UART_HandleTypeDef *huart,
 HAL_StatusTypeDef HAL_UART_Receive(UART_HandleTypeDef *huart, 
                                     uint8_t *pData, uint16_t Size, 
                                     uint32_t Timeout) {
-    // Redirect: Use LCMHal virtual device for I/O
     return lcmhal_uart_receive(huart->Instance, pData, Size, Timeout);
 }
 \end{lstlisting}
 
-\subsubsection{策略四：事件驱动模拟（Event）}
+\textbf{策略四：事件驱动模拟（Event）}
 
-\textbf{适用场景}：中断回调类函数，引入事件触发机制。
+适用于：中断回调类函数。
 
-\textbf{策略说明}：通过事件队列模拟硬件中断触发。在仿真环境中，硬件中断由仿真器生成的事件触发，而非真实的硬件信号。
+该策略通过事件队列模拟硬件中断触发。在仿真环境中，硬件中断由仿真器生成的事件触发，而非真实的硬件信号。
+
+以下代码展示了 Event 策略的应用。原始函数 \texttt{HAL\_UART\_RxCpltCallback} 是用户实现的中断回调，处理接收完成后的数据。替换后的代码在调用用户回调前，先通过 \texttt{lcmhal\_event\_post} 将事件发布到事件队列，触发后续的事件处理流程。
 
 \begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt]
 // 原始代码
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
-    // 用户实现的回调
     process_received_data(huart->pRxBuffPtr);
 }
 
 // 替换代码（Event 策略）
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
-    // Event: Trigger callback through event mechanism
     lcmhal_event_t event = {
         .type = LCMHAL_EVENT_UART_RX_COMPLETE,
         .handle = huart
@@ -532,9 +540,9 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 }
 \end{lstlisting}
 
-采用多智能体协作的工作流设计具有多方面优势：首先是职责分离与专业化，每个智能体专注于特定领域的任务；其次是可扩展性与灵活性，智能体通过工具接口进行交互；再次是状态管理与错误恢复，LangGraph 架构提供了强大的状态管理能力；最后是质量保障的多重验证，工作流通过代码审查、编译验证和修复验证三重质量保障机制，确保替换代码的正确性和可靠性。
+\subsection{智能体工作流设计}
 
-\subsection{工作流执行过程}
+\subsubsection{工作流执行过程}
 
 智能体协作工作流的执行过程是一个多轮迭代的"分类-验证-修复"循环，其整体流程如图~\ref{fig:workflow-execution}所示。工作流从 Classifier Agent 开始，首先对目标函数进行语义分类，确定函数类别和推荐的替换策略。对于需要替换的函数，Classifier Agent 生成替换代码后，会调用 VerifyReplacement 进行代码审查和编译验证。
 
@@ -572,11 +580,11 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 \label{fig:workflow-execution}
 \end{figure}
 
-\subsection{智能体角色与职责}
+\subsubsection{智能体角色与职责}
 
 替换代码生成后，系统需要进行质量验证，确保生成的代码能够在编译和运行阶段正常工作。本研究设计了两个层次的验证机制：代码审查和编译测试，形成"轻量检查→完整验证"的渐进式质量保障体系。
 
-\subsubsection{代码审查}
+\paragraph{代码审查}
 
 代码审查在代码生成后立即进行，目的是在编译之前就过滤掉明显有问题的替换代码，避免浪费编译时间和资源。
 
@@ -594,7 +602,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 
 代码审查的实现采用 LLM 结构化输出技术。系统定义了 \texttt{CodeReviewResult} 数据类作为输出格式，包含 \texttt{passed}（是否通过检查）和 \texttt{reason}（未通过的原因）两个字段。通过 LangChain 的结构化输出功能，强制 LLM 按照该格式输出，确保结果可以被程序正确解析。
 
-\subsubsection{编译测试}
+\paragraph{编译测试}
 
 代码审查通过后，系统进行编译测试。编译测试是替换代码质量验证的关键环节，它将替换代码集成回工程，调用构建系统执行完整的编译链接流程，验证替换代码的语法正确性和链接兼容性。
 
