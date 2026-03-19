@@ -3,72 +3,50 @@
 
 本章详细阐述基于驱动程序替换的固件仿真系统的设计与实现。系统采用"静态识别→智能替换→构建验证→动态反馈"的分层架构，通过 CodeQL 静态分析和大语言模型智能体技术，实现固件驱动函数的自动识别、语义分析和代码替换，最终在仿真环境中运行并支持模糊测试。
 
-\section{整体架构设计}
+\section{系统整体架构}
 \label{sec:arch}
 
-\textbf{系统分层架构}
-
-系统采用分层架构设计，按"静态识别→智能替换→构建验证→动态测试反馈"的链路组织为四个核心模块，如图~\ref{fig:arch}所示。每一层模块承担明确的职责，通过标准化的数据接口进行交互，形成完整的处理流水线。
+系统的整体架构如图~\ref{fig:arch}所示。系统由三个核心部分组成：左侧为驱动函数接口静态分析与识别模块，中间为驱动函数分析、替换与编译模块，右侧为动态测试反馈闭环模块。
 
 \begin{figure}[htbp]
 \centering
 \begin{tikzpicture}[
-    module/.style={rectangle, draw=black!60, rounded corners=8pt, minimum width=10cm, minimum height=1.4cm, align=center, font=\small\bfseries, line width=1pt},
-    layer/.style={rectangle, draw=black!40, rounded corners=6pt, minimum width=10cm, minimum height=1.2cm, align=center, font=\small, line width=0.8pt, dashed},
-    flow/.style={->, >=stealth, line width=1.2pt, draw=black!70},
-    note/.style={font=\scriptsize, text=black!60}
+    module/.style={rectangle, draw=black!60, rounded corners=8pt, minimum width=4cm, minimum height=2cm, align=center, font=\small\bfseries, line width=1pt},
+    note/.style={font=\scriptsize, text=black!60, align=left},
+    arrow/.style={->, >=stealth, line width=1.5pt, draw=black!70}
 ]
-    % 动态测试反馈闭环模块
-    \node[module, fill=red!15] (feedback) at (0, 4.5) {动态测试反馈闭环模块};
-    \node[note, right] at (5.5, 4.5) {仿真运行 | 日志采集 | 错误分析 | 反馈回流};
+    % 左侧模块：静态分析
+    \node[module, fill=orange!15] (static) at (-6, 0) {驱动函数接口\\静态分析与\\识别模块};
+    \node[note, below=0.3cm of static] {CodeQL分析\\MMIO识别\\函数定位\\数据模型};
     
-    % 箭头1
-    \draw[flow, draw=blue!60] (0, 3.7) -- (0, 3.1) node[midway, right, note] {运行结果};
+    % 中间模块：替换与编译
+    \node[module, fill=green!15] (replace) at (0, 0) {驱动函数分析、\\替换与编译模块};
+    \node[note, below=0.3cm of replace] {LLM分类\\替换策略\\代码生成\\编译集成};
     
-    % 驱动函数分析、替换与编译模块
-    \node[module, fill=green!15] (replace) at (0, 2.4) {驱动函数分析、替换与编译模块};
-    \node[note, right] at (5.5, 2.4) {LLM分类 | 替换策略 | 代码生成 | 编译集成};
+    % 右侧模块：动态测试
+    \node[module, fill=red!15] (feedback) at (6, 0) {动态测试\\反馈闭环模块};
+    \node[note, below=0.3cm of feedback] {仿真运行\\日志采集\\错误分析\\反馈回流};
     
-    % 箭头2
-    \draw[flow, draw=blue!60] (0, 1.6) -- (0, 1.0) node[midway, right, note] {驱动函数列表};
+    % 箭头：静态→替换
+    \draw[arrow, draw=blue!60] (static.east) -- node[above, font=\scriptsize] {驱动函数列表} (replace.west);
     
-    % 驱动函数接口静态分析与识别模块
-    \node[module, fill=orange!15] (static) at (0, 0.3) {驱动函数接口静态分析与识别模块};
-    \node[note, right] at (5.5, 0.3) {CodeQL分析 | MMIO识别 | 函数定位 | 数据模型};
+    % 箭头：替换→测试
+    \draw[arrow, draw=blue!60] (replace.east) -- node[above, font=\scriptsize] {替换代码} (feedback.west);
     
-    % 箭头3（反馈闭环）
-    \draw[flow, draw=red!60, dashed] (-5.5, 2.4) -- (-5.5, 4.5) -- (-5.2, 4.5) node[midway, above, note, sloped] {错误反馈};
-    
-    % 数据与缓存层
-    \node[layer, fill=gray!10] (data) at (0, -1.2) {数据与缓存层：分析缓存 | 生成结果 | 编译产物 | 运行日志};
-    
-    % 数据层连接线
-    \draw[draw=gray!50, dashed] (static.south) -- (0, -0.6);
-    \draw[draw=gray!50, dashed] (replace.south) -- (0, 0.9) -- (0, -0.6);
-    \draw[draw=gray!50, dashed] (feedback.south) -- (0, 3.7) -- (0, -0.6);
-    \draw[draw=gray!50, dashed] (0, -0.6) -- (data.north);
-    
-    % 标题
-    \node[font=\footnotesize\bfseries, text=black!70] at (-5.5, 0.3) {静态分析};
-    \node[font=\footnotesize\bfseries, text=black!70] at (-5.5, 2.4) {智能替换};
-    \node[font=\footnotesize\bfseries, text=black!70] at (-5.5, 4.5) {动态验证};
+    % 箭头：测试→替换（反馈闭环）
+    \draw[arrow, draw=red!60, dashed] (feedback.south) -- ++(0, -1) -- ++(-12, 0) -- ++(0, 0.8) node[midway, below, font=\scriptsize] {错误反馈} (replace.south);
 \end{tikzpicture}
 \caption{系统整体架构图}
 \label{fig:arch}
 \end{figure}
 
-\noindent
-架构的顶层是\textbf{动态测试反馈闭环模块}，负责在仿真环境中运行替换后的固件，采集运行日志、崩溃信息与覆盖率等指标，并将失败样例与错误信息结构化回流，触发重新分析与再生成。该模块是系统质量保障的关键环节。
+左侧的驱动函数接口静态分析与识别模块负责对固件源码进行静态分析，定位硬件相关代码，抽取驱动函数、MMIO 访问点、依赖数据结构、调用关系等信息，并以统一的数据模型对外提供查询接口。该模块基于 CodeQL 静态分析引擎实现，通过预定义的查询规则从固件源码中提取驱动相关信息，其输出结果作为中间模块的输入。
 
-中间层是\textbf{驱动函数分析、替换与编译模块}，这是系统的核心智能层。该模块基于上游静态分析结果，使用大语言模型对驱动函数进行类型分类与语义保留分析，生成可替代实现，同时将替代实现集成回工程并驱动构建。该模块采用 LangGraph 智能体框架实现复杂的推理和决策流程。
+中间的驱动函数分析、替换与编译模块是系统的核心智能层。该模块接收静态分析模块输出的驱动函数列表，使用大语言模型对驱动函数进行类型分类与语义保留分析，生成可替代实现，同时将替代实现集成回工程并驱动构建。该模块采用 LangGraph 智能体框架实现复杂的推理和决策流程，确保生成的替换代码既满足语义保持性要求，又能够在仿真环境中正确运行。
 
-底层是\textbf{驱动函数接口静态分析与识别模块}，这是整个方案的基础支撑层。该模块对固件源码进行静态分析，定位硬件相关代码，抽取驱动函数、MMIO 访问点、依赖数据结构、调用关系等信息，并以统一的数据模型对外提供查询接口。模块基于 CodeQL 静态分析引擎实现，通过预定义的查询规则从固件源码中提取驱动相关信息。
+右侧的动态测试反馈闭环模块负责在仿真环境中运行替换后的固件，采集运行日志、崩溃信息与覆盖率等指标，并将失败样例与错误信息结构化回流，触发重新分析与再生成。该模块是系统质量保障的关键环节，通过构建"生成-测试-反馈-修正"的闭环机制，使仿真质量能够持续提升，减少对分析人员经验的依赖。
 
-贯穿上述三层的是\textbf{数据与缓存层}，统一管理静态分析缓存、生成结果缓存、编译产物与运行日志，支持断点续跑和结果复用。该层确保系统在长时间运行过程中能够保存中间状态，避免重复计算，提高处理效率。
-
-\textbf{核心模块职责}
-
-系统架构中的四个核心模块各司其职，协同工作，共同完成从固件源码到可仿真固件的自动化转换。本节详细阐述各模块的职责定位、设计考量和技术挑战。3.2~3.4节将分别对四个核心模块进行详细说明。
+三个模块之间通过标准化的数据接口进行交互，形成完整的处理流水线。静态分析模块向替换模块提供驱动函数列表和相关信息，替换模块生成替换代码后传递给测试模块进行验证，测试模块的反馈结果又会触发替换模块进行修正，形成迭代优化循环。
 
 % ============================================================
 % 3.2 驱动函数接口静态分析与识别模块
