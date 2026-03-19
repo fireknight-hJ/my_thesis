@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2022/dev/Debian) (preloaded format=xelatex 2026.3.5)  19 MAR 2026 08:32
+This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2022/dev/Debian) (preloaded format=xelatex 2026.3.5)  19 MAR 2026 10:05
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1358,7 +1358,7 @@ Package: xkeyval 2020/11/20 v2.8 package option processing (HA)
 File: xkeyval.tex 2014/12/03 v2.7a key=value parser (HA)
 ))
 \verbatim@out=\write4
-runsystem(echo 'write18-test-2026319512'>"main.w18")...disabled (restricted).
+runsystem(echo 'write18-test-2026319605'>"main.w18")...disabled (restricted).
 
 
 
@@ -2726,6 +2726,9 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [50]
+LaTeX Font Info:    Font shape `TU/lmtt/bx/n' in size <10.95> not available
+(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 1075.
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3395,14 +3398,14 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
 LaTeX Warning: There were multiply-defined labels.
 
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 9CE3C086B121439B61D758EEBD8D962D;4388.
+(rerunfilecheck)             Checksum: 8EA5DE2C63F00AFC5AC2C3F4DDA87E87;4388.
  ) 
 Here is how much of TeX's memory you used:
- 43455 strings out of 477728
- 949948 string characters out of 5842239
- 1810186 words of memory out of 5000000
- 63217 multiletter control sequences out of 15000+600000
- 488883 words of font info for 185 fonts, out of 8000000 for 9000
+ 43503 strings out of 477728
+ 952514 string characters out of 5842239
+ 1810224 words of memory out of 5000000
+ 63261 multiletter control sequences out of 15000+600000
+ 489936 words of font info for 192 fonts, out of 8000000 for 9000
  264 hyphenation exceptions out of 8191
  99i,15n,102p,1208b,2344s stack positions out of 5000i,500n,10000p,200000b,80000s
 

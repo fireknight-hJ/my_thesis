@@ -1032,47 +1032,49 @@ Fixer Agent 接收 Emulator Runner Agent 传递的仿真输出信息，包括标
 
 闭环协同工作流的核心逻辑如下所示：
 
-初始化状态：state <- \{messages, iteration\_count=0\}
+\begin{algorithm}[htbp]
+\caption{闭环协同工作流核心逻辑}
+\label{alg:closed-loop-workflow}
+\small
+\KwIn{固件工程、构建配置、待替换函数列表}
+\KwOut{\texttt{EmulateResult}（成功/失败及原因）}
 
-构建 LangGraph 工作流：graph <- build\_graph()
+state $\leftarrow$ \{messages, iteration\_count = 0\}\;
+graph $\leftarrow$ build\_graph()\;
 
-当 iteration\_count < MAX\_ITERATIONS 时循环：
+\While{iteration\_count $<$ MAX\_ITERATIONS}{
+  \tcp{仿真运行阶段}
+  emulate\_result $\leftarrow$ graph.invoke(EmulateProject(state))\;
+  \If{emulate\_result.success == true}{
+    \Return EmulateResult(success=true)\;
+  }
 
-\quad 仿真运行阶段：emulate\_result <- graph.invoke(EmulateProject(state))
+  \tcp{故障诊断阶段}
+  mmio\_info $\leftarrow$ GetMMIOFunctionEmulateInfo()\;
+  call\_stack $\leftarrow$ GetFunctionCallsEmulateInfo()\;
+  fault\_func $\leftarrow$ ParseFaultFunction(emulate\_result, mmio\_info, call\_stack)\;
+  \If{fault\_func == null \textbf{or} fault\_func $\in$ mmio\_info\_list}{
+    \Return EmulateResult(success=false, reason="无法解析或函数已处理")\;
+  }
 
-\quad 如果 emulate\_result.success == true，则返回 EmulateResult(success=true)
+  \tcp{修复阶段}
+  replacement $\leftarrow$ Fixer(emulate\_result, fault\_func)\;
+  update\_function\_replacement(replacement)\;
 
-\quad 故障诊断阶段：
+  \tcp{构建阶段}
+  build\_result $\leftarrow$ Builder(replacement)\;
+  \If{build\_result.exit\_code $\neq$ 0}{
+    iteration\_count $\leftarrow$ iteration\_count + 1\;
+  }\Else{
+    \tcp{回归验证阶段}
+    generate\_emulator\_configs()\;
+    iteration\_count $\leftarrow$ iteration\_count + 1\;
+  }
 
-\qquad mmio\_info <- GetMMIOFunctionEmulateInfo()
+}
 
-\qquad call\_stack <- GetFunctionCallsEmulateInfo()
-
-\qquad fault\_func <- ParseFaultFunction(emulate\_result, mmio\_info, call\_stack)
-
-\quad 如果 fault\_func == null 或 fault\_func $\in$ mmio\_info\_list，则跳出循环
-
-\quad 修复阶段：
-
-\qquad replacement <- Fixer(emulate\_result, fault\_func)
-
-\qquad update\_function\_replacement(replacement)
-
-\quad 构建阶段：
-
-\qquad build\_result <- Builder(replacement)
-
-\quad 如果 build\_result.exit\_code $\neq$ 0，则继续下一次循环
-
-\quad 回归验证阶段：
-
-\qquad generate\_emulator\_configs()
-
-\qquad iteration\_count <- iteration\_count + 1
-
-返回 EmulateResult(success=false, reason="达到最大迭代次数")
-
-返回 EmulateResult(success=false, reason="达到最大迭代次数")
+\Return EmulateResult(success=false, reason="达到最大迭代次数")\;
+\end{algorithm}
 
 闭环协同工作流的核心逻辑以 LangGraph 框架实现，通过状态管理和条件分支控制执行流程。仿真运行阶段调用 EmulateProject 工具执行固件仿真，采集运行输出、退出码和异常循环检测标志。当仿真成功（success=true）时，直接返回结果；当仿真失败时，进入故障诊断阶段。
 
