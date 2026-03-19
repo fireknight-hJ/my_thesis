@@ -878,9 +878,6 @@ Builder Agent 的核心能力包括：
 \label{fig:build-loop}
 \end{figure}
 
-\subsection{具体实现}
-
-在具体实现层面，本系统采用 LangChain 作为整体智能体框架，组织“推理-工具调用-结果汇总”的迭代过程，并以 LangGraph 构建有状态、可循环的工作流，从而实现替换策略生成、质量验证与构建集成的协同执行。
 
 \subsubsection{LangGraph 工作流框架}
 

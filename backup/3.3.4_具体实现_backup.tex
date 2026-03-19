@@ -1,0 +1,46 @@
+% ============================================================
+% 3.3.4 具体实现（已删除，移至backup目录）
+% ============================================================
+
+\subsection{具体实现}
+
+在具体实现层面，本系统采用 LangChain 作为整体智能体框架，组织"推理-工具调用-结果汇总"的迭代过程，并以 LangGraph 构建有状态、可循环的工作流，从而实现替换策略生成、质量验证与构建集成的协同执行。
+
+\subsubsection{LangGraph 工作流框架}
+
+系统采用 LangGraph 框架构建图式工作流。LangGraph 是 LangChain 生态中用于构建有状态、可循环的智能体工作流的库，支持复杂的状态管理和条件分支。
+
+智能体工作流的核心包含三个逻辑节点：\textbf{推理与决策节点}（由大语言模型驱动）、\textbf{工具调用节点}（当推理节点需要补充信息时请求调用工具）、\textbf{结果汇总节点}（对输出进行结构化解析并写入缓存）。
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    box/.style={rectangle, draw, rounded corners, minimum width=3cm, minimum height=1.5cm, align=center, font=\small},
+    arrow/.style={->, thick, >=stealth}
+]
+    \node[box, fill=blue!20] (reason) at (5, 2) {推理与决策\\节点};
+    \node[box, fill=green!20] (tool) at (0, 0) {工具调用\\节点};
+    \node[box, fill=orange!20] (summary) at (10, 0) {结果汇总\\节点};
+
+    \draw[arrow] (reason.south west) -- (tool.north east) node[midway, above, font=\scriptsize, sloped] {需要工具};
+    \draw[arrow] (tool.north) -- (reason.south) node[midway, left, font=\scriptsize] {返回结果};
+    \draw[arrow] (reason.south east) -- (summary.north west) node[midway, above, font=\scriptsize, sloped] {给出答案};
+\end{tikzpicture}
+\caption{智能体工作流架构图}
+\label{fig:agent-workflow}
+\end{figure}
+
+\subsubsection{状态机设计}
+
+LangGraph 的核心是状态（State）对象，它在工作流的各个节点之间传递和更新。状态模型需要维护智能体执行过程中的关键信息。
+
+状态转移逻辑控制智能体的执行流程。智能体从 START 状态开始，首先进入推理节点，LLM 根据当前状态决定下一步行动。如果 LLM 请求调用工具（如查询函数源码、获取调用关系），则转移到工具节点，工具执行完毕后返回推理节点继续处理。如果 LLM 认为已经获得足够信息并给出最终答案，则转移到结果节点，对输出进行结构化解析后进入 END 状态。如果在执行过程中发生错误，且重试次数未超过上限，则返回推理节点重新尝试；否则进入错误处理流程。
+
+\begin{figure}[htbp]
+\centering
+\fbox{\parbox{0.92\linewidth}{\centering
+智能体状态机转移图（示意）
+}}
+\caption{智能体状态机转移图}
+\label{fig:agent-state-machine}
+\end{figure}
