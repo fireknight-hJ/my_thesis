@@ -38,6 +38,7 @@
 \centering
 \caption{外设类型分类}
 \label{tab:peripherals}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{ll}
 \toprule
 \textbf{类别} & \textbf{外设类型} \\
@@ -48,6 +49,7 @@
 其他外设 & BLE（蓝牙）、FatFS（文件系统） \\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
 
 \textbf{（4）测试固件构建}
@@ -61,6 +63,7 @@
 \caption{测试固件详细信息}
 \label{tab:firmware}
 \footnotesize
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{llllp{3cm}}
 \toprule
 \textbf{编号} & \textbf{MCU型号} & \textbf{OS} & \textbf{外设/驱动库} & \textbf{Demo名称} \\
@@ -86,6 +89,7 @@ F18 & STM32F429 & 裸机 & UART, GPIO, STM32 HAL & UART\_Hyperterminal\_IT \\
 
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
 
 \subsection{实验环境}
@@ -146,6 +150,7 @@ F18 & STM32F429 & 裸机 & UART, GPIO, STM32 HAL & UART\_Hyperterminal\_IT \\
 \caption{测试用例详细信息}
 \label{tab:testcases}
 \small
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{llp{5cm}l}
 \toprule
 \textbf{编号} & \textbf{Demo 名称} & \textbf{平台/OS/外设/驱动库} & \textbf{关键节点} \\
@@ -162,6 +167,7 @@ T09 & imxrt1052-nxp-evk & STM32/FreeRTOS/多外设/STM32 HAL & osKernelStart \\
 T10 & imxrt1060-nxp-evk & STM32/FreeRTOS/多外设/STM32 HAL & osKernelStart \\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
 
 \textbf{（2）功能正确性验证}
@@ -189,6 +195,7 @@ T10 & imxrt1060-nxp-evk & STM32/FreeRTOS/多外设/STM32 HAL & osKernelStart \\
 \caption{驱动函数识别与替换统计}
 \label{tab:driver_stats}
 \small
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lccccc}
 \toprule
 \textbf{编号} & \textbf{Demo 名称} & \textbf{识别驱动函数数量} & \textbf{替换驱动函数数量} & \textbf{执行到的驱动函数数量} & \textbf{行为正常数量} \\
@@ -219,6 +226,7 @@ T20 & STM32/FreeRTOS/多外设 & 21 & 20 & 20 & 20 \\
 \textbf{平均} & - & \textbf{11.4} & \textbf{10.9} & \textbf{10.9} & \textbf{10.9} \\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
 
 从统计结果可以看出，本文方法在驱动函数识别和替换方面表现出较高的准确性。20个测试用例共识别出228个驱动函数，平均每个固件11.4个；成功替换218个驱动函数，平均每个固件10.9个。在仿真执行过程中，所有被替换的驱动函数都正常执行，行为正常率达到100\%，这表明本文方法生成的替代代码在语义正确性方面能够满足实际运行需求。
@@ -272,6 +280,7 @@ T10 & imxrt1060-nxp-evk & STM32/FreeRTOS/多外设/STM32 HAL & osKernelStart \\
 \centering
 \caption{关键节点匹配情况}
 \label{tab:match_results}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lcccc}
 \toprule
 \textbf{编号} & \textbf{Demo 名称} & \textbf{预期节点数} & \textbf{匹配节点数} & \textbf{匹配率} \\
@@ -290,6 +299,7 @@ T10 & imxrt1060-nxp-evk & 1 & 1 & 100.0\% \\
 \textbf{总计} & \textbf{10} & \textbf{15} & \textbf{15} & \textbf{100.0\%} \\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
 
 实验结果表明，所有测试用例的关键节点匹配率均为100.0\%，所有预期关键节点都被成功匹配。这说明替换后的固件能够正确执行主要功能，RTOS内核启动、网络功能、存储功能、串口功能等关键节点都被正常触发。
