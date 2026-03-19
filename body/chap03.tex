@@ -365,19 +365,102 @@ class FunctionInfo:
 \section{驱动函数分析、替换与编译模块}
 \label{sec:builder}
 
-驱动函数分析、替换与编译模块是系统的核心智能层，承担着语义理解和代码生成的核心任务。该模块需要在替换驱动函数的同时，确保替换后的代码在仿真环境中能够正常执行，且不破坏原有的业务逻辑。
+驱动函数分析、替换与编译模块是系统的核心智能层，承担着语义理解和代码生成的核心任务。该模块采用大语言模型驱动的智能体架构，通过 LangGraph 框架构建图式工作流，实现从函数分类、代码生成、质量验证到编译集成的完整自动化流程。该模块采用"语义分析→代码生成→质量验证→编译集成→错误修复"的迭代优化模式，通过多轮迭代逐步提升替换质量，直至生成能够在仿真环境中正常运行的替换代码。
 
-现有的固件仿真方法主要基于对 MMIO 寄存器的直接模拟，需要在仿真器中为每个外设构建完整的状态机模型。这种方法面临着严重的可扩展性和可靠性问题：不同外设具有完全不同的寄存器布局和行为语义，为每个外设构建准确的状态机模型需要深入了解其硬件规范，且模型构建的复杂度随外设数量的增加而急剧上升；同时，状态机模型的正确性难以验证，模拟错误可能导致固件行为异常；此外，状态机模型的维护成本高昂，当硬件版本更新或引入新外设时，需要重新构建和测试相应的模型。
+\subsection{智能体工作流设计}
 
-针对上述问题，本研究采用驱动层函数替换的方法，在函数调用层面进行硬件依赖的解耦，从而避免直接模拟底层复杂的外设状态机和同步机制。该方法的核心思想是：通过识别和替换访问 MMIO 寄存器的驱动函数，将硬件依赖部分替换为与仿真环境兼容的实现，同时保留驱动层的业务逻辑和状态管理，使固件能够在仿真环境中正常运行。
+\subsubsection{Classifier Agent：智能体分析全流程}
 
-驱动函数替换面临的核心挑战在于如何在去除硬件依赖的同时，保证驱动层状态的完整性和一致性。具体而言，挑战包括：（1）避免固件在等待硬件状态时进入死循环，需要识别并跳过对硬件状态的轮询等待；（2）保证驱动层状态机在软件层面的正常运行，确保初始化函数、配置函数等在上层函数视角下的行为保持一致；（3）维护数据传输路径的正确性，确保串口收发函数、网络传输函数等能够进行正常的数据收发模拟工作，使上层协议栈能够正常运行。
+Classifier Agent 基于函数源码和静态分析结果，通过图式工作流实现驱动函数的自动分类和语义保留分析。该智能体采用 LangGraph 框架构建的状态机模型，通过"推理-工具调用-结果汇总"的循环过程，逐步完成函数分类、策略选择和代码生成等工作。
 
-以 UART 驱动为例，替换策略需要满足多方面的需求。首先，需要确保固件不会在等待硬件状态时进入死循环。UART 发送函数通常包含对状态寄存器中 TXE（发送缓冲区空）标志位的轮询等待，只有当硬件实际发送完数据后该标志位才会置位。在仿真环境中，如果保留这类硬件等待逻辑，固件将无限等待一个永远不会出现的状态，导致程序卡死。因此，替换策略需要识别这些硬件等待逻辑并进行适当的跳过处理。
+工作流执行过程如图~\ref{fig:classifier-workflow}所示。工作流从 Classifier Agent 开始，首先对目标函数进行语义分类，确定函数类别和推荐的替换策略。对于需要替换的函数，Classifier Agent 生成替换代码后，会调用 VerifyReplacement 进行代码审查和编译验证。
 
-其次，需要保证初始化函数在软件层面的状态机在上层函数视角下是正常的。UART 初始化函数通常包含对控制寄存器的配置、波特率设置、中断使能等操作。这些操作在外设层面会进入不同的硬件状态，但在驱动层面，初始化函数需要向上层返回正确的状态码，表示初始化成功或失败。替换策略需要确保初始化函数能够向上层正确返回状态，同时维护驱动层内部的状态变量（如发送缓冲区、接收缓冲区、错误标志等），使得上层函数能够正确判断驱动是否可用。
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    node distance=1.5cm,
+    box/.style={rectangle, draw, rounded corners, minimum width=2.5cm, minimum height=0.8cm, align=center, font=\small},
+    decision/.style={diamond, draw, aspect=2, minimum width=2cm, align=center, font=\small},
+    arrow/.style={->, thick, >=stealth}
+]
+    \node[box, fill=blue!20] (start) {开始：\\Classifier Agent};
+    \node[box, fill=green!20, right of=start, xshift=1.5cm] (classify) {函数分类与\\替换代码生成};
+    \node[decision, fill=yellow!20, right of=classify, xshift=1.5cm] (has_replacement) {需要\\替换?};
+    \node[box, fill=orange!20, right of=has_replacement, xshift=1.5cm] (verify) {VerifyReplacement\\验证};
+    \node[decision, fill=yellow!20, right of=verify, xshift=1.5cm] (pass) {验证\\通过?};
+    \node[box, fill=red!20, above right of=pass, xshift=0.3cm] (fixer) {BuildFixer\\修复};
+    \node[decision, fill=yellow!20, below right of=pass, xshift=0.3cm] (fix) {修复\\成功?};
+    \node[box, fill=gray!20, right of=fixer, xshift=1.5cm] (accept) {采纳替换\\代码};
+    \node[box, fill=gray!20, right of=accept, xshift=0.5cm] (end) {完成};
+    
+    \draw[arrow] (start) -- (classify);
+    \draw[arrow] (classify) -- (has_replacement);
+    \draw[arrow] (has_replacement) -- node[above, font=\scriptsize] {否} (end);
+    \draw[arrow] (has_replacement) -- node[below, font=\scriptsize] {是} (verify);
+    \draw[arrow] (verify) -- (pass);
+    \draw[arrow] (pass) -- node[above, font=\scriptsize] {是} (accept);
+    \draw[arrow] (pass) -- (end);
+    \draw[arrow] (fixer) -- (fix);
+    \draw[arrow] (fixer) -- node[above, font=\scriptsize] {是} (accept);
+    \draw[arrow] (fixer) -- node[below, font=\scriptsize] {否} (end);
+    \draw[arrow] (fixer) -- (end);
+    \draw[arrow] (accept) -- (end);
+\end{tikzpicture}
+\caption{Classifier Agent 工作流程图}
+\label{fig:classifier-workflow}
+\end{figure}
 
-最后，需要保证串口收发函数的正常运行，使底层驱动仍可以进行正常的数据收发模拟工作。UART 发送函数和接收函数通常会检查驱动状态、操作数据缓冲区、触发数据传输等。替换策略需要保留这些逻辑，同时将数据缓冲区操作和触发机制替换为与仿真环境兼容的实现，例如将数据写入虚拟发送缓冲区、从虚拟接收缓冲区读取数据等，使得上层应用和协议栈能够通过驱动函数进行正常的数据交互。
+智能体的工作流程包括三个核心阶段：
+
+\textbf{（1）信息获取阶段}。智能体通过工具调用获取目标函数的完整实现代码、函数签名、参数类型、返回类型等信息。工具包括 GetFunctionInfo（获取函数基本信息）、GetFunctionCallStack（获取函数调用栈）、GetMMIOFunctionEmulateInfo（获取 MMIO 函数仿真信息）等。这些工具调用使智能体能够全面了解函数的实现细节和上下文关系。
+
+\textbf{（2）推理与分类阶段}。智能体基于函数源码和静态分析结果，通过大语言模型的语义理解能力进行推理判断。推理过程包括：识别 MMIO 访问模式、判断函数主要用途、确定函数类别。例如，对于 UART 接收函数，LLM 能够识别出通过寄存器读取数据的行为特征，将其分类为 RECV 类；对于 UART 初始化函数，LLM 能够识别出配置寄存器写入的行为特征，将其分类为 INIT 类。
+
+\textbf{（3）代码生成阶段}。对于需要替换的函数，LLM 根据分类结果选择对应的替换策略并生成替换代码。对于 RECV 类函数，LLM 生成使用 HAL\_BE\_In 或 HAL\_BE\_ENET\_ReadFrame 等注入函数将仿真数据注入缓冲区的代码；对于 INIT 类函数，LLM 生成跳过硬件寄存器配置但保留结构初始化和状态设置的代码。生成的替换代码必须满足函数签名一致性和语义保持性要求。
+
+\textbf{（4）验证阶段}。代码生成后，智能体会调用 VerifyReplacement 工具进行代码审查。代码审查基于预定义的规则进行判断，主要包括签名一致性规则、语义保持性规则、代码合理性规则和调用关系保持规则。通过代码审查过滤掉明显有问题的替换代码，避免编译失败和运行错误。
+
+\subsubsection{Builder 智能体：编译集成与错误修复}
+
+Builder 智能体负责将替换代码集成回工程并执行编译，同时处理可能出现的编译错误。该智能体作为系统中专门处理构建任务的智能体，通过 LangChain 框架实现与底层工具的交互，实现"编译-错误解析-修复-重新编译"的闭环。
+
+\textbf{（1）编译集成流程}。Builder Agent 的工作流程包括四个阶段：
+
+\textbf{（1）代码集成阶段}。Agent 调用 ReplaceFuncs 工具将替换代码写入源文件，替换原函数的定义。ReplaceFuncs 工具会在替换前保存原始函数的定义，以便在出现问题时能够恢复。
+
+\textbf{（2）构建执行阶段}。Agent 调用 BuildProject 工具执行项目的构建脚本（如 Makefile、CMakefile），执行完整的编译链接流程。构建过程中，Agent 实时监控构建输出和错误输出。
+
+\textbf{（3）错误解析阶段}。如果编译失败，Agent 会解析编译器的错误输出，提取错误类型（语法错误、链接错误、类型错误等）、错误位置和错误原因。
+
+\textbf{（4）错误修复阶段}。对于编译错误，Agent 生成修复建议并调用相应工具进行修复。修复策略包括：调整代码语法、修正类型错误、补充缺失的头文件引用、调整编译选项等。修复完成后，Agent 重新执行编译。
+
+\textbf{（2）修复策略类型}。Builder Agent 支持多种错误类型的修复：函数未声明、类型不匹配、缺少头文件引用、链接错误等。对于不同的错误类型，Agent 采用不同的修复策略。
+
+\subsubsection{双层代码审查机制}
+
+\textbf{（1）第一层：rubric check + 可选编译验证}。第一层验证检查主要查验替换代码是否符合预定义的规则，确保其语法正确性和语义一致性。该层验证由 VerifyReplacement 工具实现，通过 rubric checker 扫描代码并生成验证报告。如果验证未通过，则不会进行落盘操作。
+
+\textbf{第一层验证规则}主要包括：
+
+签名一致性规则：要求替换函数的名称、返回类型、参数列表必须与原函数完全一致，这是替换代码能够正确集成回工程的基本前提。
+
+语义保持性规则：要求替换代码应保留原函数的核心业务逻辑，如状态变量更新、错误处理流程等，只替换与硬件交互的部分。
+
+代码合理性规则：要求替换代码不应引入明显的问题，如未声明变量、无限循环、内存泄漏等。
+
+调用关系保持规则：如果原函数调用了某些核心函数（如回调函数、状态更新函数），替换代码应在适当的位置保留这些调用。
+
+\textbf{（2）第二层：编译验证与修复闭环}。第二层验证是在编译阶段进行的验证，通过临时应用和最终恢复机制确保编译成功。该机制包含两个关键动作：
+
+临时应用：将替换代码临时应用到源文件进行编译验证。编译成功则直接采用该替换代码，编译失败则进入修复流程。
+
+最终恢复：无论编译结果如何，都要恢复原始函数定义，确保工作树不被污染。
+
+修复委托机制：如果编译失败，VerifyReplacement 工具返回 build\_stderr，Builder Agent 会将编译错误和替换代码传递给 Fixer Agent。Fixer Agent 根据 build\_stderr 和替换代码生成修复建议，然后调用 Builder Agent 执行修复。
+
+修复闭环：Fixer Agent 调用 Builder Agent 执行修复，修复完成后 Builder Agent 重新执行编译。修复过程可以多轮迭代，直至编译成功或达到最大迭代次数。
+
+\textbf{（3）程序化校验与二次校验}。Fixer Agent 在返回 success=true 后，还会进行程序化校验。该机制通过检查编译输出中是否仍有 error\_info 来确认修复是否真正成功。如果 stderr 中仍包含错误信息，则强制将 success 改为 false 并记录错误日志。这种二次校验确保修复的可靠性。
 
 为实现语义保持的驱动函数替换，模块采用大语言模型驱动的智能体架构。与传统基于规则或模板的代码生成方法不同，LLM 具备理解代码语义的能力，能够根据函数的具体实现和上下文生成定制化的替换代码。模块使用 LangGraph 框架构建图式工作流，通过"推理-工具调用-结果汇总"的迭代过程，逐步完成函数分类、策略选择、代码生成和验证等工作。
 
