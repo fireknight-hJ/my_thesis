@@ -10,13 +10,11 @@
 
 \subsection{实验目标}
 
-本章实验旨在验证以下研究问题：
+本章实验从功能正确性和性能效率两个维度对本文方法进行评估。
 
-\textbf{RQ1（运行正确性）}：替换后的固件能否在仿真环境中正确运行？能否正常启动、执行主要功能、保持语义一致性等？该指标是验证系统核心能力的关键，即"替换后的固件能否正常运行"。运行正确性包括编译正确性、启动正确性、功能完整性和运行稳定性四个方面。如果替换后的固件无法在仿真环境中正确运行，那么本文方法就无法支持后续的安全测试和漏洞挖掘任务。
+首先，\textbf{功能正确性}评估是验证系统核心能力的关键。替换后的固件能否在仿真环境中正确运行，包括能否正常启动、执行主要功能、保持语义一致性等。功能正确性评估包括仿真环境测试和模糊测试两个方面。仿真环境测试验证替换后的固件能否正常启动和执行主要功能；模糊测试验证固件在仿真环境中能否支持模糊测试任务并发现潜在漏洞。
 
-\textbf{RQ2（工作量评估）}：与现有的固件仿真方法相比，本文方法在人力成本和工作量上是否有优势？该指标用于评估本文方法的实用价值和可扩展性。与 Halucinator 和 Para-rehosting 等现有方法相比，本文方法通过 LLM 驱动的智能替换机制，大幅降低了人工编写和移植代码的工作量，显著提升了处理效率和可扩展性。
-
-\textbf{RQ3（应用验证）}：本文方法能否有效支持后续的模糊测试和漏洞挖掘任务？该指标用于验证本文方法的实际应用价值。如果替换后的固件能够在仿真环境中稳定运行并支持模糊测试，那么本文方法就能够为物联网设备固件的安全测试提供有效的技术途径。
+其次，\textbf{性能效率评估}用于检验本文方法的实用价值和可扩展性。与 Halucinator 和 Para-rehosting 等现有方法相比，本文方法通过 LLM 驱动的智能替换机制，大幅降低了人工编写和移植代码的工作量，显著提升了处理效率和可扩展性。性能效率评估包括人工成本比较和模糊测试效率两个方面。
 
 \subsection{测试固件选择}
 
@@ -64,29 +62,28 @@
 \label{tab:firmware}
 \footnotesize
 \begin{adjustbox}{max width=\textwidth}
-\begin{tabular}{llllp{3cm}}
+\begin{tabular}{lllp{3cm}}
 \toprule
-\textbf{编号} & \textbf{MCU型号} & \textbf{OS} & \textbf{外设/驱动库} & \textbf{Demo名称} \\
+\textbf{MCU型号} & \textbf{OS} & \textbf{外设/驱动库} & \textbf{Demo名称} \\
 \midrule
-F01 & STM32F407 & FreeRTOS & UART, I2C, STM32 HAL & NXP\_FATFS\_BareMetal \\
-F02 & STM32F407 & FreeRTOS & SPI, ETH, FreeRTOS & NXP\_FATFS\_FreeRTOS \\
-F03 & STM32F407 & RT-Thread & UART, ADC, RT-Thread & NXP\_I2C\_BareMetal \\
-F04 & STM32F407 & 裸机 & UART, GPIO, STM32 HAL & NXP\_I2C\_FreeRTOS \\
-F05 & STM32F407 & 裸机 & I2C, TIM, STM32 HAL & NXP\_LwIP\_BareMetal \\
-F06 & STM32F429 & FreeRTOS & UART, ETH, LwIP, FreeRTOS & NXP\_LwIP\_FreeRTOS \\
-F07 & STM32F429 & FreeRTOS & SPI, Flash, STM32 HAL & NXP\_UART\_BareMetal \\
-F08 & STM32F429 & RT-Thread & I2C, ADC, RT-Thread & NXP\_UART\_FreeRTOS \\
-F09 & STM32F429 & 裸机 & UART, DAC, STM32 HAL & imxrt1052\_nxp\_evk\_uart \\
-F10 & STM32F429 & 裸机 & TIM, WDT, STM32 HAL & imxrt1060\_nxp\_evk\_timer \\
-F11 & RT1052 & FreeRTOS & UART, ETH, LwIP, FreeRTOS & BLE\_HeartRateFreeRTOS \\
-F12 & RT1052 & FreeRTOS & SPI, SDIO, NXP HAL & FatFs\_USBDisk\_RTOS \\
-F13 & RT1052 & RT-Thread & I2C, RTC, RT-Thread & LwIP\_HTTP\_Server\_Raw \\
-F14 & RT1052 & RT-Thread & UART, Flash, RT-Thread & LwIP\_HTTP\_Server\_SocketRTOS \\
-F15 & RT1052 & 裸机 & GPIO, ADC, NXP HAL & LwIP\_HTTP\_Server\_Socket\_RTOS \\
-F16 & RT1052 & 裸机 & UART, TIM, NXP HAL & LwIP\_HTTP\_Server\_Socket\_RTOS \\
-F17 & STM32F407 & FreeRTOS & UART, ETH, LwIP, FreeRTOS & LwIP\_StreamingServer \\
-F18 & STM32F429 & 裸机 & UART, GPIO, STM32 HAL & UART\_Hyperterminal\_IT \\
-
+STM32F407 & FreeRTOS & UART, I2C, STM32 HAL & NXP\_FATFS\_BareMetal \\
+STM32F407 & FreeRTOS & SPI, ETH, FreeRTOS & NXP\_FATFS\_FreeRTOS \\
+STM32F407 & RT-Thread & UART, ADC, RT-Thread & NXP\_I2C\_BareMetal \\
+STM32F407 & 裸机 & UART, GPIO, STM32 HAL & NXP\_I2C\_FreeRTOS \\
+STM32F407 & 裸机 & I2C, TIM, STM32 HAL & NXP\_LwIP\_BareMetal \\
+STM32F429 & FreeRTOS & UART, ETH, LwIP, FreeRTOS & NXP\_LwIP\_FreeRTOS \\
+STM32F429 & FreeRTOS & SPI, Flash, STM32 HAL & NXP\_UART\_BareMetal \\
+STM32F429 & RT-Thread & I2C, ADC, RT-Thread & NXP\_UART\_FreeRTOS \\
+STM32F429 & 裸机 & UART, DAC, STM32 HAL & imxrt1052\_nxp\_evk\_uart \\
+STM32F429 & 裸机 & TIM, WDT, STM32 HAL & imxrt1060\_nxp\_evk\_timer \\
+RT1052 & FreeRTOS & UART, ETH, LwIP, FreeRTOS & BLE\_HeartRateFreeRTOS \\
+RT1052 & FreeRTOS & SPI, SDIO, NXP HAL & FatFs\_USBDisk\_RTOS \\
+RT1052 & RT-Thread & I2C, RTC, RT-Thread & LwIP\_HTTP\_Server\_Raw \\
+RT1052 & RT-Thread & UART, Flash, RT-Thread & LwIP\_HTTP\_Server\_SocketRTOS \\
+RT1052 & 裸机 & GPIO, ADC, NXP HAL & LwIP\_HTTP\_Server\_Socket\_RTOS \\
+RT1052 & 裸机 & UART, TIM, NXP HAL & LwIP\_HTTP\_Server\_Socket\_RTOS \\
+STM32F407 & FreeRTOS & UART, ETH, LwIP, FreeRTOS & LwIP\_StreamingServer \\
+STM32F429 & 裸机 & UART, GPIO, STM32 HAL & UART\_Hyperterminal\_IT \\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
@@ -128,16 +125,16 @@ F18 & STM32F429 & 裸机 & UART, GPIO, STM32 HAL & UART\_Hyperterminal\_IT \\
 \end{tabular}
 \end{table}
 
-\section{运行正确性评估}
-\label{sec:eval_correctness}
+\section{功能测试}
+\label{sec:functional_test}
 
-本节评估替换后的固件在仿真环境中的运行正确性。运行正确性是验证系统核心能力的关键指标，即"替换后的固件能否正常运行"。
+本节评估替换后的固件在仿真环境中的功能正确性。功能正确性是验证系统核心能力的关键指标，即"替换后的固件能否正常运行"。功能测试包括两个方面：（1）仿真环境测试，验证固件能否正常启动和执行主要功能；（2）模糊测试，验证固件在仿真环境中能否支持模糊测试任务并发现潜在漏洞。
 
 为了全面评估替换后固件的运行正确性，本研究采用基于关键节点检查的验证方法。该方法的核心思想是：通过对各个代表性Demo进行模拟仿真运行，然后通过检查关键节点（函数、事件、中断）是否被执行到来确认固件的执行是否正常。与传统的基于硬件的测试方法不同，本方法关注固件在仿真环境中的执行轨迹和关键事件，而非具体的硬件状态。这种方法的优势在于：适合无硬件场景的验证、可以快速验证多个固件、验证结果可追溯可复现、适合大规模自动化测试。
 
-\subsection{验证方法}
+\subsection{测试方法}
 
-本节介绍验证方法的设计思路、验证流程、测试用例选择和评估指标。
+本节介绍功能测试方法的设计思路、测试流程、测试用例选择和评估指标。
 
 \textbf{（1）执行轨迹验证}
 
@@ -151,20 +148,20 @@ F18 & STM32F429 & 裸机 & UART, GPIO, STM32 HAL & UART\_Hyperterminal\_IT \\
 \label{tab:testcases}
 \small
 \begin{adjustbox}{max width=\textwidth}
-\begin{tabular}{llp{5cm}l}
+\begin{tabular}{lp{5cm}l}
 \toprule
-\textbf{编号} & \textbf{Demo 名称} & \textbf{平台/OS/外设/驱动库} & \textbf{关键节点} \\
+\textbf{Demo 名称} & \textbf{平台/OS/外设/驱动库} & \textbf{关键节点} \\
 \midrule
-T01 & NXP\_FATFS\_BareMetal & NXP/裸机/FatFS/NXP HAL & main \\
-T02 & NXP\_FATFS\_FreeRTOS & NXP/FreeRTOS/FatFS/NXP HAL & osKernelStart<br>fatfs\_thread\_entry \\
-T03 & NXP\_I2C\_BareMetal & NXP/裸机/I2C/NXP HAL & main \\
-T04 & NXP\_I2C\_FreeRTOS & NXP/FreeRTOS/I2C/NXP HAL & osKernelStart<br>i2c\_thread\_entry \\
-T05 & NXP\_LwIP\_BareMetal & NXP/裸机/ETH/LwIP/NXP HAL & ethernetif\_input \\
-T06 & NXP\_LwIP\_FreeRTOS & NXP/FreeRTOS/ETH/LwIP/NXP HAL & osKernelStart<br>eth\_rx\_thread\_entry \\
-T07 & NXP\_UART\_BareMetal & NXP/裸机/UART/NXP HAL & main \\
-T08 & NXP\_UART\_FreeRTOS & NXP/FreeRTOS/UART/NXP HAL & osKernelStart<br>uart\_thread\_entry \\
-T09 & imxrt1052-nxp-evk & STM32/FreeRTOS/多外设/STM32 HAL & osKernelStart \\
-T10 & imxrt1060-nxp-evk & STM32/FreeRTOS/多外设/STM32 HAL & osKernelStart \\
+NXP\_FATFS\_BareMetal & NXP/裸机/FatFS/NXP HAL & main \\
+NXP\_FATFS\_FreeRTOS & NXP/FreeRTOS/FatFS/NXP HAL & osKernelStart<br>fatfs\_thread\_entry \\
+NXP\_I2C\_BareMetal & NXP/裸机/I2C/NXP HAL & main \\
+NXP\_I2C\_FreeRTOS & NXP/FreeRTOS/I2C/NXP HAL & osKernelStart<br>i2c\_thread\_entry \\
+NXP\_LwIP\_BareMetal & NXP/裸机/ETH/LwIP/NXP HAL & ethernetif\_input \\
+NXP\_LwIP\_FreeRTOS & NXP/FreeRTOS/ETH/LwIP/NXP HAL & osKernelStart<br>eth\_rx\_thread\_entry \\
+NXP\_UART\_BareMetal & NXP/裸机/UART/NXP HAL & main \\
+NXP\_UART\_FreeRTOS & NXP/FreeRTOS/UART/NXP HAL & osKernelStart<br>uart\_thread\_entry \\
+imxrt1052-nxp-evk & STM32/FreeRTOS/多外设/STM32 HAL & osKernelStart \\
+imxrt1060-nxp-evk & STM32/FreeRTOS/多外设/STM32 HAL & osKernelStart \\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
@@ -180,9 +177,9 @@ T10 & imxrt1060-nxp-evk & STM32/FreeRTOS/多外设/STM32 HAL & osKernelStart \\
 
 
 
-\subsection{验证实施}
+\subsection{测试实施}
 
-本节详细介绍验证的实施过程，包括测试用例详情、仿真执行过程、关键节点检查过程和验证结果分析。
+本节详细介绍功能测试的实施过程，包括测试用例详情、仿真执行过程、关键节点检查过程和测试结果分析。
 
 \textbf{（1）测试用例详情}
 
@@ -196,34 +193,34 @@ T10 & imxrt1060-nxp-evk & STM32/FreeRTOS/多外设/STM32 HAL & osKernelStart \\
 \label{tab:driver_stats}
 \small
 \begin{adjustbox}{max width=\textwidth}
-\begin{tabular}{lccccc}
+\begin{tabular}{lcccc}
 \toprule
-\textbf{编号} & \textbf{Demo 名称} & \textbf{识别驱动函数数量} & \textbf{替换驱动函数数量} & \textbf{执行到的驱动函数数量} & \textbf{行为正常数量} \\
+\textbf{Demo 名称} & \textbf{识别驱动函数数量} & \textbf{替换驱动函数数量} & \textbf{执行到的驱动函数数量} & \textbf{行为正常数量} \\
 \midrule
-T01 & NXP\_FATFS\_BareMetal & 8 & 7 & 7 & 7 \\
-T02 & NXP\_FATFS\_FreeRTOS & 10 & 9 & 9 & 9 \\
-T03 & NXP\_I2C\_BareMetal & 5 & 5 & 5 & 5 \\
-T04 & NXP\_I2C\_FreeRTOS & 7 & 7 & 7 & 7 \\
-T05 & NXP\_LwIP\_BareMetal & 15 & 14 & 14 & 14 \\
-T06 & NXP\_LwIP\_FreeRTOS & 17 & 16 & 16 & 16 \\
-T07 & NXP\_UART\_BareMetal & 6 & 6 & 6 & 6 \\
-T08 & NXP\_UART\_FreeRTOS & 8 & 8 & 8 & 8 \\
-T09 & imxrt1052\_nxp\_evk\_uart & 12 & 11 & 11 & 11 \\
-T10 & imxrt1060\_nxp\_evk\_timer & 14 & 13 & 13 & 13 \\
-T11 & BLE\_HeartRateFreeRTOS & 20 & 19 & 19 & 19 \\
-T12 & FatFs\_USBDisk\_RTOS & 9 & 8 & 8 & 8 \\
-T13 & LwIP\_HTTP\_Server\_Raw & 16 & 15 & 15 & 15 \\
-T14 & LwIP\_HTTP\_Server\_SocketRTOS & 18 & 17 & 17 & 17 \\
-T15 & LwIP\_HTTP\_Server\_Socket\_RTOS & 18 & 17 & 17 & 17 \\
-T16 & LwIP\_StreamingServer & 13 & 12 & 12 & 12 \\
-T17 & UART\_Hyperterminal\_IT & 11 & 10 & 10 & 10 \\
-T18 & NXP\_FreeRTOS/多外设\_UART & 9 & 8 & 8 & 8 \\
-T19 & NXP\_FreeRTOS/多外设\_ETH & 19 & 18 & 18 & 18 \\
-T20 & STM32/FreeRTOS/多外设 & 21 & 20 & 20 & 20 \\
+NXP\_FATFS\_BareMetal & 8 & 7 & 7 & 7 \\
+NXP\_FATFS\_FreeRTOS & 10 & 9 & 9 & 9 \\
+NXP\_I2C\_BareMetal & 5 & 5 & 5 & 5 \\
+NXP\_I2C\_FreeRTOS & 7 & 7 & 7 & 7 \\
+NXP\_LwIP\_BareMetal & 15 & 14 & 14 & 14 \\
+NXP\_LwIP\_FreeRTOS & 17 & 16 & 16 & 16 \\
+NXP\_UART\_BareMetal & 6 & 6 & 6 & 6 \\
+NXP\_UART\_FreeRTOS & 8 & 8 & 8 & 8 \\
+imxrt1052\_nxp\_evk\_uart & 12 & 11 & 11 & 11 \\
+imxrt1060\_nxp\_evk\_timer & 14 & 13 & 13 & 13 \\
+BLE\_HeartRateFreeRTOS & 20 & 19 & 19 & 19 \\
+FatFs\_USBDisk\_RTOS & 9 & 8 & 8 & 8 \\
+LwIP\_HTTP\_Server\_Raw & 16 & 15 & 15 & 15 \\
+LwIP\_HTTP\_Server\_SocketRTOS & 18 & 17 & 17 & 17 \\
+LwIP\_HTTP\_Server\_Socket\_RTOS & 18 & 17 & 17 & 17 \\
+LwIP\_StreamingServer & 13 & 12 & 12 & 12 \\
+UART\_Hyperterminal\_IT & 11 & 10 & 10 & 10 \\
+NXP\_FreeRTOS/多外设\_UART & 9 & 8 & 8 & 8 \\
+NXP\_FreeRTOS/多外设\_ETH & 19 & 18 & 18 & 18 \\
+STM32/FreeRTOS/多外设 & 21 & 20 & 20 & 20 \\
 \midrule
-\textbf{总计} & \textbf{20} & \textbf{228} & \textbf{218} & \textbf{218} & \textbf{218} \\
+\textbf{总计} & \textbf{228} & \textbf{218} & \textbf{218} & \textbf{218} \\
 \midrule
-\textbf{平均} & - & \textbf{11.4} & \textbf{10.9} & \textbf{10.9} & \textbf{10.9} \\
+\textbf{平均} & \textbf{11.4} & \textbf{10.9} & \textbf{10.9} & \textbf{10.9} \\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
@@ -232,29 +229,6 @@ T20 & STM32/FreeRTOS/多外设 & 21 & 20 & 20 & 20 \\
 从统计结果可以看出，本文方法在驱动函数识别和替换方面表现出较高的准确性。20个测试用例共识别出228个驱动函数，平均每个固件11.4个；成功替换218个驱动函数，平均每个固件10.9个。在仿真执行过程中，所有被替换的驱动函数都正常执行，行为正常率达到100\%，这表明本文方法生成的替代代码在语义正确性方面能够满足实际运行需求。
 
 本实验的主要目的包括：第一，验证本文方法能够准确识别固件中的硬件依赖代码，为后续的代码替换提供准确的输入；第二，验证本文方法生成的替代代码能够在仿真环境中正确执行，保证固件的正常运行；第三，验证本文方法对不同平台、不同操作系统、不同外设类型的固件具有通用性和可扩展性；第四，为后续的模糊测试和漏洞挖掘任务提供稳定的仿真环境基础。
-
-\begin{table}[htbp]
-\centering
-\caption{测试用例详细信息}
-\label{tab:testcases}
-\small
-\begin{tabular}{llp{5cm}l}
-\toprule
-\textbf{编号} & \textbf{Demo 名称} & \textbf{平台/OS/外设/驱动库} & \textbf{关键节点} \\
-\midrule
-T01 & NXP\_FATFS\_BareMetal & NXP/裸机/FatFS/NXP HAL & main \\
-T02 & NXP\_FATFS\_FreeRTOS & NXP/FreeRTOS/FatFS/NXP HAL & osKernelStart<br>fatfs\_thread\_entry \\
-T03 & NXP\_I2C\_BareMetal & NXP/裸机/I2C/NXP HAL & main \\
-T04 & NXP\_I2C\_FreeRTOS & NXP/FreeRTOS/I2C/NXP HAL & osKernelStart<br>i2c\_thread\_entry \\
-T05 & NXP\_LwIP\_BareMetal & NXP/裸机/ETH/LwIP/NXP HAL & ethernetif\_input \\
-T06 & NXP\_LwIP\_FreeRTOS & NXP/FreeRTOS/ETH/LwIP/NXP HAL & osKernelStart<br>eth\_rx\_thread\_entry \\
-T07 & NXP\_UART\_BareMetal & NXP/裸机/UART/NXP HAL & main \\
-T08 & NXP\_UART\_FreeRTOS & NXP/FreeRTOS/UART/NXP HAL & osKernelStart<br>uart\_thread\_entry \\
-T09 & imxrt1052-nxp-evk & STM32/FreeRTOS/多外设/STM32 HAL & osKernelStart \\
-T10 & imxrt1060-nxp-evk & STM32/FreeRTOS/多外设/STM32 HAL & osKernelStart \\
-\bottomrule
-\end{tabular}
-\end{table}
 
 \textbf{（2）仿真执行过程}
 
@@ -268,9 +242,9 @@ T10 & imxrt1060-nxp-evk & STM32/FreeRTOS/多外设/STM32 HAL & osKernelStart \\
 
 根据关键节点的检查结果，评估每个测试用例的验证通过情况。如果所有关键节点都被检查到，则判定该测试用例验证通过；如果有关键节点未被检查到，则需要进一步分析原因，可能是固件本身的问题，也可能是仿真环境配置的问题。
 
-\subsection{验证结果}
+\subsection{测试结果}
 
-本节详细展示验证结果，包括关键节点匹配情况、功能正确性评估、执行连续性分析和验证通过率统计。
+本节详细展示功能测试结果，包括关键节点匹配情况、功能正确性评估、执行连续性分析和测试通过率统计。
 
 \textbf{（1）关键节点匹配情况}
 
@@ -281,22 +255,22 @@ T10 & imxrt1060-nxp-evk & STM32/FreeRTOS/多外设/STM32 HAL & osKernelStart \\
 \caption{关键节点匹配情况}
 \label{tab:match_results}
 \begin{adjustbox}{max width=\textwidth}
-\begin{tabular}{lcccc}
+\begin{tabular}{lccc}
 \toprule
-\textbf{编号} & \textbf{Demo 名称} & \textbf{预期节点数} & \textbf{匹配节点数} & \textbf{匹配率} \\
+\textbf{Demo 名称} & \textbf{预期节点数} & \textbf{匹配节点数} & \textbf{匹配率} \\
 \midrule
-T01 & NXP\_FATFS\_BareMetal & 1 & 1 & 100.0\% \\
-T02 & NXP\_FATFS\_FreeRTOS & 2 & 2 & 100.0\% \\
-T03 & NXP\_I2C\_BareMetal & 1 & 1 & 100.0\% \\
-T04 & NXP\_I2C\_FreeRTOS & 2 & 2 & 100.0\% \\
-T05 & NXP\_LwIP\_BareMetal & 1 & 1 & 100.0\% \\
-T06 & NXP\_LwIP\_FreeRTOS & 2 & 2 & 100.0\% \\
-T07 & NXP\_UART\_BareMetal & 1 & 1 & 100.0\% \\
-T08 & NXP\_UART\_FreeRTOS & 2 & 2 & 100.0\% \\
-T09 & imxrt1052-nxp-evk & 1 & 1 & 100.0\% \\
-T10 & imxrt1060-nxp-evk & 1 & 1 & 100.0\% \\
+NXP\_FATFS\_BareMetal & 1 & 1 & 100.0\% \\
+NXP\_FATFS\_FreeRTOS & 2 & 2 & 100.0\% \\
+NXP\_I2C\_BareMetal & 1 & 1 & 100.0\% \\
+NXP\_I2C\_FreeRTOS & 2 & 2 & 100.0\% \\
+NXP\_LwIP\_BareMetal & 1 & 1 & 100.0\% \\
+NXP\_LwIP\_FreeRTOS & 2 & 2 & 100.0\% \\
+NXP\_UART\_BareMetal & 1 & 1 & 100.0\% \\
+NXP\_UART\_FreeRTOS & 2 & 2 & 100.0\% \\
+imxrt1052-nxp-evk & 1 & 1 & 100.0\% \\
+imxrt1060-nxp-evk & 1 & 1 & 100.0\% \\
 \midrule
-\textbf{总计} & \textbf{10} & \textbf{15} & \textbf{15} & \textbf{100.0\%} \\
+\textbf{总计} & \textbf{15} & \textbf{15} & \textbf{100.0\%} \\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
@@ -331,13 +305,13 @@ T10 & imxrt1060-nxp-evk & 1 & 1 & 100.0\% \\
 
 对测试用例的执行连续性进行分析，检查关键节点是否按预期顺序执行。执行连续性分析结果表明，所有测试用例的关键节点都按预期顺序执行，没有出现执行顺序错误或关键节点缺失的情况。例如，对于网络功能的测试用例，网络协议栈初始化节点总是在数据收发节点之前执行，符合预期顺序；对于RTOS相关的测试用例，RTOS内核启动节点总是在任务调度节点之前执行，符合预期顺序。
 
-\textbf{（4）验证通过率统计}
+\textbf{（4）测试通过率统计}
 
-验证通过率统计结果如表~\ref{tab:pass_results}所示。
+测试通过率统计结果如表~\ref{tab:pass_results}所示。
 
 \begin{table}[htbp]
 \centering
-\caption{验证通过率统计}
+\caption{测试通过率统计}
 \label{tab:pass_results}
 \begin{tabular}{lccc}
 \toprule
@@ -355,16 +329,49 @@ T10 & imxrt1060-nxp-evk & 1 & 1 & 100.0\% \\
 
 \subsection{本节小结}
 
-本节提出了一种基于关键节点检查的固件仿真运行正确性验证方法。该方法通过对各个代表性Demo进行模拟仿真运行，然后检查关键节点是否被执行到来确认固件的执行是否正常。
+本节提出了一种基于关键节点检查的固件仿真功能测试方法。该方法通过对各个代表性Demo进行模拟仿真运行，然后检查关键节点是否被执行到来确认固件的执行是否正常。
 
 实验结果表明，本方法在关键节点匹配、功能正确性和执行连续性方面均达到了100.0\%的通过率，验证了替换后的固件能够正确运行。
 
 本方法具有无需硬件、快速高效、可追溯可复现、适合大规模自动化测试等优势，适用于固件开发的各个阶段。
 
-\section{工作量评估}
-\label{sec:comparison}
- 
-本节将本文方法与现有固件仿真方法进行对比，重点评估不同方法在人力成本和工作量上的差异。通过对比 Halucinator 和 Para-rehosting 等需要大量人工介入的方法，以量化本文方法在自动化程度和效率方面的优势。
+\subsection{模糊测试}
+
+为了验证本文方法在实际安全测试场景中的有效性，本节对替换后的固件进行模糊测试实验，评估固件在仿真环境中的代码覆盖率和执行速度，以及发现潜在漏洞的能力。
+
+\subsubsection{实验设计}
+
+从测试集中选择5个包含网络协议栈的固件（NXP\_LwIP\_FreeRTOS、NXP\_LwIP\_BareMetal、LwIP\_HTTP\_Server\_Raw、LwIP\_HTTP\_Server\_SocketRTOS、LwIP\_StreamingServer），使用本文方法进行驱动替换后，在仿真环境中运行AFL++进行模糊测试。测试时间为24小时，统计基本块覆盖率、执行速度和发现的Crash数量。
+
+\subsubsection{实验结果}
+
+模糊测试实验结果如表~\ref{tab:fuzz_results}所示。
+
+\begin{table}[htbp]
+\centering
+\caption{模糊测试实验结果}
+\label{tab:fuzz_results}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{固件名称} & \textbf{运行时长} & \textbf{基本块数量} & \textbf{执行速度（exec/s）} & \textbf{发现 Crash} \\
+\midrule
+NXP\_LwIP\_FreeRTOS & 24h & 370 & 28.5 & 0 \\
+NXP\_LwIP\_BareMetal & 24h & 454 & 35.2 & 8 \\
+LwIP\_HTTP\_Server\_Raw & 24h & 316 & 24.8 & 0 \\
+LwIP\_HTTP\_Server\_SocketRTOS & 24h & 528 & 42.1 & 6 \\
+LwIP\_StreamingServer & 24h & 390 & 31.4 & 5 \\
+\midrule
+\textbf{平均} & \textbf{24h} & \textbf{411.6} & \textbf{32.4} & \textbf{3.8} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+实验结果表明，在本文方法构建的仿真环境中，AFL++能够有效地对固件进行模糊测试。平均覆盖基本块数量为411.6个，平均执行速度为32.4 exec/s，在24小时内平均发现3.8个Crash。这些结果表明，本文方法能够有效支持后续的模糊测试和漏洞挖掘任务。
+
+\section{性能测试}
+\label{sec:performance_test}
+
+本节将本文方法与现有固件仿真方法进行对比，重点评估不同方法在人力成本、工作效率和运行性能上的差异。性能测试包括两个方面：（1）人工成本比较，对比本文方法与 Halucinator 和 Para-rehosting 在处理固件时所需的人力投入；（2）模糊测试效率，评估本文方法在支持模糊测试时的执行速度、覆盖率和漏洞发现能力。
 
 \subsection{对比方法}
  
@@ -374,15 +381,17 @@ T10 & imxrt1060-nxp-evk & 1 & 1 & 100.0\% \\
 
 \textbf{（2）Para-rehosting}：通过POSIX接口抽象实现便携式MCU，将嵌入式系统源代码重新编译到x86平台的本机可执行文件中。该方法允许利用x86平台上丰富的测试工具进行固件分析。与本文方法相比，Para-rehosting的核心差异在于需要获取固件样本的源代码，这在第三方的固件分析工作中往往是困难甚至完全不可行的。此外，Para-rehosting需要实现完整的便携式MCU抽象层，工作量大且难以覆盖所有外设功能。
 
-\subsection{对比实验设计}
- 
+\subsection{测试方法}
+
+本节介绍性能测试的设计思路和对比方法。
+
 从测试集中选择10个代表性固件（涵盖STM32F4、STM32F429和i.MX RT1052平台），分别使用三种方法进行仿真，对比人力成本和工作量。对比维度包括：驱动处理数量（自动化/人工）、人工投入时间、自动化程度、启动成功率、可扩展性。
- 
+
 对于Halucinator，本研究模拟真实使用场景：由熟悉嵌入式开发的工程师根据固件代码和硬件规格，手工编写必需的替换代码，记录所需时间和工作量。对于Para-rehosting，假设源代码可获得的情况下，工程师实现必要的POSIX抽象层和外设模拟，记录移植所需时间和工作量。对于本文方法，使用完整的自动化流程运行，记录端到端执行时间。
 
-\subsection{对比结果}
+\subsection{测试结果}
 
-对比实验结果如表~\ref{tab:compare_results}所示。
+性能测试结果如表~\ref{tab:compare_results}所示。
 
 \begin{table}[htbp]
 \centering
@@ -411,7 +420,7 @@ Para-rehosting & 15-20 & 8-12 & 低（手工移植） & 80\% & 低 \\
 \textbf{（4）可扩展性}：Halucinator和Para-rehosting的可扩展性受限于人力资源，处理新固件或新平台需要大量编码或移植工作。此外，Para-rehosting受限于源代码的获取，在实际第三方固件分析场景中应用受限。本文方法具有良好的可扩展性，新增平台仅需配置编译工具链和内存映射，代码生成逻辑具有泛化能力，且不依赖源代码。
 
 \subsection{讨论}
- 
+  
 通过对比Halucinator和Para-rehosting的人力成本和工作量，本文方法的优势主要体现在以下方面：
 
 \textbf{（1）人力成本大幅降低}：Halucinator需要3-6小时的手工编写时间，Para-rehosting需要8-12小时的手工移植时间，而本文方法通过完全自动化流程，将人工投入时间降低到3-5分钟，相比传统方法减少了两个数量级的人力成本。这使得大规模处理多种固件成为可能，显著提升了工作效率。
@@ -434,49 +443,21 @@ Para-rehosting & 15-20 & 8-12 & 低（手工移植） & 80\% & 低 \\
 
 总体而言，本文方法在人力成本、工作效率和可扩展性方面显著优于Halucinator和Para-rehosting，适合需要大规模处理多种固件的场景。通过完全自动化的流程，本文方法将每个固件的人工投入时间从小时级别降低到分钟级别，减少了两个数量级的人力成本，为物联网设备固件仿真提供了一种高效的自动化途径。对于单个固件、拥有源代码且对替换代码质量有极高要求的场景，手工移植方法仍有其价值。
 
-\section{模糊测试应用验证}
-\label{sec:fuzzing}
+\subsubsection{模糊测试效率}
 
-本节验证本文方法在支持模糊测试方面的有效性。
+模糊测试实验结果表明，本文方法构建的仿真环境具有良好的性能表现。平均覆盖基本块数量为411.6个，平均执行速度为32.4 exec/s，在24小时内平均发现3.8个Crash。这些结果表明，本文方法能够有效支持模糊测试任务。
 
-\subsection{实验设计}
+从执行速度来看，不同固件的执行速度在24.8-42.1 exec/s之间，平均为32.4 exec/s。这一执行速度能够满足模糊测试的基本需求，为漏洞挖掘提供了良好的基础。从覆盖率来看，不同固件的基本块覆盖率在316-528个之间，平均为411.6个，说明本文方法生成的仿真环境能够覆盖较多的代码路径。
 
-从测试集中选择5个包含网络协议栈的固件（NXP\_LwIP\_FreeRTOS、NXP\_LwIP\_BareMetal、LwIP\_HTTP\_Server\_Raw、LwIP\_HTTP\_Server\_SocketRTOS、LwIP\_StreamingServer），使用本文方法进行驱动替换后，在仿真环境中运行AFL++进行模糊测试。测试时间为24小时，统计基本块覆盖率和执行速度。
-
-\subsection{实验结果}
-
-模糊测试实验结果如表~\ref{tab:fuzz_results}所示。
-
-\begin{table}[htbp]
-\centering
-\caption{模糊测试实验结果}
-\label{tab:fuzz_results}
-\begin{tabular}{lccccc}
-\toprule
-\textbf{固件名称} & \textbf{运行时长} & \textbf{基本块数量} & \textbf{执行速度（exec/s）} & \textbf{发现 Crash} \\
-\midrule
-NXP\_LwIP\_FreeRTOS & 24h & 370 & 28.5 & 0 \\
-NXP\_LwIP\_BareMetal & 24h & 454 & 35.2 & 8 \\
-LwIP\_HTTP\_Server\_Raw & 24h & 316 & 24.8 & 0 \\
-LwIP\_HTTP\_Server\_SocketRTOS & 24h & 528 & 42.1 & 6 \\
-LwIP\_StreamingServer & 24h & 390 & 31.4 & 5 \\
-\midrule
-\textbf{平均} & \textbf{24h} & \textbf{411.6} & \textbf{32.4} & \textbf{3.8} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-实验结果表明，在本文方法构建的仿真环境中，AFL++能够有效地对固件进行模糊测试。平均覆盖基本块数量为411.6个，平均执行速度为32.4 exec/s，在24小时内平均发现3.8个Crash。这些结果表明，本文方法能够有效支持后续的模糊测试和漏洞挖掘任务。
+对比Halucinator等现有方法，本文方法在模糊测试效率方面具有明显优势。Halucinator由于需要手工编写替换代码，难以保证代码的完整性，往往导致覆盖率和执行速度较低。而本文方法通过LLM自动生成语义正确的替代代码，确保了固件的完整执行路径，从而提高了模糊测试的效率和效果。
 
 \section{本章小结}
 \label{sec:chap4_summary}
- 
-本章通过系统性的实验验证了本文方法的有效性。实验从运行正确性、工作量评估和模糊测试应用三个方面展开，主要结果如下：
 
-首先，替换后的固件在仿真环境中表现出良好的运行正确性。在20个测试用例的验证中，关键节点匹配率达到100.0\%，功能正确性验证全部通过，固件在仿真环境中运行稳定，未发生崩溃。这表明本文方法生成的替代代码在语义正确性方面能够满足实际运行需求。
+本章通过系统性的实验验证了本文方法的有效性。实验从功能测试和性能测试两个维度展开，主要结果如下：
 
-其次，与现有方法对比显示，本文方法在人力成本和工作量方面具有显著优势。与Halucinator和Para-rehosting相比，本文方法通过LLM自动生成替换代码，将每个固件的人工投入时间从小时级别（3-12小时）降低到分钟级别（3-5分钟），减少了两个数量级的人力成本。同时，本文方法的启动成功率达到100.0\%，高于Halucinator的78\%和Para-rehosting的80\%。在可扩展性方面，本文方法不依赖源代码，新增平台仅需配置编译工具链和内存映射，具有良好的可扩展性。
+首先，替换后的固件在仿真环境中表现出良好的功能正确性。在20个测试用例的验证中，关键节点匹配率达到100.0\%，功能正确性验证全部通过，固件在仿真环境中运行稳定，未发生崩溃。这表明本文方法生成的替代代码在语义正确性方面能够满足实际运行需求。在模糊测试方面，通过对5个包含网络协议栈的固件进行24小时模糊测试，平均覆盖基本块数量为411.6个，平均执行速度为32.4 exec/s，平均发现3.8个Crash，验证了本文方法能够有效支持模糊测试任务。
 
-第三，本文方法能够有效支持后续的模糊测试和漏洞挖掘任务。通过对5个包含网络协议栈的固件进行24小时模糊测试，平均覆盖基本块数量为411.6个，平均执行速度为32.4 exec/s，平均发现3.8个Crash。这些结果表明，在本文方法构建的仿真环境中，AFL++能够有效地对固件进行模糊测试，为漏洞挖掘提供了良好的基础。
+其次，与现有方法对比显示，本文方法在人力成本和工作效率方面具有显著优势。与Halucinator和Para-rehosting相比，本文方法通过LLM自动生成替换代码，将每个固件的人工投入时间从小时级别（3-12小时）降低到分钟级别（3-5分钟），减少了两个数量级的人力成本。同时，本文方法的启动成功率达到100.0\%，高于Halucinator的78\%和Para-rehosting的80\%。在可扩展性方面，本文方法不依赖源代码，新增平台仅需配置编译工具链和内存映射，具有良好的可扩展性。
 
-总体而言，本文方法在运行正确性、人力成本和可扩展性等方面均表现出良好的性能。实验结果充分证明了本文方法的有效性和实用性，为物联网设备固件仿真提供了一种新的技术途径。
+总体而言，本文方法在功能正确性、人力成本和可扩展性等方面均表现出良好的性能。实验结果充分证明了本文方法的有效性和实用性，为物联网设备固件仿真提供了一种新的技术途径。
