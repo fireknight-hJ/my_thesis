@@ -6,17 +6,45 @@
 \section{实验设计}
 \label{sec:design}
 
-为了全面评估本文方法的有效性和实用性，本节介绍实验的整体设计，包括实验目标、测试固件的选择、实验环境的搭建以及评估指标的定义。
+为了全面评估本文方法的有效性和实用性，本节介绍实验的整体设计，包括实验环境的搭建、测试用例的选择以及实验目标的定义。
 
-\subsection{实验目标}
+\subsection{实验环境}
 
-本章实验从功能正确性和性能效率两个维度对本文方法进行评估。
+实验在以下软硬件环境中进行：
 
-首先，\textbf{功能正确性}评估是验证系统核心能力的关键。替换后的固件能否在仿真环境中正确运行，包括能否正常启动、执行主要功能、保持语义一致性等。功能正确性评估包括仿真环境测试和模糊测试两个方面。仿真环境测试验证替换后的固件能否正常启动和执行主要功能；模糊测试验证固件在仿真环境中能否支持模糊测试任务并发现潜在漏洞。
+\begin{table}[htbp]
+\centering
+\caption{硬件环境配置}
+\label{tab:hw_env}
+\small
+\begin{tabular}{ll}
+\toprule
+\textbf{配置项} & \textbf{规格} \\
+\midrule
+主机 & Intel Xeon Platinum 8350C 处理器（128核心），503GB 内存，869GB SSD \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-其次，\textbf{性能效率评估}用于检验本文方法的实用价值和可扩展性。与 Halucinator 和 Para-rehosting 等现有方法相比，本文方法通过 LLM 驱动的智能替换机制，大幅降低了人工编写和移植代码的工作量，显著提升了处理效率和可扩展性。性能效率评估包括人工成本比较和模糊测试效率两个方面。
+\begin{table}[htbp]
+\centering
+\caption{软件环境配置}
+\label{tab:sw_env}
+\small
+\begin{tabular}{ll}
+\toprule
+\textbf{配置项} & \textbf{规格} \\
+\midrule
+操作系统 & Ubuntu 22.04 LTS \\
+编译工具链 & ARM GCC 10.3.1、CMake 3.21.4 \\
+仿真环境 & Unicorn 2.0.2、UnicornAFL（基于Unicorn的模糊测试扩展） \\
+模糊测试 & AFL++ 4.08c+（基于v4.08c的开发版本） \\
+大模型 & DeepSeek V3.2 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-\subsection{测试固件选择}
+\subsection{测试用例}
 
 为了验证方法的通用性和有效性，本研究选择了多种典型的物联网设备固件作为测试案例，涵盖不同的芯片平台、操作系统、驱动复杂度和应用场景。
 
@@ -87,42 +115,6 @@ STM32F429 & 裸机 & UART, GPIO, STM32 HAL & UART\_Hyperterminal\_IT \\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
-\end{table}
-
-\subsection{实验环境}
-
-实验在以下软硬件环境中进行：
-
-\begin{table}[htbp]
-\centering
-\caption{硬件环境配置}
-\label{tab:hw_env}
-\small
-\begin{tabular}{ll}
-\toprule
-\textbf{配置项} & \textbf{规格} \\
-\midrule
-主机 & Intel Xeon Platinum 8350C 处理器（128核心），503GB 内存，869GB SSD \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{table}[htbp]
-\centering
-\caption{软件环境配置}
-\label{tab:sw_env}
-\small
-\begin{tabular}{ll}
-\toprule
-\textbf{配置项} & \textbf{规格} \\
-\midrule
-操作系统 & Ubuntu 22.04 LTS \\
-编译工具链 & ARM GCC 10.3.1、CMake 3.21.4 \\
-仿真环境 & Unicorn 2.0.2、UnicornAFL（基于Unicorn的模糊测试扩展） \\
-模糊测试 & AFL++ 4.08c+（基于v4.08c的开发版本） \\
-大模型 & DeepSeek V3.2 \\
-\bottomrule
-\end{tabular}
 \end{table}
 
 \section{功能测试}
