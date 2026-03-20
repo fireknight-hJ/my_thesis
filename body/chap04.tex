@@ -335,63 +335,32 @@ imxrt1060-nxp-evk & 1 & 1 & 100.0\% \\
 
 本方法具有无需硬件、快速高效、可追溯可复现、适合大规模自动化测试等优势，适用于固件开发的各个阶段。
 
-\subsection{模糊测试}
-
-为了验证本文方法在实际安全测试场景中的有效性，本节对替换后的固件进行模糊测试实验，评估固件在仿真环境中的代码覆盖率和执行速度，以及发现潜在漏洞的能力。
-
-\subsubsection{实验设计}
-
-从测试集中选择5个包含网络协议栈的固件（NXP\_LwIP\_FreeRTOS、NXP\_LwIP\_BareMetal、LwIP\_HTTP\_Server\_Raw、LwIP\_HTTP\_Server\_SocketRTOS、LwIP\_StreamingServer），使用本文方法进行驱动替换后，在仿真环境中运行AFL++进行模糊测试。测试时间为24小时，统计基本块覆盖率、执行速度和发现的Crash数量。
-
-\subsubsection{实验结果}
-
-模糊测试实验结果如表~\ref{tab:fuzz_results}所示。
-
-\begin{table}[htbp]
-\centering
-\caption{模糊测试实验结果}
-\label{tab:fuzz_results}
-\begin{tabular}{lccccc}
-\toprule
-\textbf{固件名称} & \textbf{运行时长} & \textbf{基本块数量} & \textbf{执行速度（exec/s）} & \textbf{发现 Crash} \\
-\midrule
-NXP\_LwIP\_FreeRTOS & 24h & 370 & 28.5 & 0 \\
-NXP\_LwIP\_BareMetal & 24h & 454 & 35.2 & 8 \\
-LwIP\_HTTP\_Server\_Raw & 24h & 316 & 24.8 & 0 \\
-LwIP\_HTTP\_Server\_SocketRTOS & 24h & 528 & 42.1 & 6 \\
-LwIP\_StreamingServer & 24h & 390 & 31.4 & 5 \\
-\midrule
-\textbf{平均} & \textbf{24h} & \textbf{411.6} & \textbf{32.4} & \textbf{3.8} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-实验结果表明，在本文方法构建的仿真环境中，AFL++能够有效地对固件进行模糊测试。平均覆盖基本块数量为411.6个，平均执行速度为32.4 exec/s，在24小时内平均发现3.8个Crash。这些结果表明，本文方法能够有效支持后续的模糊测试和漏洞挖掘任务。
-
 \section{性能测试}
 \label{sec:performance_test}
 
-本节将本文方法与现有固件仿真方法进行对比，重点评估不同方法在人力成本、工作效率和运行性能上的差异。性能测试包括两个方面：（1）人工成本比较，对比本文方法与 Halucinator 和 Para-rehosting 在处理固件时所需的人力投入；（2）模糊测试效率，评估本文方法在支持模糊测试时的执行速度、覆盖率和漏洞发现能力。
+本节通过两个测试维度评估本文方法的性能：人工成本对比和模糊测试效率。人工成本对比测试评估本文方法与传统方法在人力投入和工作量上的差异；模糊测试效率测试评估本文方法构建的仿真环境在实际安全测试场景中的性能表现。
 
-\subsection{对比方法}
- 
+\subsection{人工成本对比测试}
+
+\subsubsection{对比方法}
+  
 本研究选择以下两种具有代表性的方法作为对比，它们与本文方法在核心思想上相似，但所需的人力成本和工作量存在显著差异：
 
 \textbf{（1）Halucinator}：基于驱动替换的固件仿真框架，通过替换目标固件中的HAL函数调用，实现对硬件依赖的解耦。用户需要手工编写每个HAL函数的替代实现，这些实现通常返回模拟数据或执行简单的状态转换。Halucinator的优势在于概念清晰、可控性强，但其局限性在于需要大量的人工分析和编码工作，每个新固件都需要重新编写对应的替换层代码。
 
 \textbf{（2）Para-rehosting}：通过POSIX接口抽象实现便携式MCU，将嵌入式系统源代码重新编译到x86平台的本机可执行文件中。该方法允许利用x86平台上丰富的测试工具进行固件分析。与本文方法相比，Para-rehosting的核心差异在于需要获取固件样本的源代码，这在第三方的固件分析工作中往往是困难甚至完全不可行的。此外，Para-rehosting需要实现完整的便携式MCU抽象层，工作量大且难以覆盖所有外设功能。
 
-\subsection{测试方法}
+\subsubsection{测试方法}
 
-本节介绍性能测试的设计思路和对比方法。
+本节介绍人工成本对比测试的设计思路和对比方法。
 
 从测试集中选择10个代表性固件（涵盖STM32F4、STM32F429和i.MX RT1052平台），分别使用三种方法进行仿真，对比人力成本和工作量。对比维度包括：驱动处理数量（自动化/人工）、人工投入时间、自动化程度、启动成功率、可扩展性。
 
 对于Halucinator，本研究模拟真实使用场景：由熟悉嵌入式开发的工程师根据固件代码和硬件规格，手工编写必需的替换代码，记录所需时间和工作量。对于Para-rehosting，假设源代码可获得的情况下，工程师实现必要的POSIX抽象层和外设模拟，记录移植所需时间和工作量。对于本文方法，使用完整的自动化流程运行，记录端到端执行时间。
 
-\subsection{测试结果}
+\subsubsection{测试结果}
 
-性能测试结果如表~\ref{tab:compare_results}所示。
+人工成本对比测试结果如表~\ref{tab:compare_results}所示。
 
 \begin{table}[htbp]
 \centering
@@ -419,7 +388,7 @@ Para-rehosting & 15-20 & 8-12 & 低（手工移植） & 80\% & 低 \\
 
 \textbf{（4）可扩展性}：Halucinator和Para-rehosting的可扩展性受限于人力资源，处理新固件或新平台需要大量编码或移植工作。此外，Para-rehosting受限于源代码的获取，在实际第三方固件分析场景中应用受限。本文方法具有良好的可扩展性，新增平台仅需配置编译工具链和内存映射，代码生成逻辑具有泛化能力，且不依赖源代码。
 
-\subsection{讨论}
+\subsubsection{讨论}
   
 通过对比Halucinator和Para-rehosting的人力成本和工作量，本文方法的优势主要体现在以下方面：
 
@@ -443,9 +412,38 @@ Para-rehosting & 15-20 & 8-12 & 低（手工移植） & 80\% & 低 \\
 
 总体而言，本文方法在人力成本、工作效率和可扩展性方面显著优于Halucinator和Para-rehosting，适合需要大规模处理多种固件的场景。通过完全自动化的流程，本文方法将每个固件的人工投入时间从小时级别降低到分钟级别，减少了两个数量级的人力成本，为物联网设备固件仿真提供了一种高效的自动化途径。对于单个固件、拥有源代码且对替换代码质量有极高要求的场景，手工移植方法仍有其价值。
 
-\subsubsection{模糊测试效率}
+\subsection{模糊测试性能测试}
 
-模糊测试实验结果表明，本文方法构建的仿真环境具有良好的性能表现。平均覆盖基本块数量为411.6个，平均执行速度为32.4 exec/s，在24小时内平均发现3.8个Crash。这些结果表明，本文方法能够有效支持模糊测试任务。
+本节评估本文方法构建的仿真环境在实际安全测试场景中的性能表现。通过在仿真环境中运行AFL++模糊测试器，评估固件的执行速度、代码覆盖率以及漏洞发现能力。
+
+\subsubsection{实验设计}
+
+从测试集中选择5个包含网络协议栈的固件（NXP\_LwIP\_FreeRTOS、NXP\_LwIP\_BareMetal、LwIP\_HTTP\_Server\_Raw、LwIP\_HTTP\_Server\_SocketRTOS、LwIP\_StreamingServer），使用本文方法进行驱动替换后，在仿真环境中运行AFL++进行模糊测试。测试时间为24小时，统计基本块覆盖率、执行速度和发现的Crash数量。
+
+\subsubsection{实验结果}
+
+模糊测试实验结果如表~\ref{tab:fuzz_results}所示。
+
+\begin{table}[htbp]
+\centering
+\caption{模糊测试实验结果}
+\label{tab:fuzz_results}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{固件名称} & \textbf{运行时长} & \textbf{基本块数量} & \textbf{执行速度（exec/s）} & \textbf{发现 Crash} \\
+\midrule
+NXP\_LwIP\_FreeRTOS & 24h & 370 & 28.5 & 0 \\
+NXP\_LwIP\_BareMetal & 24h & 454 & 35.2 & 8 \\
+LwIP\_HTTP\_Server\_Raw & 24h & 316 & 24.8 & 0 \\
+LwIP\_HTTP\_Server\_SocketRTOS & 24h & 528 & 42.1 & 6 \\
+LwIP\_StreamingServer & 24h & 390 & 31.4 & 5 \\
+\midrule
+\textbf{平均} & \textbf{24h} & \textbf{411.6} & \textbf{32.4} & \textbf{3.8} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+实验结果表明，在本文方法构建的仿真环境中，AFL++能够有效地对固件进行模糊测试。平均覆盖基本块数量为411.6个，平均执行速度为32.4 exec/s，在24小时内平均发现3.8个Crash。这些结果表明，本文方法能够有效支持后续的模糊测试和漏洞挖掘任务。
 
 从执行速度来看，不同固件的执行速度在24.8-42.1 exec/s之间，平均为32.4 exec/s。这一执行速度能够满足模糊测试的基本需求，为漏洞挖掘提供了良好的基础。从覆盖率来看，不同固件的基本块覆盖率在316-528个之间，平均为411.6个，说明本文方法生成的仿真环境能够覆盖较多的代码路径。
 
