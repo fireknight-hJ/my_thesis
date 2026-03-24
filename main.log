@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2022/dev/Debian) (preloaded format=xelatex 2026.3.5)  25 MAR 2026 06:21
+This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2022/dev/Debian) (preloaded format=xelatex 2026.3.5)  25 MAR 2026 06:24
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1362,7 +1362,7 @@ Package: xkeyval 2020/11/20 v2.8 package option processing (HA)
 File: xkeyval.tex 2014/12/03 v2.7a key=value parser (HA)
 ))
 \verbatim@out=\write4
-runsystem(echo 'write18-test-2026325381'>"main.w18")...disabled (restricted).
+runsystem(echo 'write18-test-2026325384'>"main.w18")...disabled (restricted).
 
 
 
@@ -2267,9 +2267,9 @@ File: lstlang1.sty 2020/03/24 1.8d listings language file
 File: lstmisc.sty 2020/03/24 1.8d (Carsten Heinz)
 )
 LaTeX Font Info:    Font shape `TU/lmtt/bx/n' in size <8> not available
-(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 40.
+(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 38.
 LaTeX Font Info:    Font shape `TU/lmtt/bx/n' in size <12> not available
-(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 59.
+(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 57.
 
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
@@ -2408,32 +2408,17 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [30]
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
- []
-
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
- []
-
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
- []
-
-[31]
-Underfull \hbox (badness 10000) in paragraph at lines 411--412
+Underfull \hbox (badness 10000) in paragraph at lines 409--410
 []|\TU/lmtt/m/n/11 HAL_UART_WaitOnFlag\TU/TimesNewRoman(0)/m/n/11 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 412--413
+Underfull \hbox (badness 10000) in paragraph at lines 410--411
 []|\TU/lmtt/m/n/11 HAL_UART_IRQHandler\TU/TimesNewRoman(0)/m/n/11 ,
  []
 
 
-Overfull \hbox (28.33746pt too wide) in paragraph at lines 405--419
+Overfull \hbox (28.33746pt too wide) in paragraph at lines 403--417
  [][] 
  []
 
@@ -2452,8 +2437,23 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
+[31]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+ []
+
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+ []
+
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+ []
+
 [32]
-Overfull \hbox (47.57626pt too wide) in paragraph at lines 432--446
+Overfull \hbox (47.57626pt too wide) in paragraph at lines 430--444
  [][] 
  []
 
@@ -2475,7 +2475,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
 [33
 
 ]
-Overfull \hbox (9.2115pt too wide) in paragraph at lines 488--489
+Overfull \hbox (9.2115pt too wide) in paragraph at lines 486--487
 []\TU/TimesNewRoman(0)/m/n/12 Redirect \TU/SimSun.ttf(0)/m/n/12 策 略 使 用 自 定 义 的
  注 入 函 数  |（如 \TU/TimesNewRoman(0)/m/n/12 HAL_BE_In\TU/SimSun.ttf(0)/m/n/12 、| 
 \TU/TimesNewRoman(0)/m/n/12 HAL_BE_ENET_ReadFrame\TU/SimSun.ttf(0)/m/n/12 、|
@@ -2512,7 +2512,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [35]
-Overfull \hbox (4.41534pt too wide) in paragraph at lines 567--568
+Overfull \hbox (4.41534pt too wide) in paragraph at lines 565--566
 []\TU/SimSun.ttf(0)/m/n/12 以 \TU/TimesNewRoman(0)/m/n/12 NXP \TU/SimSun.ttf(0)/
 m/n/12 网 卡 驱 动 中 的 \TU/TimesNewRoman(0)/m/n/12 ENET_GetRxFrame \TU/SimSun.ttf(0
 )/m/n/12 函 数 为 例，|  该 函 数 使 用 \TU/TimesNewRoman(0)/m/n/12 DMA+RingBuffer
@@ -2640,7 +2640,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
 
 [43]
 LaTeX Font Info:    Font shape `TU/lmtt/bx/n' in size <10.95> not available
-(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 883.
+(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 881.
 
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
@@ -3154,15 +3154,15 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
 LaTeX Warning: There were multiply-defined labels.
 
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 90D9A77911F164E258C74C71A692F251;4215.
+(rerunfilecheck)             Checksum: 7F9E7320D760A40378DF149812288479;4090.
  ) 
 Here is how much of TeX's memory you used:
  43809 strings out of 477728
  960373 string characters out of 5842239
- 1798368 words of memory out of 5000000
+ 1797846 words of memory out of 5000000
  63560 multiletter control sequences out of 15000+600000
  489928 words of font info for 191 fonts, out of 8000000 for 9000
  264 hyphenation exceptions out of 8191
  99i,15n,102p,1208b,2354s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on main.xdv (81 pages, 1462740 bytes).
+Output written on main.xdv (81 pages, 1461336 bytes).
