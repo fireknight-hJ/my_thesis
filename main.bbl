@@ -102,23 +102,6 @@ Jiongyi Chen, Wenrui Diao, Qingchuan Zhao, Chaoshun Zuo, Zhiqiang Lin, XiaoFeng
   Fuzzing.
 \newblock In: NDSS, 2018
 
-\bibitem{openai2023gpt4}
-OpenAI.
-\newblock GPT-4 Technical Report.
-\newblock arXiv preprint arXiv:2303.08774, 2023
-
-\bibitem{roziere2023code}
-Baptiste Rozi{\`e}re, Jonas Gehring, Fabian Gloeckle, Sten Sootla, Itai Gat,
-  Xiaoqing~Ellen Tan, et~al.
-\newblock Code Llama: Open Foundation Models for Code.
-\newblock arXiv preprint arXiv:2308.12950, 2023
-
-\bibitem{li2023starcoder}
-Raymond Li, Loubna~Ben Allal, Yangtian Zi, Niklas Muennighoff, Denis Kocetkov,
-  Chenghao Mou, et~al.
-\newblock StarCoder: May the Source Be with You!
-\newblock arXiv preprint arXiv:2305.06161, 2023
-
 \bibitem{wei2022finetuned}
 Jason Wei, Maarten Bosma, Vincent~Y Zhao, Kelvin Guu, Adams~Wei Yu, Brian
   Lester, et~al.

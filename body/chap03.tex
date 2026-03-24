@@ -1,6 +1,8 @@
 \chapter{系统设计与实现}
 \label{chap:design}
 
+\usetikzlibrary{arrows.meta,positioning,calc}
+
 本章详细阐述基于驱动程序替换的固件仿真系统的设计与实现。系统采用"静态识别→智能替换→构建验证→动态反馈"的分层架构，通过 CodeQL 静态分析和大语言模型智能体技术，实现固件驱动函数的自动识别、语义分析和代码替换，最终在仿真环境中运行并支持模糊测试。
 
 \section{系统整体架构}
@@ -315,72 +317,78 @@ class FunctionInfo:
 
 驱动函数分析、替换与编译模块是系统的核心智能层，承担着语义理解和代码生成的核心任务。该模块采用大语言模型驱动的智能体架构，通过 LangGraph 框架构建图式工作流，实现从函数分类、代码生成、质量验证到编译集成的完整自动化流程。该模块采用"语义分析→代码生成→质量验证→编译集成→错误修复"的迭代优化模式，通过多轮迭代逐步提升替换质量，直至生成能够在仿真环境中正常运行的替换代码。
 
-\subsection{智能体工作流设计}
+\subsection{分析替换与编译智能体工作流设计}
 
-\subsubsection{Classifier Agent：智能体分析全流程}
-
-Classifier Agent 基于函数源码和静态分析结果，通过图式工作流实现驱动函数的自动分类和语义保留分析。该智能体采用 LangGraph 框架构建的状态机模型，通过"推理-工具调用-结果汇总"的循环过程，逐步完成函数分类、策略选择和代码生成等工作。
-
-工作流执行过程如图~\ref{fig:classifier-workflow}所示。工作流从 Classifier Agent 开始，首先对目标函数进行语义分类，确定函数类别和推荐的替换策略。对于需要替换的函数，Classifier Agent 生成替换代码后，会调用 VerifyReplacement 进行代码审查和编译验证。
+工作流以\textbf{单个驱动函数}为粒度调度：每轮从静态分析模块或任务队列中取定一条驱动函数记录（含签名、源码片段、MMIO 访问上下文等），在图式状态机中顺序执行，直至该函数被判定为无需替换并结束，或替换实现通过校验与编译并被采纳。为便于叙述与实现解耦，整条流水线在逻辑上划分为\textbf{驱动函数分析与替换代码生成}、\textbf{替换代码修正与编译集成}两个子模块；前者由 Analyzer Agent 主导完成上下文拉取、分类与候选替换生成，后者在工程侧完成定义校验、构建与失败修复。整体编排如图~\ref{fig:analyzer-workflow}所示。
 
 \begin{figure}[htbp]
 \centering
 \begin{tikzpicture}[
-    node distance=1.5cm,
-    box/.style={rectangle, draw, rounded corners, minimum width=2.5cm, minimum height=0.8cm, align=center, font=\small},
-    decision/.style={diamond, draw, aspect=2, minimum width=2cm, align=center, font=\small},
-    arrow/.style={->, thick, >=stealth}
+    box/.style={rectangle, draw, rounded corners, minimum width=3.0cm, minimum height=0.75cm, align=center, font=\small},
+    decision/.style={diamond, draw, aspect=2.2, minimum width=2.2cm, align=center, font=\footnotesize},
+    panellbl/.style={font=\small\bfseries},
+    arrow/.style={-Stealth, thick},
+    darrow/.style={-Stealth, thick, dashed}
 ]
-    \node[box, fill=blue!20] (start) {开始：\\Classifier Agent};
-    \node[box, fill=green!20, right of=start, xshift=1.5cm] (classify) {函数分类与\\替换代码生成};
-    \node[decision, fill=yellow!20, right of=classify, xshift=1.5cm] (has_replacement) {需要\\替换?};
-    \node[box, fill=orange!20, right of=has_replacement, xshift=1.5cm] (verify) {VerifyReplacement\\验证};
-    \node[decision, fill=yellow!20, right of=verify, xshift=1.5cm] (pass) {验证\\通过?};
-    \node[box, fill=red!20, above right of=pass, xshift=0.3cm] (fixer) {BuildFixer\\修复};
-    \node[decision, fill=yellow!20, below right of=pass, xshift=0.3cm] (fix) {修复\\成功?};
-    \node[box, fill=gray!20, right of=fixer, xshift=1.5cm] (accept) {采纳替换\\代码};
-    \node[box, fill=gray!20, right of=accept, xshift=0.5cm] (end) {完成};
-    
-    \draw[arrow] (start) -- (classify);
-    \draw[arrow] (classify) -- (has_replacement);
-    \draw[arrow] (has_replacement) -- node[above, font=\scriptsize] {否} (end);
-    \draw[arrow] (has_replacement) -- node[below, font=\scriptsize] {是} (verify);
-    \draw[arrow] (verify) -- (pass);
-    \draw[arrow] (pass) -- node[above, font=\scriptsize] {是} (accept);
-    \draw[arrow] (pass) -- (end);
-    \draw[arrow] (fixer) -- (fix);
-    \draw[arrow] (fixer) -- node[above, font=\scriptsize] {是} (accept);
-    \draw[arrow] (fixer) -- node[below, font=\scriptsize] {否} (end);
-    \draw[arrow] (fixer) -- (end);
-    \draw[arrow] (accept) -- (end);
+    % ----- 左栏：分析与生成 -----
+    \node[panellbl, anchor=west] at (-5.2, 0.85) {驱动函数分析与替换代码生成};
+    \draw[dashed, gray!60] (-5.45, 0.55) rectangle (-0.15, -6.85);
+
+    \node[box, fill=blue!12] (in) at (-2.8, -0.2) {单个驱动函数\\输入};
+    \node[box, fill=cyan!12] (fetch) at (-2.8, -1.35) {信息获取};
+    \node[box, fill=cyan!12] (cls) at (-2.8, -2.5) {代码分类};
+    \node[decision, fill=yellow!15] (need) at (-2.8, -3.85) {需替换?};
+    \node[box, fill=green!15] (gen) at (-2.8, -5.25) {替换代码\\生成};
+    \node[box, fill=gray!22] (skip) at (-5.0, -3.85) {结束\\（不替换）};
+
+    \draw[arrow] (in) -- (fetch);
+    \draw[arrow] (fetch) -- (cls);
+    \draw[arrow] (cls) -- (need);
+    \draw[arrow] (need) -- node[above, font=\scriptsize] {否} (skip);
+    \draw[arrow] (need) -- node[right, font=\scriptsize] {是} (gen);
+
+    % ----- 右栏：校验、编译与修复 -----
+    \node[panellbl, anchor=west] at (1.0, 0.85) {替换代码修正与编译集成};
+    \draw[dashed, gray!60] (0.75, 0.55) rectangle (6.35, -6.85);
+
+    \node[box, fill=orange!15] (vr) at (3.5, -0.2) {VerifyReplacement\\（定义符合性）};
+    \node[decision, fill=yellow!15] (defok) at (3.5, -1.55) {符合\\定义?};
+    \node[box, fill=orange!15] (build) at (3.5, -2.9) {源码编译\\（工程集成构建）};
+    \node[decision, fill=yellow!15] (bok) at (3.5, -4.25) {编译\\成功?};
+    \node[box, fill=red!15] (bf) at (5.85, -4.25) {BuilderFixer\\修复};
+    \node[box, fill=gray!28] (done) at (3.5, -5.75) {完成\\（采纳替换）};
+
+    \draw[arrow] (gen) -- node[above, font=\scriptsize] {候选替换} (vr);
+    \draw[arrow] (vr) -- (defok);
+    \draw[arrow] (defok) -- node[right, font=\scriptsize] {是} (build);
+    \draw[darrow] (defok.west) -- ++(-0.85,0) |- node[near start, left, font=\scriptsize] {否} (gen.west);
+    \draw[arrow] (build) -- (bok);
+    \draw[arrow] (bok) -- node[above, font=\scriptsize] {否} (bf);
+    \draw[arrow] (bf.north) |- ($(build.east)+(0.35,0)$);
+    \draw[arrow] (bok) -- node[right, font=\scriptsize] {是} (done);
 \end{tikzpicture}
-\caption{Classifier Agent 工作流程图}
-\label{fig:classifier-workflow}
+\caption{Analyzer Agent 工作流：左侧为分析与替换生成，右侧为定义校验、编译与 BuilderFixer 修复闭环}
+\label{fig:analyzer-workflow}
 \end{figure}
 
-智能体的工作流程包括四个核心阶段：
+\subsubsection{驱动函数分析与替换代码生成模块}
 
-\textbf{（1）信息获取阶段}。智能体通过工具调用获取目标函数的完整实现代码、函数签名、参数类型、返回类型等信息。工具包括 GetFunctionInfo（获取函数基本信息）、GetFunctionCallStack（获取函数调用栈）、GetMMIOFunctionEmulateInfo（获取 MMIO 函数仿真信息）等。这些工具调用使智能体能够全面了解函数的实现细节和上下文关系。
+该子模块由 \textbf{Analyzer Agent} 驱动，在 LangGraph 状态机中通过``工具调用—推理—写回''的循环完成单函数处理。执行顺序固定为：\textbf{信息获取} $\rightarrow$ \textbf{代码分类} $\rightarrow$（仅在分类结果认定该函数需要替换时）\textbf{替换代码生成}。
 
-\textbf{（2）推理与分类阶段}。智能体基于函数源码和静态分析结果，通过大语言模型的语义理解能力进行推理判断。推理过程包括：识别 MMIO 访问模式、判断函数主要用途、确定函数类别。例如，对于 UART 接收函数，LLM 能够识别出通过寄存器读取数据的行为特征，将其分类为 RECV 类；对于 UART 初始化函数，LLM 能够识别出配置寄存器写入的行为特征，将其分类为 INIT 类。
+\textbf{信息获取}阶段通过工具调用拉齐该驱动函数在工程中的可观测上下文，包括完整实现或相关片段、函数签名与参数类型、调用关系与 MMIO 仿真侧提示等（如 GetFunctionInfo、GetFunctionCallStack、GetMMIOFunctionEmulateInfo）。\textbf{代码分类}阶段综合源码与静态分析结果，由大语言模型判定函数语义类别及是否属于必须替换的硬件相关行为；分类所依据的类别体系及提示构造方式见第~\ref{sec:driver-replacement-strategy}~节。\textbf{替换代码生成}仅在``需要替换''分支上触发：模型在既定类别上选择替换策略并产出与签名一致的候选实现，具体策略（如 Skip、Strip、Redirect、Event 等）的选择规则与生成约束同样在第~\ref{sec:driver-replacement-strategy}~节展开，本节只给出子模块内的先后次序与数据交接关系。
 
-\textbf{（3）代码生成阶段}。对于需要替换的函数，LLM 根据分类结果选择对应的替换策略并生成替换代码。对于 RECV 类函数，LLM 生成使用 HAL\_BE\_In 或 HAL\_BE\_ENET\_ReadFrame 等注入函数将仿真数据注入缓冲区的代码；对于 INIT 类函数，LLM 生成跳过硬件寄存器配置但保留结构初始化和状态设置的代码。生成的替换代码必须满足函数签名一致性和语义保持性要求。
+\subsubsection{替换代码修正与编译集成模块}
 
-\textbf{（4）验证阶段}。代码生成后，智能体会调用 VerifyReplacement 工具进行代码审查与编译验证。代码审查基于预定义的规则进行检查，编译验证通过实际编译测试验证替换代码的可执行性。通过验证环节过滤掉明显有问题的替换代码，避免编译失败和运行错误。
+该子模块在工程目录中对上一子模块输出的\textbf{候选替换代码}做\textbf{二阶段检验与修复}，目标是在真实构建环境下得到可链接、可编译的替换定义。
 
-\subsubsection{编译集成与错误修复模块}
+\textbf{第一阶段（定义符合性）}调用 VerifyReplacement，依据预置规则与接口契约检查候选替换是否满足替换定义（例如签名一致、禁止引入不兼容的存储类或明显违背仿真假设的写法等），过滤与定义明显不符的实现；未通过时可将反馈交回 Analyzer Agent 侧重新生成或局部修订（图~\ref{fig:analyzer-workflow}中以虚线表示返回替换生成环节）。
 
-编译集成与错误修复模块主要由 Builder 智能体完成，该智能体负责将替换代码集成到工程中并执行编译，同时处理可能出现的编译错误。Builder 智能体作为系统中专门处理构建任务的智能体，通过 LangChain 框架实现与底层工具的交互，实现"编译-错误解析-修复-重新编译"的闭环，确保替换代码能够成功集成到目标工程中。
+\textbf{第二阶段（源码编译）}在通过定义校验后，将替换写入目标源文件（如 ReplaceFuncs，并保留回滚所需的原定义快照），再调用工程构建脚本执行完整编译链接（如 BuildProject）。若\textbf{编译失败}，则进入 \textbf{BuilderFixer} 路径：由构建侧智能体解析编译器诊断信息，结合 GetFunctionInfo、GetMMIOFunctionInfo 等工具定位首个关键错误，通过 UpdateFunctionReplacement 或 FixFunctionBuildErrors 等动作修订替换代码，并再次触发构建，形成``编译 $\rightarrow$ 错误解析 $\rightarrow$ 修复 $\rightarrow$ 重新编译''的闭环，直至编译成功或达到步数上限，从而保证最终被采纳的替换函数能够通过工程编译。
 
-Builder 智能体在编译集成过程中首先调用 ReplaceFuncs 工具将替换代码写入源文件，替换原函数的定义。该工具会在替换前保存原始函数的定义，以便在出现问题时能够恢复。随后，智能体调用 BuildProject 工具执行项目的构建脚本（如 Makefile、CMakefile），执行完整的编译链接流程。在构建过程中，智能体实时监控构建输出和错误输出，确保能够及时捕获编译过程中的任何问题。
-
-当编译出现错误时，Builder 智能体会分析编译失败的成因并做出修复。编译错误可能由多种原因引起，包括函数未声明、类型不匹配、缺少头文件引用、链接错误等。在驱动函数替换场景中，常见的错误类型包括替换代码中使用了目标芯片 HAL 中不存在的结构体成员，或者函数声明与头文件声明不一致。例如，STM32F401 芯片的 TIM\_HandleTypeDef 结构体没有 ErrorCode 成员，RCC\_PLLInitTypeDef 结构体没有 PLLR 成员，如果替换代码引用了这些不存在的成员就会导致编译错误。另外，将非静态函数声明为静态也会导致编译错误。
-
-Builder 智能体针对不同的错误类型采用不同的修复策略。对于函数未声明错误，智能体会补充相应的函数声明；对于类型不匹配错误，智能体会修正变量类型或进行适当的类型转换；对于缺少头文件引用错误，智能体会添加必要的 include 指令；对于结构体成员不存在的错误，智能体会删除对不存在成员的引用或替换为正确的成员名称；对于链接错误，智能体会检查函数调用关系和依赖库配置。修复完成后，智能体重新执行编译，形成"编译-错误解析-修复-重新编译"的闭环，直至编译成功或达到最大迭代次数。
-
-Builder 智能体的错误修复能力来源于其工具链和提示词设计。智能体通过调用 GetFunctionInfo、GetMMIOFunctionInfo 等工具获取函数的完整信息和上下文，通过分析编译器的错误输出定位问题函数，然后调用 UpdateFunctionReplacement 工具将修复后的代码写入数据管理器。智能体的提示词明确要求其在遇到构建失败时先调用 BuildProject，根据 stderr 只针对第一个错误对应的一个函数调用 GetFunctionInfo 和 GetMMIOFunctionInfo，然后调用 UpdateFunctionReplacement 或 FixFunctionBuildErrors，再执行 BuildProject。这种设计避免了智能体对多个函数轮番查信息而消耗步数，确保了错误修复的效率和准确性。
+编译错误的典型成因包括函数未声明、类型不匹配、缺少头文件、链接错误，以及替换代码引用了目标芯片 HAL 中不存在的结构体成员或与头文件声明不一致等。例如，STM32F401 的 TIM\_HandleTypeDef 无 ErrorCode 成员、RCC\_PLLInitTypeDef 无 PLLR 成员时，若替换体仍访问这些成员会导致编译失败；将非静态函数误写为 static 亦会破坏链接一致性。BuilderFixer 针对不同诊断采取补声明、改类型与转换、补 \texttt{\#include}、删改非法成员访问、核对依赖等策略。提示词上约束智能体在构建失败时优先根据 stderr 锁定\textbf{第一个错误}所涉函数再查上下文，避免对多函数无序轮询而浪费步数，从而兼顾修复质量与效率。
 
 \subsection{驱动函数替换策略设计}
+\label{sec:driver-replacement-strategy}
 
 为实现语义保持的驱动函数替换，本研究在替换前先对驱动函数进行语义分类，并基于分类结果选择对应替换策略，避免硬件依赖被误删或替换不足导致仿真异常。
 
@@ -900,7 +908,7 @@ state $\leftarrow$ \{messages, iteration\_count = 0\}\;
 
 驱动函数分析、替换与编译模块是系统的核心智能层，承担着语义理解和代码生成的核心任务。该模块采用大语言模型驱动的智能体架构，通过 LangGraph 框架构建图式工作流，实现从函数分类、代码生成、质量验证到编译集成的完整自动化流程。模块设计了四种替换策略：Skip 策略跳过硬件寄存器操作但保留结构初始化，Strip 策略移除硬件访问相关的代码逻辑，Redirect 策略使用自定义注入函数重定向输入输出，Event 策略保留回调并直接触发事件。每种策略适用于特定类型的驱动函数，策略的选择由 LLM 根据函数的语义特征自主决定。
 
-智能体工作流设计包含两个核心组件：Classifier Agent 负责驱动函数的智能体分析全流程，通过信息获取、推理与分类、代码生成和验证四个阶段完成函数分类和替换代码生成；编译集成与错误修复模块主要由 Builder 智能体完成，负责将替换代码集成到工程中并执行编译，同时分析编译失败的成因并做出修复，处理函数未声明、类型不匹配、缺少头文件引用、链接错误等各类编译错误。
+分析替换与编译智能体工作流按单函数粒度调度，在逻辑上分为驱动函数分析与替换代码生成、替换代码修正与编译集成两部分：Analyzer Agent 负责信息获取、代码分类与（在需要时）替换代码生成，具体分类与策略细节由第~\ref{sec:driver-replacement-strategy}~节给出；修正与编译侧先经 VerifyReplacement 做定义符合性检验，再在工程内执行源码编译，编译失败时由 BuilderFixer 迭代修订替换代码直至通过构建或达到终止条件。
 
 动态测试反馈闭环模块采用多智能体架构实现自动化的仿真运行、故障诊断、代码修复和回归验证。该闭环由 Emulator Runner Agent 作为主控智能体，Fixer Agent 作为修复智能体，Builder Agent 作为构建智能体协同工作完成。Emulator Runner Agent 基于 LangGraph 框架实现图式工作流，通过工具调用的方式与 Fixer Agent 和 Builder Agent 交互，负责驱动整个闭环流程，协调仿真执行、故障诊断和修复验证。工作流程遵循"仿真→诊断→修复→构建→回归"的循环模式，通过多轮迭代逐步修复运行时问题，最终实现稳定运行或达到终止条件。
 
