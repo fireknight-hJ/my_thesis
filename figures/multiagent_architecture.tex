@@ -1,0 +1,99 @@
+% 动态执行与反馈多智能体架构图 — 独立编译：xelatex multiagent_architecture.tex
+\documentclass[tikz,border=12pt]{standalone}
+\usepackage{ctex}
+\usetikzlibrary{arrows.meta,calc,positioning}
+
+\begin{document}
+\begin{tikzpicture}[
+    font=\small,
+    hub/.style={
+        rectangle,
+        rounded corners=6pt,
+        draw=blue!70,
+        very thick,
+        fill=blue!12,
+        minimum width=3.65cm,
+        minimum height=1.2cm,
+        align=center,
+        font=\bfseries
+    },
+    sub/.style={
+        rectangle,
+        rounded corners=6pt,
+        draw=black!55,
+        very thick,
+        minimum width=3.05cm,
+        minimum height=0.95cm,
+        align=center,
+        font=\bfseries\small
+    },
+    tool/.style={
+        rectangle,
+        rounded corners=3pt,
+        draw=black!45,
+        thin,
+        fill=cyan!8,
+        minimum height=0.5cm,
+        inner xsep=5pt,
+        align=center,
+        font=\scriptsize
+    },
+    plat/.style={
+        rectangle,
+        rounded corners=5pt,
+        draw=purple!58,
+        thick,
+        fill=purple!7,
+        minimum width=7.2cm,
+        minimum height=0.95cm,
+        align=center,
+        font=\small\bfseries
+    },
+    lbl/.style={font=\scriptsize, inner sep=1pt, fill=white, fill opacity=0.93, text opacity=1},
+    invoke/.style={{Stealth[length=2.5mm]}-, thick, dashed, draw=orange!78!black},
+    solid/.style={{Stealth[length=2.5mm]}-, thick, draw=black!58},
+    loop/.style={{Stealth[length=2.5mm]}-, semithick, dashed, draw=red!65!black}
+]
+
+% 主控
+\node[hub] (runner) at (0, 0) {Emulator Runner Agent\\{\scriptsize\mdseries LangGraph 主控}};
+
+% 主控直连工具
+\node[tool, above=0.5cm of runner.west, anchor=south west, xshift=-0.05cm] (t1) {EmulateProject};
+\node[tool, above=0.5cm of runner, anchor=south] (t2) {GetMMIOFunctionEmulateInfo};
+\node[tool, above=0.5cm of runner.east, anchor=south east, xshift=0.05cm] (t3) {GetFunctionCallsEmulateInfo};
+\draw[solid] (t1.south) -- (t1.south |- runner.north);
+\draw[solid] (t2.south) -- (runner.north);
+\draw[solid] (t3.south) -- (t3.south |- runner.north);
+
+% 子智能体
+\node[sub, fill=orange!15, draw=orange!72!black] (fixer) at (-4.75, 0) {Fixer Agent};
+\node[sub, fill=green!12, draw=green!58!black] (builder) at (4.75, 0) {Builder Agent};
+
+\node[tool, below=0.4cm of fixer.south, anchor=north, minimum width=3.35cm] (fu) {{\scriptsize\texttt{update\_function\_replacement}}};
+\node[tool, above=0.38cm of builder.north, anchor=south] (br) {\texttt{replace\_funcs}};
+\node[tool, right=0.28cm of br.east, anchor=west] (bp) {\texttt{build\_project}};
+\draw[solid] (fixer) -- (fu);
+\draw[solid] (builder) -- (br);
+\draw[solid] (br) -- (bp);
+
+% 工具式调用
+\draw[invoke] (runner.west) -- node[lbl, above=1pt, sloped] {Fixer 工具} (fixer.east);
+\draw[invoke] (runner.east) -- node[lbl, above=1pt, sloped] {Builder 工具} (builder.west);
+
+% 仿真后端
+\node[plat] (emu) at (0, -2.75) {MCP $\rightarrow$ Unicorn 固件仿真};
+\draw[solid] (runner.south) -- node[lbl, right=1pt] {下发仿真} (emu.north);
+\draw[solid] (emu.140) to[bend left=18] node[lbl, pos=0.45, sloped] {日志 / 崩溃 / 结果} (runner.220);
+
+% Fixer 写入与 Builder 读取：经数据管理器（概念带）
+\coordinate (dm) at (0, -1.35);
+\node[lbl, draw=gray!55, rounded corners=2pt, inner sep=3pt, fill=gray!6] at (dm) {替换数据管理};
+\draw[solid, draw=gray!50] (fu.south) |- ($(dm)+(0,-0.12)$);
+\draw[solid, draw=gray!50] ($(dm)+(0,-0.12)$) -| (br.south);
+
+% 构建输出回归主控
+\draw[loop] (bp.east) -- ++(0.45, 0) |- node[lbl, pos=0.23, right=1pt] {BuildOutput} (runner.north east);
+
+\end{tikzpicture}
+\end{document}
