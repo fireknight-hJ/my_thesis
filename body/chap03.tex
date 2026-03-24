@@ -398,14 +398,14 @@ Builder 智能体的错误修复能力来源于其工具链和提示词设计。
 \toprule
 \textbf{缩写} & \textbf{描述} & \textbf{典型函数} \\
 \midrule
-INIT & 外设初始化 & \texttt{HAL\_UART\_Init}, \texttt{BOARD\_BootClockRUN} \\
-RECV & 从硬件/寄存器读取数据 & \texttt{HAL\_UART\_Receive}, \texttt{ENET\_GetRxFrame} \\
-LOOP & 轮询等待硬件状态 & \texttt{HAL\_UART\_WaitOnFlag}, \texttt{FLASH\_WaitForLastOperation} \\
-IRQ & 中断处理函数/回调 & \texttt{HAL\_UART\_IRQHandler}, \texttt{ENET\_TransmitIRQHandler} \\
-RETURNOK & 直接返回成功的辅助函数 & \texttt{HAL\_GPIO\_DeInit}, \texttt{HAL\_I2C\_IsDeviceReady} \\
-CORE & 操作系统核心或底层函数（不做替换） & \texttt{SysTick\_Handler}, \texttt{rt\_thread\_init} \\
-SKIP & 可以直接跳过的函数 & \texttt{HAL\_ADC\_MspInit}, \texttt{FLASH\_FlushCaches} \\
-NODRIVER & 纯业务逻辑函数（无需替换） & \texttt{main}, \texttt{GPIO\_GetInstance} \\
+INIT & 外设初始化函数，驱动操作可能影响固件状态机 & \texttt{HAL\_UART\_Init}, \texttt{BOARD\_BootClockRUN} \\
+RECV & 从硬件/寄存器/DMA 缓冲器读取数据 & \texttt{HAL\_UART\_Receive}, \texttt{ENET\_GetRxFrame} \\
+LOOP & 存在轮询等待硬件状态变化的函数 & \texttt{HAL\_UART\_WaitOnFlag}, \texttt{FLASH\_WaitForLastOperation} \\
+IRQ & 中断处理函数/回调函数 & \texttt{HAL\_UART\_IRQHandler}, \texttt{ENET\_TransmitIRQHandler} \\
+RETURNOK & 仅包含驱动与硬件操作，不影响上层状态，返回类型为 status & \texttt{HAL\_GPIO\_DeInit}, \texttt{HAL\_I2C\_IsDeviceReady} \\
+CORE & 存在系统区寄存器操作的函数，一般为操作系统核心函数（不做替换） & \texttt{SysTick\_Handler}, \texttt{rt\_thread\_init} \\
+SKIP & 仅包含驱动与硬件操作，不影响上层状态，返回类型为 void & \texttt{HAL\_ADC\_MspInit}, \texttt{FLASH\_FlushCaches} \\
+NODRIVER & 纯业务逻辑函数或驱动操作无法对执行路径产生影响 & \texttt{main}, \texttt{GPIO\_GetInstance} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -422,14 +422,14 @@ NODRIVER & 纯业务逻辑函数（无需替换） & \texttt{main}, \texttt{GPIO
 \toprule
 \textbf{函数类别} & \textbf{策略类型} & \textbf{说明} \\
 \midrule
-INIT & Skip & 跳过硬件寄存器操作，保留结构初始化 \\
-RECV & Redirect & 利用 HAL\_BE\_* 注入函数重定向输入输出 \\
-LOOP & Skip & 跳过轮询等待逻辑，避免死循环 \\
-IRQ & Event & 保留回调并直接触发事件，移除硬件条件判断 \\
-RETURNOK & ReturnOK & 直接返回成功状态，保留函数签名 \\
-CORE & Skip & 跳过 OS 核心函数，由仿真器提供底层支持 \\
-SKIP & Skip & 直接跳过，删除函数体但保留签名 \\
-NODRIVER & NoReplacement & 不替换，保留原函数代码 \\
+INIT & Skip & 移除硬件寄存器操作，保留结构体初始化，避免仿真环境中的阻塞 \\
+RECV & Redirect & 利用 HAL\_BE\_* 注入函数重定向输入输出，实现数据注入 \\
+LOOP & Skip & 移除轮询等待逻辑，避免仿真环境中的死循环，直接返回成功状态 \\
+IRQ & Event & 保留回调函数签名，直接触发事件通知，移除硬件条件判断 \\
+RETURNOK & ReturnOK & 直接返回成功状态值，保留函数签名，不执行硬件操作 \\
+CORE & Skip & 跳过 OS 核心函数，由仿真器提供底层支持，不做替换 \\
+SKIP & Skip & 直接跳过函数执行，保留函数签名和调用路径，函数体为空 \\
+NODRIVER & NoReplacement & 不进行任何替换，保留原函数代码和调用关系 \\
 \bottomrule
 \end{tabular}
 \end{table}
