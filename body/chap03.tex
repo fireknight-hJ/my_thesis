@@ -396,11 +396,13 @@ class FunctionInfo:
 
 系统基于大语言模型实现驱动函数的自动分类。LLM 通过读取函数源码、识别 MMIO 访问模式、判断函数主要用途等步骤，将函数分类到预定义的类别。分类策略基于对嵌入式驱动函数硬件交互模式的分析，将函数划分为以下类别，如表~\ref{tab:function-categories}所示。
 
-\begin{table}[htbp]
+\begin{table}[!htbp]
 \centering
 \caption{驱动函数分类体系}
 \label{tab:function-categories}
-\begin{tabular}{llp{8cm}}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}llp{6.6cm}@{}}
 \toprule
 \textbf{缩写} & \textbf{描述} & \textbf{典型函数} \\
 \midrule
@@ -416,18 +418,17 @@ NODRIVER & 纯业务逻辑 & \texttt{main}, \texttt{GPIO\_GetInstance} \\
 \end{tabular}
 \end{table}
 
-% 分类表与替换策略分属两个子节，强制分页避免两表与标题挤在同一版心
-\clearpage
-
 \subsubsection{替换策略体系}
 
 本研究总结出四种通用替换策略，每种策略适用于特定的函数类别和使用场景。策略的选择由 LLM 根据函数的语义特征自动决定。不同函数类别对应的推荐策略如表~\ref{tab:replace-strategies}所示。
 
-\begin{table}[htbp]
+\begin{table}[!htbp]
 \centering
 \caption{替换策略选择指南}
 \label{tab:replace-strategies}
-\begin{tabular}{lll}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}llp{5.9cm}@{}}
 \toprule
 \textbf{函数类别} & \textbf{策略类型} & \textbf{说明} \\
 \midrule
