@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2022/dev/Debian) (preloaded format=xelatex 2026.3.5)  25 MAR 2026 06:04
+This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2022/dev/Debian) (preloaded format=xelatex 2026.3.5)  25 MAR 2026 06:20
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1362,7 +1362,7 @@ Package: xkeyval 2020/11/20 v2.8 package option processing (HA)
 File: xkeyval.tex 2014/12/03 v2.7a key=value parser (HA)
 ))
 \verbatim@out=\write4
-runsystem(echo 'write18-test-2026325364'>"main.w18")...disabled (restricted).
+runsystem(echo 'write18-test-2026325380'>"main.w18")...disabled (restricted).
 
 
 
@@ -2439,11 +2439,6 @@ Overfull \hbox (28.33746pt too wide) in paragraph at lines 405--419
  []
 
 
-Overfull \hbox (47.57626pt too wide) in paragraph at lines 429--443
- [][] 
- []
-
-
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -2474,7 +2469,29 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [33]
-Overfull \hbox (9.2115pt too wide) in paragraph at lines 485--486
+Overfull \hbox (47.57626pt too wide) in paragraph at lines 432--446
+ [][] 
+ []
+
+
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+ []
+
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+ []
+
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+ []
+
+[34
+
+]
+Overfull \hbox (9.2115pt too wide) in paragraph at lines 488--489
 []\TU/TimesNewRoman(0)/m/n/12 Redirect \TU/SimSun.ttf(0)/m/n/12 策 略 使 用 自 定 义 的
  注 入 函 数  |（如 \TU/TimesNewRoman(0)/m/n/12 HAL_BE_In\TU/SimSun.ttf(0)/m/n/12 、| 
 \TU/TimesNewRoman(0)/m/n/12 HAL_BE_ENET_ReadFrame\TU/SimSun.ttf(0)/m/n/12 、|
@@ -2495,29 +2512,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[34]
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
- []
-
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
- []
-
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
- []
-
 [35]
-Overfull \hbox (4.41534pt too wide) in paragraph at lines 564--565
-[]\TU/SimSun.ttf(0)/m/n/12 以 \TU/TimesNewRoman(0)/m/n/12 NXP \TU/SimSun.ttf(0)/
-m/n/12 网 卡 驱 动 中 的 \TU/TimesNewRoman(0)/m/n/12 ENET_GetRxFrame \TU/SimSun.ttf(0
-)/m/n/12 函 数 为 例，|  该 函 数 使 用 \TU/TimesNewRoman(0)/m/n/12 DMA+RingBuffer
- []
-
-
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -2533,6 +2528,13 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [36]
+Overfull \hbox (4.41534pt too wide) in paragraph at lines 567--568
+[]\TU/SimSun.ttf(0)/m/n/12 以 \TU/TimesNewRoman(0)/m/n/12 NXP \TU/SimSun.ttf(0)/
+m/n/12 网 卡 驱 动 中 的 \TU/TimesNewRoman(0)/m/n/12 ENET_GetRxFrame \TU/SimSun.ttf(0
+)/m/n/12 函 数 为 例，|  该 函 数 使 用 \TU/TimesNewRoman(0)/m/n/12 DMA+RingBuffer
+ []
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -2638,9 +2640,6 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [43]
-LaTeX Font Info:    Font shape `TU/lmtt/bx/n' in size <10.95> not available
-(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 880.
-
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -2656,6 +2655,9 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [44]
+LaTeX Font Info:    Font shape `TU/lmtt/bx/n' in size <10.95> not available
+(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 883.
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3173,10 +3175,10 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 Here is how much of TeX's memory you used:
  43809 strings out of 477728
  960373 string characters out of 5842239
- 1821385 words of memory out of 5000000
+ 1797385 words of memory out of 5000000
  63560 multiletter control sequences out of 15000+600000
  489928 words of font info for 191 fonts, out of 8000000 for 9000
  264 hyphenation exceptions out of 8191
  99i,15n,102p,1208b,2415s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on main.xdv (82 pages, 1462832 bytes).
+Output written on main.xdv (82 pages, 1463420 bytes).
