@@ -404,7 +404,7 @@ LOOP & 轮询等待硬件状态 & \texttt{HAL\_UART\_WaitOnFlag}, \texttt{FLASH\
 IRQ & 中断处理函数/回调 & \texttt{HAL\_UART\_IRQHandler}, \texttt{ENET\_TransmitIRQHandler} \\
 NEEDCHECK & 语义复杂需进一步检查的函数 & \texttt{CLOCK\_InitSysPll}, \texttt{ETH\_UpdateDescriptor} \\
 RETURNOK & 直接返回成功的辅助函数 & \texttt{HAL\_GPIO\_DeInit}, \texttt{HAL\_I2C\_IsDeviceReady} \\
-CORE & 操作系统核心或底层函数 & \texttt{HAL\_InitTick}, \texttt{rt\_hw\_pin\_init} \\
+CORE & 操作系统核心或底层函数 & \texttt{SysTick\_Handler}, \texttt{rt\_thread\_init} \\
 SKIP & 可以直接跳过的函数 & \texttt{HAL\_ADC\_MspInit}, \texttt{FLASH\_FlushCaches} \\
 NODRIVER & 纯业务逻辑函数（无需替换） & \texttt{main}, \texttt{GPIO\_GetInstance} \\
 \bottomrule
