@@ -402,9 +402,8 @@ INIT & 外设初始化 & \texttt{HAL\_UART\_Init}, \texttt{BOARD\_BootClockRUN} 
 RECV & 从硬件/寄存器读取数据 & \texttt{HAL\_UART\_Receive}, \texttt{ENET\_GetRxFrame} \\
 LOOP & 轮询等待硬件状态 & \texttt{HAL\_UART\_WaitOnFlag}, \texttt{FLASH\_WaitForLastOperation} \\
 IRQ & 中断处理函数/回调 & \texttt{HAL\_UART\_IRQHandler}, \texttt{ENET\_TransmitIRQHandler} \\
-NEEDCHECK & 语义复杂需进一步检查的函数 & \texttt{CLOCK\_InitSysPll}, \texttt{ETH\_UpdateDescriptor} \\
 RETURNOK & 直接返回成功的辅助函数 & \texttt{HAL\_GPIO\_DeInit}, \texttt{HAL\_I2C\_IsDeviceReady} \\
-CORE & 操作系统核心或底层函数 & \texttt{SysTick\_Handler}, \texttt{rt\_thread\_init} \\
+CORE & 操作系统核心或底层函数（不做替换） & \texttt{SysTick\_Handler}, \texttt{rt\_thread\_init} \\
 SKIP & 可以直接跳过的函数 & \texttt{HAL\_ADC\_MspInit}, \texttt{FLASH\_FlushCaches} \\
 NODRIVER & 纯业务逻辑函数（无需替换） & \texttt{main}, \texttt{GPIO\_GetInstance} \\
 \bottomrule
@@ -427,7 +426,6 @@ INIT & Skip & 跳过硬件寄存器操作，保留结构初始化 \\
 RECV & Redirect & 利用 HAL\_BE\_* 注入函数重定向输入输出 \\
 LOOP & Skip & 跳过轮询等待逻辑，避免死循环 \\
 IRQ & Event & 保留回调并直接触发事件，移除硬件条件判断 \\
-NEEDCHECK & Iterative & 需要多次迭代生成，结合静态分析和动态反馈 \\
 RETURNOK & ReturnOK & 直接返回成功状态，保留函数签名 \\
 CORE & Skip & 跳过 OS 核心函数，由仿真器提供底层支持 \\
 SKIP & Skip & 直接跳过，删除函数体但保留签名 \\

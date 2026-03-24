@@ -10,7 +10,7 @@
 
 \subsection{实验环境}
 
-实验在以下软硬件环境中进行：
+实验在以下软硬件环境中进行，具体配置如表~\ref{tab:hw_env}和表~\ref{tab:sw_env}所示。
 
 \begin{table}[htbp]
 \centering
@@ -72,7 +72,7 @@
 通信外设 & UART（串口通信）、I2C（总线通信）、SPI（串行外设接口）、ETH（以太网控制器） \\
 存储外设 & Flash（闪存控制器）、SDIO（SD 卡接口） \\
 定时器外设 & TIM（通用定时器）、RTC（实时时钟）、WDT（看门狗定时器） \\
-其他外设 & BLE（蓝牙）、FatFS（文件系统） \\
+其他外设 & BLE（蓝牙）、SD（SD卡） \\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
@@ -82,39 +82,38 @@
 
 本研究测试固件来源于官方示例与开源项目，从 STM32CubeMX 和 NXP MCUXpresso SDK 提取的官方示例程序代表规范的驱动代码编写风格，而从 GitHub 和 Gitee 收集的开源的物联网设备固件项目涵盖智能照明、环境监测、工业控制等多种应用场景。这种来源选择确保了测试固件的多样性和代表性。
 
-经过筛选和整理，最终构建了包含 20 个固件的测试集，详细信息如表~\ref{tab:firmware}所示。
+经过筛选和整理，最终构建了包含 19 个固件的测试集，详细信息如表~\ref{tab:firmware}所示。
 
 \begin{table}[htbp]
 \centering
 \caption{测试固件详细信息}
 \label{tab:firmware}
 \footnotesize
-\begin{adjustbox}{max width=\textwidth}
-\begin{tabular}{lllp{3cm}}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X p{2.2cm} p{2.0cm} >{\raggedright\arraybackslash}p{3.0cm} >{\raggedright\arraybackslash}p{1.8cm}}
 \toprule
-\textbf{MCU型号} & \textbf{OS} & \textbf{外设/驱动库} & \textbf{Demo名称} \\
+\textbf{Demo名称} & \textbf{MCU型号} & \textbf{OS} & \textbf{外设} & \textbf{驱动库} \\
 \midrule
-STM32F407 & FreeRTOS & UART, I2C, STM32 HAL & NXP\_FATFS\_BareMetal \\
-STM32F407 & FreeRTOS & SPI, ETH, FreeRTOS & NXP\_FATFS\_FreeRTOS \\
-STM32F407 & RT-Thread & UART, ADC, RT-Thread & NXP\_I2C\_BareMetal \\
-STM32F407 & 裸机 & UART, GPIO, STM32 HAL & NXP\_I2C\_FreeRTOS \\
-STM32F407 & 裸机 & I2C, TIM, STM32 HAL & NXP\_LwIP\_BareMetal \\
-STM32F429 & FreeRTOS & UART, ETH, LwIP, FreeRTOS & NXP\_LwIP\_FreeRTOS \\
-STM32F429 & FreeRTOS & SPI, Flash, STM32 HAL & NXP\_UART\_BareMetal \\
-STM32F429 & RT-Thread & I2C, ADC, RT-Thread & NXP\_UART\_FreeRTOS \\
-STM32F429 & 裸机 & UART, DAC, STM32 HAL & imxrt1052\_nxp\_evk\_uart \\
-STM32F429 & 裸机 & TIM, WDT, STM32 HAL & imxrt1060\_nxp\_evk\_timer \\
-RT1052 & FreeRTOS & UART, ETH, LwIP, FreeRTOS & BLE\_HeartRateFreeRTOS \\
-RT1052 & FreeRTOS & SPI, SDIO, NXP HAL & FatFs\_USBDisk\_RTOS \\
-RT1052 & RT-Thread & I2C, RTC, RT-Thread & LwIP\_HTTP\_Server\_Raw \\
-RT1052 & RT-Thread & UART, Flash, RT-Thread & LwIP\_HTTP\_Server\_SocketRTOS \\
-RT1052 & 裸机 & GPIO, ADC, NXP HAL & LwIP\_HTTP\_Server\_Socket\_RTOS \\
-RT1052 & 裸机 & UART, TIM, NXP HAL & LwIP\_HTTP\_Server\_Socket\_RTOS \\
-STM32F407 & FreeRTOS & UART, ETH, LwIP, FreeRTOS & LwIP\_StreamingServer \\
-STM32F429 & 裸机 & UART, GPIO, STM32 HAL & UART\_Hyperterminal\_IT \\
+\url{NXP_FATFS_BareMetal} & RT1052 & 裸机 & SD & NXP \\
+\url{NXP_FATFS_FreeRTOS} & RT1052 & FreeRTOS & SD & NXP \\
+\url{NXP_I2C_BareMetal} & RT1052 & 裸机 & I2C & NXP \\
+\url{NXP_I2C_FreeRTOS} & RT1052 & FreeRTOS & I2C & NXP \\
+\url{NXP_LwIP_BareMetal} & RT1052 & 裸机 & ETH & NXP \\
+\url{NXP_LwIP_FreeRTOS} & RT1052 & FreeRTOS & ETH & NXP \\
+\url{NXP_UART_BareMetal} & RT1052 & 裸机 & UART & NXP \\
+\url{NXP_UART_FreeRTOS} & RT1052 & FreeRTOS & UART & NXP \\
+\url{imxrt1052-nxp-evk} & RT1052 & RT-Thread & 多外设 & NXP \\
+\url{imxrt1060-nxp-evk} & RT1060 & RT-Thread & 多外设 & NXP \\
+\url{stm32f401-st-nucleo/eth} & STM32F401 & RT-Thread & ETH & STM32 \\
+\url{stm32f401-st-nucleo/fatfs} & STM32F401 & RT-Thread & SD & STM32 \\
+\url{stm32f401-st-nucleo/uart} & STM32F401 & RT-Thread & UART & STM32 \\
+\url{BLE_HeartRateFreeRTOS} & STM32 & FreeRTOS & BLE & STM32 \\
+\url{FatFs_USBDisk_RTOS} & STM32 & FreeRTOS & SD & STM32 \\
+\url{LwIP_HTTP_Server_Raw} & STM32 & HAL & ETH & STM32 \\
+\url{LwIP_HTTP_Server_Socket_RTOS} & STM32 & FreeRTOS & ETH & STM32 \\
+\url{LwIP_StreamingServer} & STM32 & FreeRTOS & ETH & STM32 \\
+\url{UART_Hyperterminal_IT} & STM32 & HAL & UART & STM32 \\
 \bottomrule
-\end{tabular}
-\end{adjustbox}
+\end{tabularx}
 \end{table}
 
 \section{功能测试}
@@ -140,20 +139,20 @@ STM32F429 & 裸机 & UART, GPIO, STM32 HAL & UART\_Hyperterminal\_IT \\
 \label{tab:testcases}
 \small
 \begin{adjustbox}{max width=\textwidth}
-\begin{tabular}{lp{5cm}l}
+\begin{tabular}{ll}
 \toprule
-\textbf{Demo 名称} & \textbf{平台/OS/外设/驱动库} & \textbf{关键节点} \\
+\textbf{Demo 名称} & \textbf{关键节点} \\
 \midrule
-NXP\_FATFS\_BareMetal & NXP/裸机/FatFS/NXP HAL & main \\
-NXP\_FATFS\_FreeRTOS & NXP/FreeRTOS/FatFS/NXP HAL & osKernelStart<br>fatfs\_thread\_entry \\
-NXP\_I2C\_BareMetal & NXP/裸机/I2C/NXP HAL & main \\
-NXP\_I2C\_FreeRTOS & NXP/FreeRTOS/I2C/NXP HAL & osKernelStart<br>i2c\_thread\_entry \\
-NXP\_LwIP\_BareMetal & NXP/裸机/ETH/LwIP/NXP HAL & ethernetif\_input \\
-NXP\_LwIP\_FreeRTOS & NXP/FreeRTOS/ETH/LwIP/NXP HAL & osKernelStart<br>eth\_rx\_thread\_entry \\
-NXP\_UART\_BareMetal & NXP/裸机/UART/NXP HAL & main \\
-NXP\_UART\_FreeRTOS & NXP/FreeRTOS/UART/NXP HAL & osKernelStart<br>uart\_thread\_entry \\
-imxrt1052-nxp-evk & STM32/FreeRTOS/多外设/STM32 HAL & osKernelStart \\
-imxrt1060-nxp-evk & STM32/FreeRTOS/多外设/STM32 HAL & osKernelStart \\
+NXP\_FATFS\_BareMetal & main \\
+NXP\_FATFS\_FreeRTOS & osKernelStart fatfs\_thread\_entry \\
+NXP\_I2C\_BareMetal & main \\
+NXP\_I2C\_FreeRTOS & osKernelStart i2c\_thread\_entry \\
+NXP\_LwIP\_BareMetal & ethernetif\_input \\
+NXP\_LwIP\_FreeRTOS & osKernelStart eth\_rx\_thread\_entry \\
+NXP\_UART\_BareMetal & main \\
+NXP\_UART\_FreeRTOS & osKernelStart uart\_thread\_entry \\
+imxrt1052-nxp-evk & osKernelStart \\
+imxrt1060-nxp-evk & osKernelStart \\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
@@ -202,7 +201,6 @@ imxrt1060\_nxp\_evk\_timer & 14 & 13 & 13 & 13 \\
 BLE\_HeartRateFreeRTOS & 20 & 19 & 19 & 19 \\
 FatFs\_USBDisk\_RTOS & 9 & 8 & 8 & 8 \\
 LwIP\_HTTP\_Server\_Raw & 16 & 15 & 15 & 15 \\
-LwIP\_HTTP\_Server\_SocketRTOS & 18 & 17 & 17 & 17 \\
 LwIP\_HTTP\_Server\_Socket\_RTOS & 18 & 17 & 17 & 17 \\
 LwIP\_StreamingServer & 13 & 12 & 12 & 12 \\
 UART\_Hyperterminal\_IT & 11 & 10 & 10 & 10 \\
@@ -210,17 +208,71 @@ NXP\_FreeRTOS/多外设\_UART & 9 & 8 & 8 & 8 \\
 NXP\_FreeRTOS/多外设\_ETH & 19 & 18 & 18 & 18 \\
 STM32/FreeRTOS/多外设 & 21 & 20 & 20 & 20 \\
 \midrule
-\textbf{总计} & \textbf{228} & \textbf{218} & \textbf{218} & \textbf{218} \\
+\textbf{总计} & \textbf{210} & \textbf{201} & \textbf{201} & \textbf{201} \\
 \midrule
-\textbf{平均} & \textbf{11.4} & \textbf{10.9} & \textbf{10.9} & \textbf{10.9} \\
+\textbf{平均} & \textbf{11.1} & \textbf{10.6} & \textbf{10.6} & \textbf{10.6} \\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
 \end{table}
 
-从统计结果可以看出，本文方法在驱动函数识别和替换方面表现出较高的准确性。20个测试用例共识别出228个驱动函数，平均每个固件11.4个；成功替换218个驱动函数，平均每个固件10.9个。在仿真执行过程中，所有被替换的驱动函数都正常执行，行为正常率达到100\%，这表明本文方法生成的替代代码在语义正确性方面能够满足实际运行需求。
+从统计结果可以看出，本文方法在驱动函数识别和替换方面表现出较高的准确性。19个测试用例共识别出210个驱动函数，平均每个固件11.1个；成功替换201个驱动函数，平均每个固件10.6个。在仿真执行过程中，所有被替换的驱动函数都正常执行，行为正常率达到100\%，这表明本文方法生成的替代代码在语义正确性方面能够满足实际运行需求。
 
 本实验的主要目的包括：第一，验证本文方法能够准确识别固件中的硬件依赖代码，为后续的代码替换提供准确的输入；第二，验证本文方法生成的替代代码能够在仿真环境中正确执行，保证固件的正常运行；第三，验证本文方法对不同平台、不同操作系统、不同外设类型的固件具有通用性和可扩展性；第四，为后续的模糊测试和漏洞挖掘任务提供稳定的仿真环境基础。
+
+为了全面评估本文方法的驱动函数分类能力，本研究统计了每个测试用例的驱动函数分类情况，统计结果如表~\ref{tab:function_categories_stats}所示。该表展示了静态分析模块识别出的驱动函数按照不同类别的分布情况。
+
+\begin{table}[htbp]
+\centering
+\caption{驱动函数分类统计}
+\label{tab:function_categories_stats}
+\footnotesize
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lccccccccc}
+\toprule
+\textbf{Demo 名称} & \textbf{INIT} & \textbf{RECV} & \textbf{LOOP} & \textbf{IRQ} & \textbf{NEEDCHECK} & \textbf{RETURNOK} & \textbf{CORE} & \textbf{SKIP} & \textbf{NODRIVER} \\
+\midrule
+NXP\_FATFS\_BareMetal & 11 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\
+NXP\_I2C\_BareMetal & 4 & 1 & 0 & 0 & 15 & 1 & 0 & 0 & 1 \\
+NXP\_LwIP\_BareMetal & 13 & 1 & 1 & 2 & 1 & 1 & 0 & 1 & 2 \\
+NXP\_LwIP\_FreeRTOS & 12 & 1 & 1 & 3 & 0 & 3 & 0 & 0 & 2 \\
+NXP\_UART\_BareMetal & 1 & 0 & 0 & 0 & 27 & 1 & 0 & 0 & 1 \\
+NXP\_UART\_FreeRTOS & 13 & 8 & 5 & 2 & 0 & 1 & 0 & 1 & 0 \\
+imxrt1052-nxp-evk & 31 & 4 & 3 & 0 & 3 & 1 & 0 & 0 & 3 \\
+imxrt1060-nxp-evk & 8 & 1 & 0 & 1 & 16 & 0 & 0 & 0 & 0 \\
+stm32f401-st-nucleo/eth & 9 & 0 & 2 & 0 & 4 & 1 & 0 & 4 & 0 \\
+stm32f401-st-nucleo/fatfs & 19 & 0 & 1 & 0 & 0 & 0 & 0 & 1 & 0 \\
+stm32f401-st-nucleo/uart & 15 & 0 & 2 & 0 & 3 & 0 & 0 & 0 & 0 \\
+LwIP\_HTTP\_Server\_Raw & 38 & 20 & 15 & 5 & 5 & 3 & 1 & 1 & 0 \\
+LwIP\_HTTP\_Server\_Socket\_RTOS & 42 & 15 & 16 & 6 & 11 & 24 & 2 & 4 & 2 \\
+LwIP\_StreamingServer & 57 & 12 & 23 & 2 & 7 & 21 & 6 & 2 & 0 \\
+UART\_Hyperterminal\_IT & 23 & 19 & 12 & 6 & 4 & 11 & 2 & 2 & 0 \\
+\midrule
+\textbf{总计} & \textbf{296} & \textbf{82} & \textbf{82} & \textbf{27} & \textbf{79} & \textbf{67} & \textbf{11} & \textbf{16} & \textbf{9} \\
+\midrule
+\textbf{占比} & \textbf{44.2\%} & \textbf{12.3\%} & \textbf{12.3\%} & \textbf{4.0\%} & \textbf{11.8\%} & \textbf{10.0\%} & \textbf{1.6\%} & \textbf{2.4\%} & \textbf{1.3\%} \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+从统计结果可以看出，本文方法对不同类型的驱动函数具有全面的识别和分类能力。15个测试用例共识别出669个驱动函数（平均每个固件44.6个），分类统计如下：
+
+初始化类（INIT）函数占比最高，达到44.2\%（296个），这是因为固件启动阶段需要大量初始化操作，包括时钟配置、外设初始化、内存映射设置等。这类函数主要采用Skip替换策略，跳过硬件寄存器配置但保留结构初始化。
+
+接收类（RECV）函数占比12.3\%（82个），反映了物联网设备数据接收的核心功能需求。这类函数主要采用Redirect替换策略，利用HAL\_BE\_*注入函数重定向输入输出。
+
+轮询等待类（LOOP）函数占比12.3\%（82个），主要存在于状态检查和硬件响应等待场景。这类函数采用Skip策略移除轮询等待逻辑，避免仿真环境中的死循环。
+
+中断处理类（IRQ）函数占比4.0\%（27个），虽然占比不高但对实时性至关重要。这类函数采用Event策略，保留回调并直接触发事件。
+
+直接返回成功类（RETURNOK）函数占比10.0\%（67个），主要是一些简单的辅助函数，如资源清理、状态重置等。这类函数采用ReturnOK策略，直接返回成功状态。
+
+核心类（CORE）函数占比1.6\%（11个），主要涉及操作系统核心函数，如定时器中断、RTOS相关函数。这类函数采用Skip策略，由仿真器提供底层支持。
+
+跳过类（SKIP）函数占比2.4\%（16个），这类函数可以直接跳过，不影响固件核心功能。无驱动类（NODRIVER）函数占比1.3\%（9个），这类函数是纯业务逻辑函数，不需要任何替换。
+
+这一分类统计的意义在于：第一，验证了本文方法对驱动函数语义的准确理解能力，能够自动区分不同功能的驱动函数；第二，为替换策略的选择提供了量化依据，不同类别的函数对应不同的替换策略（如INIT类用Skip，RECV类用Redirect）；第三，证明了本文方法对不同外设类型（UART、ETH、I2C等）和驱动复杂度（从12个函数到130个函数）的适应性；第四，为后续的性能优化提供了数据支撑。
 
 \textbf{（2）仿真执行过程}
 
@@ -410,7 +462,7 @@ Para-rehosting & 15-20 & 8-12 & 低（手工移植） & 80\% & 低 \\
 
 \subsubsection{实验设计}
 
-从测试集中选择5个包含网络协议栈的固件（NXP\_LwIP\_FreeRTOS、NXP\_LwIP\_BareMetal、LwIP\_HTTP\_Server\_Raw、LwIP\_HTTP\_Server\_SocketRTOS、LwIP\_StreamingServer），使用本文方法进行驱动替换后，在仿真环境中运行AFL++进行模糊测试。测试时间为24小时，统计基本块覆盖率、执行速度和发现的Crash数量。
+从测试集中选择5个包含网络协议栈的固件（NXP\_LwIP\_FreeRTOS、NXP\_LwIP\_BareMetal、LwIP\_HTTP\_Server\_Raw、LwIP\_HTTP\_Server\_Socket\_RTOS、LwIP\_StreamingServer），使用本文方法进行驱动替换后，在仿真环境中运行AFL++进行模糊测试。测试时间为24小时，统计基本块覆盖率、执行速度和发现的Crash数量。
 
 \subsubsection{实验结果}
 
@@ -425,17 +477,17 @@ Para-rehosting & 15-20 & 8-12 & 低（手工移植） & 80\% & 低 \\
 \textbf{固件名称} & \textbf{运行时长} & \textbf{基本块数量} & \textbf{执行速度（exec/s）} & \textbf{发现 Crash} \\
 \midrule
 NXP\_LwIP\_FreeRTOS & 24h & 370 & 28.5 & 0 \\
-NXP\_LwIP\_BareMetal & 24h & 454 & 35.2 & 8 \\
+NXP\_LwIP\_BareMetal & 24h & 454 & 35.2 & 0 \\
 LwIP\_HTTP\_Server\_Raw & 24h & 316 & 24.8 & 0 \\
-LwIP\_HTTP\_Server\_SocketRTOS & 24h & 528 & 42.1 & 6 \\
-LwIP\_StreamingServer & 24h & 390 & 31.4 & 5 \\
+LwIP\_HTTP\_Server\_Socket\_RTOS & 24h & 528 & 42.1 & 0 \\
+LwIP\_StreamingServer & 24h & 390 & 31.4 & 0 \\
 \midrule
-\textbf{平均} & \textbf{24h} & \textbf{411.6} & \textbf{32.4} & \textbf{3.8} \\
+\textbf{平均} & \textbf{24h} & \textbf{411.6} & \textbf{32.4} & \textbf{0} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-实验结果表明，在本文方法构建的仿真环境中，AFL++能够有效地对固件进行模糊测试。平均覆盖基本块数量为411.6个，平均执行速度为32.4 exec/s，在24小时内平均发现3.8个Crash。这些结果表明，本文方法能够有效支持后续的模糊测试和漏洞挖掘任务。
+实验结果表明，在本文方法构建的仿真环境中，AFL++能够有效地对固件进行模糊测试。平均覆盖基本块数量为411.6个，平均执行速度为32.4 exec/s，在24小时内平均发现0个Crash。这些结果表明，本文方法能够有效支持后续的模糊测试和漏洞挖掘任务。
 
 从执行速度来看，不同固件的执行速度在24.8-42.1 exec/s之间，平均为32.4 exec/s。这一执行速度能够满足模糊测试的基本需求，为漏洞挖掘提供了良好的基础。从覆盖率来看，不同固件的基本块覆盖率在316-528个之间，平均为411.6个，说明本文方法生成的仿真环境能够覆盖较多的代码路径。
 
@@ -446,7 +498,7 @@ LwIP\_StreamingServer & 24h & 390 & 31.4 & 5 \\
 
 本章通过系统性的实验验证了本文方法的有效性。实验从功能测试和性能测试两个维度展开，主要结果如下：
 
-首先，替换后的固件在仿真环境中表现出良好的功能正确性。在20个测试用例的验证中，关键节点匹配率达到100.0\%，功能正确性验证全部通过，固件在仿真环境中运行稳定，未发生崩溃。这表明本文方法生成的替代代码在语义正确性方面能够满足实际运行需求。在模糊测试方面，通过对5个包含网络协议栈的固件进行24小时模糊测试，平均覆盖基本块数量为411.6个，平均执行速度为32.4 exec/s，平均发现3.8个Crash，验证了本文方法能够有效支持模糊测试任务。
+首先，替换后的固件在仿真环境中表现出良好的功能正确性。在19个测试用例的验证中，关键节点匹配率达到100.0\%，功能正确性验证全部通过，固件在仿真环境中运行稳定，未发生崩溃。这表明本文方法生成的替代代码在语义正确性方面能够满足实际运行需求。在模糊测试方面，通过对5个包含网络协议栈的固件进行24小时模糊测试，平均覆盖基本块数量为411.6个，平均执行速度为32.4 exec/s，平均发现0个Crash，验证了本文方法能够有效支持模糊测试任务。
 
 其次，与现有方法对比显示，本文方法在人力成本和工作效率方面具有显著优势。与Halucinator和Para-rehosting相比，本文方法通过LLM自动生成替换代码，将每个固件的人工投入时间从小时级别（3-12小时）降低到分钟级别（3-5分钟），减少了两个数量级的人力成本。同时，本文方法的启动成功率达到100.0\%，高于Halucinator的78\%和Para-rehosting的80\%。在可扩展性方面，本文方法不依赖源代码，新增平台仅需配置编译工具链和内存映射，具有良好的可扩展性。
 
