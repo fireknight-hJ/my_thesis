@@ -398,14 +398,14 @@ Builder 智能体的错误修复能力来源于其工具链和提示词设计。
 \toprule
 \textbf{缩写} & \textbf{描述} & \textbf{典型函数} \\
 \midrule
-INIT & 外设初始化函数，驱动操作可能影响固件状态机 & \texttt{HAL\_UART\_Init}, \texttt{BOARD\_BootClockRUN} \\
-RECV & 从硬件/寄存器/DMA 缓冲器读取数据 & \texttt{HAL\_UART\_Receive}, \texttt{ENET\_GetRxFrame} \\
-LOOP & 存在轮询等待硬件状态变化的函数 & \texttt{HAL\_UART\_WaitOnFlag}, \texttt{FLASH\_WaitForLastOperation} \\
-IRQ & 中断处理函数/回调函数 & \texttt{HAL\_UART\_IRQHandler}, \texttt{ENET\_TransmitIRQHandler} \\
-RETURNOK & 仅包含驱动与硬件操作，不影响上层状态，返回类型为 status & \texttt{HAL\_GPIO\_DeInit}, \texttt{HAL\_I2C\_IsDeviceReady} \\
-CORE & 存在系统区寄存器操作的函数，一般为操作系统核心函数 & \texttt{SysTick\_Handler}, \texttt{rt\_thread\_init} \\
-SKIP & 仅包含驱动与硬件操作，不影响上层状态，返回类型为 void & \texttt{HAL\_ADC\_MspInit}, \texttt{FLASH\_FlushCaches} \\
-NODRIVER & 纯业务逻辑函数或驱动操作无法对执行路径产生影响 & \texttt{main}, \texttt{GPIO\_GetInstance} \\
+INIT & 外设初始化，影响固件状态机 & \texttt{HAL\_UART\_Init}, \texttt{BOARD\_BootClockRUN} \\
+RECV & 从硬件/DMA 读取数据 & \texttt{HAL\_UART\_Receive}, \texttt{ENET\_GetRxFrame} \\
+LOOP & 轮询等待硬件状态 & \texttt{HAL\_UART\_WaitOnFlag}, \texttt{FLASH\_WaitForLastOperation} \\
+IRQ & 中断处理/回调函数 & \texttt{HAL\_UART\_IRQHandler}, \texttt{ENET\_TransmitIRQHandler} \\
+RETURNOK & 硬件操作，返回 status & \texttt{HAL\_GPIO\_DeInit}, \texttt{HAL\_I2C\_IsDeviceReady} \\
+CORE & 系统区操作，OS 核心函数 & \texttt{SysTick\_Handler}, \texttt{rt\_thread\_init} \\
+SKIP & 硬件操作，返回 void & \texttt{HAL\_ADC\_MspInit}, \texttt{FLASH\_FlushCaches} \\
+NODRIVER & 纯业务逻辑 & \texttt{main}, \texttt{GPIO\_GetInstance} \\
 \bottomrule
 \end{tabular}
 \end{table}
