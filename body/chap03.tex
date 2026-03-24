@@ -3,39 +3,13 @@
 
 本章详细阐述基于驱动程序替换的固件仿真系统的设计与实现。系统采用"静态识别→智能替换→构建验证→动态反馈"的分层架构，通过 CodeQL 静态分析和大语言模型智能体技术，实现固件驱动函数的自动识别、语义分析和代码替换，最终在仿真环境中运行并支持模糊测试。
 
-\section{系统整体架构}
-\label{sec:arch}
+\subsection{系统整体架构}
 
 系统的整体架构如图~\ref{fig:arch}所示。系统由三个核心部分组成：左侧为驱动函数接口静态分析与识别模块，中间为驱动函数分析、替换与编译模块，右侧为动态测试反馈闭环模块。
 
 \begin{figure}[htbp]
 \centering
-\begin{tikzpicture}[
-    module/.style={rectangle, draw=black!60, rounded corners=8pt, minimum width=4cm, minimum height=2cm, align=center, font=\small\bfseries, line width=1pt},
-    note/.style={font=\scriptsize, text=black!60, align=left},
-    arrow/.style={->, >=stealth, line width=1.5pt, draw=black!70}
-]
-    % 左侧模块：静态分析
-    \node[module, fill=orange!15] (static) at (-6, 0) {驱动函数接口\\静态分析与\\识别模块};
-    \node[note, below=0.3cm of static] {CodeQL分析\\MMIO识别\\函数定位\\数据模型};
-    
-    % 中间模块：替换与编译
-    \node[module, fill=green!15] (replace) at (0, 0) {驱动函数分析、\\替换与编译模块};
-    \node[note, below=0.3cm of replace] {LLM分类\\替换策略\\代码生成\\编译集成};
-    
-    % 右侧模块：动态测试
-    \node[module, fill=red!15] (feedback) at (6, 0) {动态测试\\反馈闭环模块};
-    \node[note, below=0.3cm of feedback] {仿真运行\\日志采集\\错误分析\\反馈回流};
-    
-    % 箭头：静态→替换
-    \draw[arrow, draw=blue!60] (static.east) -- node[above, font=\scriptsize] {驱动函数列表} (replace.west);
-    
-    % 箭头：替换→测试
-    \draw[arrow, draw=blue!60] (replace.east) -- node[above, font=\scriptsize] {替换代码} (feedback.west);
-    
-    % 箭头：测试→替换（反馈闭环）
-    \draw[arrow, draw=red!60, dashed] (feedback.south) -- ++(0, -1) -- ++(-12, 0) -- ++(0, 0.8) node[midway, below, font=\scriptsize] {错误反馈} (replace.south);
-\end{tikzpicture}
+\includegraphics[width=0.95\textwidth]{figures/system_architecture.pdf}
 \caption{系统整体架构图}
 \label{fig:arch}
 \end{figure}
@@ -47,10 +21,6 @@
 右侧的动态测试反馈闭环模块负责在仿真环境中运行替换后的固件，采集运行日志、崩溃信息与覆盖率等指标，并将失败样例与错误信息结构化回流，触发重新分析与再生成。该模块是系统质量保障的关键环节，通过构建"生成-测试-反馈-修正"的闭环机制，使仿真质量能够持续提升，减少对分析人员经验的依赖。
 
 三个模块之间通过标准化的数据接口进行交互，形成完整的处理流水线。静态分析模块向替换模块提供驱动函数列表和相关信息，替换模块生成替换代码后传递给测试模块进行验证，测试模块的反馈结果又会触发替换模块进行修正，形成迭代优化循环。
-
-% ============================================================
-% 3.2 驱动函数接口静态分析与识别模块
-% ============================================================
 
 \section{驱动函数接口静态分析与识别模块}
 \label{sec:collector}
@@ -424,18 +394,19 @@ Builder 智能体的错误修复能力来源于其工具链和提示词设计。
 \centering
 \caption{驱动函数分类体系}
 \label{tab:function-categories}
-\begin{tabular}{llp{9cm}}
+\begin{tabular}{llp{8cm}}
 \toprule
 \textbf{缩写} & \textbf{描述} & \textbf{典型函数} \\
 \midrule
-RECV & 从硬件/寄存器读取数据 & \texttt{HAL\_UART\_Receive} \\
-SEND & 将数据写入寄存器/外设 & \texttt{HAL\_UART\_Transmit} \\
-IRQ & 中断处理函数/回调 & \texttt{HAL\_UART\_IRQHandler} \\
-INIT & 外设初始化 & \texttt{HAL\_UART\_Init} \\
-CTRL & 启停、模式切换 & \texttt{HAL\_UART\_Start} \\
-LOOP & 轮询等待硬件状态 & \texttt{HAL\_UART\_GetState} \\
-DMA & 配置 DMA 传输 & \texttt{HAL\_UART\_Transmit\_DMA} \\
-NODRIVER & 不需要替换的函数 & 纯业务逻辑函数 \\
+INIT & 外设初始化 & \texttt{HAL\_UART\_Init}, \texttt{BOARD\_BootClockRUN} \\
+RECV & 从硬件/寄存器读取数据 & \texttt{HAL\_UART\_Receive}, \texttt{ENET\_GetRxFrame} \\
+LOOP & 轮询等待硬件状态 & \texttt{HAL\_UART\_WaitOnFlag}, \texttt{FLASH\_WaitForLastOperation} \\
+IRQ & 中断处理函数/回调 & \texttt{HAL\_UART\_IRQHandler}, \texttt{ENET\_TransmitIRQHandler} \\
+NEEDCHECK & 语义复杂需进一步检查的函数 & \texttt{CLOCK\_InitSysPll}, \texttt{ETH\_UpdateDescriptor} \\
+RETURNOK & 直接返回成功的辅助函数 & \texttt{HAL\_GPIO\_DeInit}, \texttt{HAL\_I2C\_IsDeviceReady} \\
+CORE & 操作系统核心或底层函数 & \texttt{HAL\_InitTick}, \texttt{rt\_hw\_pin\_init} \\
+SKIP & 可以直接跳过的函数 & \texttt{HAL\_ADC\_MspInit}, \texttt{FLASH\_FlushCaches} \\
+NODRIVER & 纯业务逻辑函数（无需替换） & \texttt{main}, \texttt{GPIO\_GetInstance} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -454,10 +425,13 @@ NODRIVER & 不需要替换的函数 & 纯业务逻辑函数 \\
 \midrule
 INIT & Skip & 跳过硬件寄存器操作，保留结构初始化 \\
 RECV & Redirect & 利用 HAL\_BE\_* 注入函数重定向输入输出 \\
-IRQ & Event & 保留回调并直接触发事件，移除硬件条件判断 \\
-CTRL & Skip & 跳过控制操作的硬件执行 \\
 LOOP & Skip & 跳过轮询等待逻辑，避免死循环 \\
-DMA & Steering & 针对 DMA+RingBuffer 场景的控制流改写 \\
+IRQ & Event & 保留回调并直接触发事件，移除硬件条件判断 \\
+NEEDCHECK & Iterative & 需要多次迭代生成，结合静态分析和动态反馈 \\
+RETURNOK & ReturnOK & 直接返回成功状态，保留函数签名 \\
+CORE & Skip & 跳过 OS 核心函数，由仿真器提供底层支持 \\
+SKIP & Skip & 直接跳过，删除函数体但保留签名 \\
+NODRIVER & NoReplacement & 不替换，保留原函数代码 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -727,6 +701,49 @@ do
 \end{lstlisting}
 
 Steering 策略通过三方面实现控制流导向：一是用条件判断旁路掉依赖硬件 flag 的 while/do-while 结构，让代码直接进入处理分支；二是在处理分支中把仿真数据写入 buffer（HAL\_BE\_ENET\_ReadFrame），保证后续 `rxFrame`/上层协议栈读取到的内容是由 fuzzemu 注入的；三是保留对 BD/`rxGenIdx` 的更新，使 RingBuffer 不至于卡死在同一个 BD 上。该策略遵循"单次收一包"的强约束，在保证 RingBuffer 状态正确的前提下，禁止保留依赖 LAST/EMPTY 等硬件 flag 的多帧/环扫描结构。
+
+\textbf{Iterative 策略：迭代优化}
+
+Iterative 策略针对 NEEDCHECK 类函数，这类函数通常具有复杂的语义特征，无法通过一次代码生成就达到正确效果。该策略的核心思想是：通过静态分析提取函数的关键特征（MMIO 访问模式、控制流结构、数据流依赖），结合动态测试反馈进行多轮迭代优化，逐步提升替换代码的正确性和稳定性。
+
+Iterative 策略的实现依赖于系统的动态测试反馈闭环模块。当第一轮生成的替换代码在仿真环境中执行失败时，系统会捕获错误信息（如崩溃、超时、执行路径异常等），并将这些信息结构化反馈给 LLM 智能体。LLM 智能体基于反馈信息重新分析函数语义，调整生成策略并生成新的替换代码，然后再次进入测试循环。这个过程持续进行，直到替换代码能够在仿真环境中稳定运行，或达到最大迭代次数。
+
+以复杂的时钟配置函数为例，这类函数通常包含多个条件分支、多层嵌套的寄存器访问和复杂的计算逻辑。初始生成的替换代码可能因为遗漏某些分支或计算错误导致仿真失败。通过 Iterative 策略，系统能够根据仿真反馈逐步修正这些问题，最终生成语义正确且稳定的替换代码。
+
+\textbf{ReturnOK 策略：直接返回成功}
+
+ReturnOK 策略针对 RETURNOK 类函数，这类函数通常是简单的辅助函数，主要功能是设置状态、清理资源或执行简单的检查。该策略的核心思想是：保留函数签名和必要的参数校验，删除函数体的具体实现，直接返回成功状态（如 HAL\_OK）。
+
+ReturnOK 策略的优势在于简单高效，避免了不必要的代码生成和测试开销。对于这类函数，保留原始实现往往会导致仿真异常（因为涉及硬件依赖），而直接返回成功通常不会影响固件的正常运行逻辑。
+
+以 GPIO 去初始化函数为例，原始代码可能包含对硬件寄存器的复位操作和状态的清理。采用 ReturnOK 策略替换后，保留函数签名和参数校验，直接返回 HAL\_OK，跳过所有硬件相关操作。
+
+代码示例如下：
+
+\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt]
+// 原始代码
+HAL_StatusTypeDef HAL_GPIO_DeInit(GPIO_TypeDef *GPIOx) {
+    if (GPIOx == NULL) return HAL_ERROR;
+    GPIOx->MODER = 0x00000000;
+    GPIOx->OTYPER = 0x00000000;
+    // ... more register operations ...
+    return HAL_OK;
+}
+
+// 替换代码（ReturnOK 策略）
+HAL_StatusTypeDef HAL_GPIO_DeInit(GPIO_TypeDef *GPIOx) {
+    if (GPIOx == NULL) return HAL_ERROR;
+    (void)GPIOx;
+    return HAL_OK;
+}
+\end{lstlisting}
+
+\textbf{SKIP 和 NODRIVER 策略}
+
+SKIP 类函数是那些可以直接删除函数体但保留签名的函数，这类函数通常不影响固件的核心功能，或者其功能已经被仿真环境接管。采用 Skip 策略后，函数体被删除，直接返回或空实现。
+
+NODRIVER 类函数是那些不涉及硬件操作的纯业务逻辑函数，这类函数不需要任何替换，直接保留原始代码即可。识别 NODRIVER 类函数可以避免不必要的替换操作，提升系统效率。
+
 % ============================================================
 % 3.4 动态测试反馈闭环模块
 % ============================================================
