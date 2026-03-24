@@ -846,29 +846,33 @@ Fixer Agent 接收 Emulator Runner Agent 传递的仿真输出信息，包括标
 \KwIn{固件工程、构建配置、待替换函数列表}
 \KwOut{\texttt{EmulateResult}（成功/失败及原因）}
 
-初始化状态和迭代计数\;
-\While{迭代次数 < 最大次数}{
-  执行仿真，获取运行结果\;
-  \If{仿真成功}{
-    \Return 成功结果\;
+state $\leftarrow$ \{messages, iteration\_count = 0\}\;
+\While{iteration\_count $<$ MAX\_ITERATIONS}{
+  \tcp{仿真运行阶段}
+  emulate\_result $\leftarrow$ EmulateProject(state)\;
+  \If{emulate\_result.success == true}{
+    \Return EmulateResult(success=true)\;
   }
 
-  从运行日志和调用栈诊断故障函数\;
-  \If{无法解析或函数已处理}{
-    \Return 失败结果\;
+  \tcp{故障诊断阶段}
+  mmio\_info $\leftarrow$ GetMMIOFunctionEmulateInfo()\;
+  call\_stack $\leftarrow$ GetFunctionCallsEmulateInfo()\;
+  fault\_func $\leftarrow$ ParseFaultFunction(emulate\_result, mmio\_info, call\_stack)\;
+  \If{fault\_func == null \textbf{or} fault\_func $\in$ processed\_list}{
+    \Return EmulateResult(success=false)\;
   }
 
-  调用 Fixer 生成修复方案\;
-  执行构建验证\;
-  \If{构建失败}{
-    继续下一轮迭代\;
-  }
+  \tcp{修复阶段}
+  replacement $\leftarrow$ Fixer(emulate\_result, fault\_func)\;
+  update\_function\_replacement(replacement)\;
 
-  重新生成仿真配置并回归验证\;
-  增加迭代计数\;
+  \tcp{构建与回归阶段}
+  build\_result $\leftarrow$ Builder()\;
+  generate\_emulator\_configs()\;
+  iteration\_count $\leftarrow$ iteration\_count + 1\;
 }
 
-\Return 失败结果（达到最大迭代次数）\;
+\Return EmulateResult(success=false, reason="达到最大迭代次数")\;
 \end{algorithm}
 
 闭环协同工作流的核心逻辑以 LangGraph 框架实现，通过状态管理和条件分支控制执行流程。仿真运行阶段调用 EmulateProject 工具执行固件仿真，采集运行输出、退出码和异常循环检测标志。当仿真成功时，直接返回结果；当仿真失败时，进入故障诊断阶段。
