@@ -782,7 +782,7 @@ Hook 机制层注册代码 Hook、基本块 Hook、内存读/写 Hook 与中断 
 \small
 \setlength{\tabcolsep}{5pt}
 \renewcommand{\arraystretch}{1.15}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.5cm}p{8.25cm}@{}}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{5.05cm}p{7.7cm}@{}}
 \toprule
 \textbf{注入接口} & \textbf{典型用途} \\
 \midrule
@@ -790,7 +790,7 @@ Hook 机制层注册代码 Hook、基本块 Hook、内存读/写 Hook 与中断 
 \texttt{HAL\_BE\_return\_1} & 恒定返回 1，多用作布尔真或约定非零语义。 \\
 \texttt{HAL\_BE\_Out} & 以输出长度表征一次发送语义，载荷是否落盘或参与比对由仿真后端决定；常见于类 SEND 的 Redirect。 \\
 \texttt{HAL\_BE\_In} & 定长接收：将仿真输入写入缓冲区，用于 UART/SPI 等固定长度收包类替换。 \\
-\makecell[tl]{\texttt{HAL\_BE\_ENET\_}\\\texttt{ReadFrame}} & 在变长上界内填充一帧网络类数据，用于非定长报文接收路径。 \\
+\texttt{HAL\_BE\_ENET\_ReadFrame} & 在变长上界内填充一帧网络类数据，用于非定长报文接收路径。 \\
 \texttt{HAL\_BE\_Block\_Read} & 按块大小与块数从虚拟介质读入缓冲区，用于存储或块设备类替换。 \\
 \texttt{HAL\_BE\_Block\_Write} & 按块粒度写出缓冲区内容，用于块设备或大块 I/O 类替换。 \\
 \bottomrule
