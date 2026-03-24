@@ -1,0 +1,87 @@
+% 系统整体架构图（图 3.1）— 独立编译：xelatex system_architecture.tex
+\documentclass[tikz,border=8pt]{standalone}
+\usepackage{ctex}
+\usetikzlibrary{arrows.meta,calc,positioning}
+
+\begin{document}
+\begin{tikzpicture}[
+    font=\small,
+    hdr/.style={
+        rectangle,
+        minimum width=4.35cm,
+        minimum height=1.05cm,
+        rounded corners=5pt,
+        draw=black!55,
+        very thick,
+        align=center,
+        font=\bfseries
+    },
+    card/.style={
+        rectangle,
+        minimum width=4.35cm,
+        minimum height=3.45cm,
+        rounded corners=6pt,
+        draw=black!55,
+        thick,
+        align=left,
+        inner sep=9pt,
+        font=\scriptsize
+    },
+    flow/.style={
+        -{Stealth[length=2.6mm]},
+        very thick,
+        draw=black!65
+    },
+    fb/.style={
+        -{Stealth[length=2.6mm]},
+        very thick,
+        dashed,
+        draw=red!68!black
+    },
+    lbl/.style={font=\scriptsize, inner sep=1pt, fill=white, fill opacity=0.92, text opacity=1}
+]
+
+% ---------- 三模块位置（横向流水线）----------
+\coordinate (row) at (0,0);
+\node[hdr, fill=orange!28, above=0pt of row, xshift=-5.35cm, anchor=south] (H1) {驱动函数接口\\静态分析与识别};
+\node[card, fill=orange!9, below=0pt of H1.south, anchor=north] (C1) {
+    \textbf{输入：}固件源码、CodeQL 数据库\\[0.35em]
+    \textbullet\ MMIO 与驱动函数定位\\
+    \textbullet\ 访问点、调用图、数据流\\
+    \textbullet\ 统一数据模型 / 缓存查询接口
+};
+
+\node[hdr, fill=blue!22, draw=blue!65, above=0pt of row, anchor=south] (H2) {驱动函数分析、\\替换与编译};
+\node[card, fill=blue!7, draw=blue!55, below=0pt of H2.south, anchor=north] (C2) {
+    \textbf{核心智能层（LangGraph）}\\[0.35em]
+    \textbullet\ Analyzer Agent：分类与替换生成\\
+    \textbullet\ VerifyReplacement 定义校验\\
+    \textbullet\ 写入源码、工程编译（Build）\\
+    \textbullet\ BuilderFixer：编译失败修复闭环
+};
+
+\node[hdr, fill=green!24, above=0pt of row, xshift=5.35cm, anchor=south] (H3) {动态测试\\反馈闭环};
+\node[card, fill=green!8, below=0pt of H3.south, anchor=north] (C3) {
+    \textbf{基于仿真器（如 Unicorn）}\\[0.35em]
+    \textbullet\ 运行替换后固件\\
+    \textbullet\ 日志、崩溃、覆盖率采集\\
+    \textbullet\ 结构化错误 / 失败样例\\
+    \textbullet\ 回流触发再分析与再生成
+};
+
+% ---------- 正向数据流 ----------
+\draw[flow] (C1.east) -- node[lbl, above=2pt] {驱动函数列表与上下文} (C2.west);
+\draw[flow] (C2.east) -- node[lbl, above=2pt] {替换代码 / 可构建镜像} (C3.west);
+
+% ---------- 反馈回路（经底部绕行）----------
+\path let \p1=(C3.south), \p2=(C2.south) in coordinate (FbR) at (\x1, \y1-0.95)
+    coordinate (FbM) at (\x2, \y1-0.95);
+\draw[fb] (C3.south) -- (FbR) -- node[lbl, below=2pt] {失败样例与诊断信息} (FbM) -- (C2.south);
+
+% ---------- 底部总览 ----------
+\node[below=1.35cm of C2.south, font=\footnotesize\bfseries, text=gray!75!black, align=center] {
+    静态识别 $\rightarrow$ 智能替换与构建 $\rightarrow$ 动态验证 \quad|\quad 反馈闭环迭代优化
+};
+
+\end{tikzpicture}
+\end{document}
