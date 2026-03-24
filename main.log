@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2022/dev/Debian) (preloaded format=xelatex 2026.3.5)  25 MAR 2026 06:56
+This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2022/dev/Debian) (preloaded format=xelatex 2026.3.5)  25 MAR 2026 06:58
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1362,7 +1362,7 @@ Package: xkeyval 2020/11/20 v2.8 package option processing (HA)
 File: xkeyval.tex 2014/12/03 v2.7a key=value parser (HA)
 ))
 \verbatim@out=\write4
-runsystem(echo 'write18-test-2026325416'>"main.w18")...disabled (restricted).
+runsystem(echo 'write18-test-2026325418'>"main.w18")...disabled (restricted).
 
 
 
@@ -2587,21 +2587,6 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [40]
-Overfull \hbox (23.6481pt too wide) in paragraph at lines 793--793
-[]|\TU/lmtt/m/n/11 HAL_BE_ENET_ReadFrame| 
- []
-
-
-Overfull \hbox (0.9881pt too wide) in paragraph at lines 794--794
-[]|\TU/lmtt/m/n/11 HAL_BE_Block_Read| 
- []
-
-
-Overfull \hbox (6.6531pt too wide) in paragraph at lines 795--795
-[]|\TU/lmtt/m/n/11 HAL_BE_Block_Write| 
- []
-
-
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3170,10 +3155,10 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 Here is how much of TeX's memory you used:
  43748 strings out of 477728
  960543 string characters out of 5842239
- 1772916 words of memory out of 5000000
+ 1772908 words of memory out of 5000000
  63499 multiletter control sequences out of 15000+600000
  489920 words of font info for 190 fonts, out of 8000000 for 9000
  264 hyphenation exceptions out of 8191
- 99i,15n,102p,1208b,2356s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 99i,19n,102p,1208b,2356s stack positions out of 5000i,500n,10000p,200000b,80000s
 
 Output written on main.pdf (81 pages).
