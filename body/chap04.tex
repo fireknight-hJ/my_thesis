@@ -176,19 +176,19 @@ imxrt1060-nxp-evk & osKernelStart \\
 \centering
 \caption{各类型Demo的功能检测策略}
 \label{tab:function_detection_strategy}
-\small
+\scriptsize
 \begin{adjustbox}{max width=\textwidth}
-\begin{tabular}{p{3cm}p{4cm}p{5cm}}
+\begin{tabular}{p{2.5cm}p{3cm}p{5.5cm}}
 \toprule
 \textbf{Demo 类型} & \textbf{验证目标} & \textbf{检测逻辑} \\
 \midrule
-网络类 & TCP连接建立、数据传输正常 & 检查网络协议栈初始化日志，验证TCP SYN/ACK握手过程，确认数据包在仿真环境中正确收发，验证上层应用是否接收到预期的数据 \\
+网络类 & TCP连接、数据传输 & 检查协议栈初始化、验证TCP握手、确认数据包收发、验证上层应用接收数据 \\
 \midrule
-UART类 & 串口初始化、数据回显正常 & 检查串口外设初始化日志，验证波特率、数据位等配置是否正确，观察串口发送/接收函数调用，确认回显数据与输入数据一致 \\
+UART类 & 串口初始化、回显正常 & 检查串口初始化日志、验证波特率配置、观察发送/接收函数调用、确认回显数据一致 \\
 \midrule
-I2C类 & I2C总线初始化、主从通信正常 & 检查I2C外设初始化日志，验证主从模式配置，观察I2C Start/Stop条件，确认数据读写操作是否完成，验证ACK信号是否正确模拟 \\
+I2C类 & 总线初始化、通信正常 & 检查I2C初始化日志、验证主从模式配置、观察Start/Stop条件、确认数据读写完成、验证ACK信号 \\
 \midrule
-文件系统类 & 文件系统挂载、读写操作正常 & 检查文件系统初始化日志，验证存储设备检测和挂载过程，观察文件打开/读写/关闭函数调用，确认文件内容读写正确 \\
+文件系统类 & 文件系统挂载、读写正常 & 检查文件系统初始化日志、验证存储设备检测和挂载、观察文件打开/读写/关闭调用、确认读写数据正确 \\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
