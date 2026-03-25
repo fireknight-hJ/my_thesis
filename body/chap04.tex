@@ -242,65 +242,11 @@ CORE & 系统区操作，OS 核心函数 & 6 & 6 & 2.3\% \\
 
 \textbf{（2）初始化函数占比最高}：INIT 类函数占 31.7\%，所有 82 个 INIT 类函数均生成了替换代码（100\%），说明固件启动阶段需要大量硬件配置操作，这些函数是替换的重点，必须正确处理以保证固件正常启动。
 
-\textbf{（3）NEEDCHECK 类占比较高}：NEEDCHECK 类函数占 15.4\%（40 个函数），其中 27 个（67.5\%）生成了替换代码，表明系统对复杂函数或边界情况保持谨慎，采用人工复审的方式保证分类准确性。这类函数包括复杂的多功能函数、语义不明确的边界函数等，需要进一步分析确定替换策略。
-
 \textbf{（4）轮询函数存在潜在风险}：LOOP 类函数占 13.5\%，所有 35 个 LOOP 类函数均生成了替换代码（100\%），这类函数在仿真环境中容易造成死循环，需要采用 Skip 策略跳过等待逻辑，避免仿真执行阻塞。
 
 \textbf{（5）数据收发函数占比较高}：RECV 类函数占 12.7\%（33 个函数），涵盖 UART、I2C、以太网、SPI 等多种通信接口，包括 UART（HAL\_UART\_Receive、LPUART\_ReadBlocking 等）、I2C（HAL\_I2C\_Master\_Receive、LPI2C\_MasterReceive 等）、以太网（ENET\_GetRxFrame、HAL\_ETH\_ReadData 等）以及其他接口（HAL\_DSI\_Read、HAL\_I2C\_Mem\_Read 等）。所有 33 个 RECV 类函数均生成了替换代码（100\%），这类函数直接与数据传输相关，替换质量直接影响仿真环境的输入输出能力，是替换工作的关键。
 
-\subsubsection{代表性固件分类统计}
 
-为了更直观地展示分类结果，本研究选择了 8 个具有代表性的固件进行详细分析，统计结果如表~\ref{tab:representative_classification}所示。
-
-\begin{table}[htbp]
-\centering
-\caption{代表性固件的驱动函数分类统计（去重后）}
-\label{tab:representative_classification}
-\footnotesize
-\begin{adjustbox}{max width=\textwidth}
-\begin{tabular}{lccccccccccc}
-\toprule
-\textbf{固件名称} & \textbf{类型} & \textbf{INIT} & \textbf{LOOP} & \textbf{NEED} & \textbf{OK} & \textbf{RECV} & \textbf{IRQ} & \textbf{CORE} & \textbf{SKIP} & \textbf{NODR} & \textbf{总计} \\
-\midrule
-LwIP\_HTTP\_Server\_Socket\_RTOS & 网络 & 42 & 16 & 11 & 24 & 15 & 6 & 2 & 4 & 2 & 122 \\
-LwIP\_StreamingServer & 网络 & 57 & 23 & 7 & 21 & 12 & 2 & 6 & 2 & 0 & 130 \\
-LwIP\_HTTP\_Server\_Socket\_RTOS & 网络 & 42 & 16 & 11 & 24 & 15 & 6 & 2 & 4 & 2 & 122 \\
-UART\_Hyperterminal\_IT & 串口 & 23 & 12 & 4 & 11 & 19 & 6 & 2 & 2 & 0 & 79 \\
-NXP\_UART\_FreeRTOS & 串口 & 13 & 5 & 0 & 1 & 8 & 2 & 0 & 1 & 0 & 30 \\
-NXP\_I2C\_BareMetal & I2C & 4 & 0 & 15 & 1 & 1 & 0 & 0 & 0 & 1 & 22 \\
-RTThread\_stm32f401\_i2c & I2C & 11 & 2 & 3 & 1 & 4 & 0 & 0 & 0 & 3 & 24 \\
-LwIP\_HTTP\_Server\_Raw & 网络 & 38 & 15 & 5 & 3 & 20 & 5 & 1 & 1 & 0 & 88 \\
-\bottomrule
-\end{tabular}
-\end{adjustbox}
-\end{table}
-
-\textit{注：NEED 代表 NEEDCHECK，OK 代表 RETURNOK，NODR 代表 NODRIVER}
-
-从表~\ref{tab:representative_classification}可以看出：
-
-\textbf{（1）固件类型与分类特征}：不同类型固件展现出显著的分类特征差异。网络型固件（LwIP\_HTTP\_Server\_Socket\_RTOS、LwIP\_StreamingServer、LwIP\_HTTP\_Server\_Raw）的 INIT 类函数占比分别为 34.4\%、43.8\% 和 43.2\%，反映了网络协议栈初始化的复杂性。串口型固件（UART\_Hyperterminal\_IT、NXP\_UART\_FreeRTOS）的 RECV 类函数占比分别为 24.1\% 和 26.7\%，反映了数据收发操作在串口应用中的重要性。I2C 型固件（NXP\_I2C\_BareMetal、RTThread\_stm32f401\_i2c）的 NEEDCHECK 类函数占比较高，分别为 68.2\% 和 12.5\%，表明 I2C 通信的复杂性。
-
-\textbf{（2）分类准确率验证}：本研究随机抽取了 50 个函数进行人工标注验证，分类准确率达到 94.0\%（47/50），表明大语言模型具备较强的代码语义理解能力，能够准确识别函数的硬件交互模式。分类错误的 3 个函数均为复杂函数（包含多种硬件操作），这类函数可以通过人工复审或引入更细粒度的分类规则来提升准确率。
-
-\textbf{（3）系统泛化能力}：8 个代表性固件涵盖网络、串口、I2C、以太网等多种外设类型和 BareMetal、FreeRTOS、RTThread 多种操作系统，系统均能完成准确的函数分类，表明方法具有良好的泛化能力。不同固件的分类结果呈现出与其功能特性相符的分布规律，验证了分类策略的普适性。
-
-\textbf{（4）NEEDCHECK 类别分析}：NEEDCHECK 类函数（72 个，19.6\%）是系统自动分类中需要进一步人工确认的类别，主要包括边界情况、复杂函数或语义不明确的函数。这类函数的数量占总数的 19.6\%，表明系统能够处理绝大多数常规函数的分类，对于复杂情况采用人工介入的方式保证了分类准确性。
-
-\subsubsection{分类结果讨论}
-
-驱动函数分类数据的统计结果验证了本文方法的有效性，主要体现在以下几个方面：
-
-\textbf{（1）验证分类策略的必要性}：不同类型驱动函数的硬件交互方式存在显著差异，采用"一刀切"的统一替换策略无法准确处理各类函数的特殊性。例如，INIT 类函数需要保留结构初始化但跳过硬件配置，LOOP 类函数需要跳过等待逻辑避免死循环，RECV 类函数需要重定向到仿真输入函数。准确的分类是选择正确替换策略的前提。
-
-\textbf{（2）证明 LLM 的语义理解能力}：94.0\% 的分类准确率表明大语言模型能够从函数源码中识别 MMIO 访问模式、判断函数主要用途，并准确分类到预定义类别。这种语义理解能力是后续智能替换的基础，为替换代码生成的正确性提供了保障。
-
-\textbf{（3）量化替换工作量}：92.3\% 的驱动函数（239/259）生成了替换代码，量化了驱动函数替换的工作量。INIT 类函数（31.7%）和 RECV 类函数（12.7\%）合计占需替换总数的 47.9\%，是替换工作的重点。LOOP 类函数（13.5\%）在仿真中容易造成死循环，需要特别关注。NEEDCHECK 类函数（15.4\%）中有 67.5\% 生成了替换代码，剩余 13 个函数需要人工复审，增加了整体工作量但保证了分类准确性。
-
-\textbf{（4）展示系统的泛化能力}：27 个测试固件涵盖多种芯片平台、操作系统和外设类型，系统均能完成准确的函数分类，表明方法具有良好的泛化能力和普适性，能够适应不同类型和规模的嵌入式固件。去重后共识别出 259 个唯一函数名，函数库规模合理，易于维护和扩展。其中 239 个函数（92.3\%）成功生成了替换代码，验证了系统的自动化替换能力。
-
-
-\subsection{测试实施}
 
 本节详细介绍功能测试的实施过程，包括测试用例详情、仿真执行过程、关键节点检查过程和测试结果分析。
 
