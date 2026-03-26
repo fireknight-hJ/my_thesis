@@ -365,6 +365,7 @@ LOOP & 轮询等待硬件状态 & \texttt{HAL\_UART\_WaitOnFlag}, \texttt{FLASH\
 IRQ & 中断处理/回调函数 & \texttt{HAL\_UART\_IRQHandler}, \texttt{ENET\_TransmitIRQHandler} \\
 RETURNOK & 纯硬件操作，返回状态值 & \texttt{HAL\_GPIO\_DeInit}, \texttt{HAL\_I2C\_IsDeviceReady} \\
 SKIP & 纯硬件操作，无返回值 & \texttt{HAL\_ADC\_MspInit}, \texttt{FLASH\_FlushCaches} \\
+\midrule
 CORE & 系统区操作，OS 核心函数 & \texttt{SysTick\_Handler}, \texttt{rt\_thread\_init} \\
 NODRIVER & 存在的驱动操作对固件状态机无影响 & \texttt{main}, \texttt{GPIO\_GetInstance} \\
 \bottomrule
@@ -391,6 +392,7 @@ LOOP & Skip & 移除轮询等待逻辑，避免仿真环境中的死循环，直
 IRQ & Event & 保留回调函数签名，直接触发事件通知，移除硬件条件判断 \\
 RETURNOK & ReturnOK & 直接返回成功状态值，保留函数签名，不执行硬件操作 \\
 SKIP & Skip & 直接跳过函数执行，保留函数签名和调用路径，函数体为空 \\
+\midrule
 CORE & NoReplacement & 完全不替换，保留原函数代码和调用关系，由仿真器提供底层支持 \\
 NODRIVER & NoReplacement & 不进行任何替换，保留原函数代码和调用关系 \\
 \bottomrule
