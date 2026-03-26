@@ -257,19 +257,7 @@ class FunctionInfo:
 
 \textbf{信息获取}阶段通过工具调用拉齐该驱动函数在工程中的可观测上下文，包括完整实现或相关片段、函数签名与参数类型、调用关系与 MMIO 仿真侧提示等（如 GetFunctionInfo、GetFunctionCallStack、GetMMIOFunctionEmulateInfo）。\textbf{代码分类}阶段综合源码与静态分析结果，由大语言模型判定函数语义类别及是否属于必须替换的硬件相关行为；分类所依据的类别体系及提示构造方式见第~\ref{sec:driver-replacement-strategy}~节。\textbf{替换代码生成}仅在"需要替换"分支上触发：模型在既定类别上选择替换策略并产出与签名一致的候选实现，具体策略（如 Skip、Strip、Redirect、Event 等）的选择规则与生成约束同样在第~\ref{sec:driver-replacement-strategy}~节展开，本节只给出子模块内的先后次序与数据交接关系。
 
-Analyzer Agent 基于 LangGraph 的 \texttt{StateGraph} 类构建，采用图式状态机架构。智能体的核心状态包括当前处理的函数信息、函数分类结果、替换代码、验证结果和错误信息。智能体的转换逻辑由条件函数决定，根据验证结果决定是否需要重新生成替换代码或进入下一个处理阶段。
-
-Analyzer Agent 的关键实现包括：
-
-\textbf{（1）状态定义}：使用 \texttt{TypedDict} 定义智能体的状态类型，包括函数名、源码、上下文信息、分类结果、替换代码等字段。
-
-\textbf{（2）工具定义}：定义一系列工具函数，包括 GetFunctionInfo（获取函数信息）、GetFunctionCallStack（获取调用栈）、GetMMIOFunctionEmulateInfo（获取 MMIO 函数仿真信息）等。这些工具通过 Python 函数实现，并通过 \texttt{@tool} 装饰器注册到 LangGraph 框架中。
-
-\textbf{（3）节点定义}：定义智能体的处理节点，包括信息获取节点、代码分类节点和替换代码生成节点。每个节点是一个 Python 函数，接收当前状态作为输入，执行相应的处理逻辑，返回更新后的状态。
-
-\textbf{（4）边定义}：定义节点之间的转换关系，包括条件边和无条件边。条件边根据状态中的某个字段（如分类结果或验证结果）决定下一个节点的选择。
-
-\textbf{（5）执行器编译}：通过 \texttt{compile()} 方法编译图，生成可执行的 \texttt{CompiledGraph} 对象。执行器负责调度节点的执行顺序，管理状态的传递，并处理异常和错误。
+Analyzer Agent 基于 LangGraph 的 \texttt{StateGraph} 类构建，采用图式状态机架构。智能体的核心状态包括当前处理的函数信息、函数分类结果、替换代码、验证结果和错误信息。智能体的转换逻辑由条件函数决定，根据验证结果决定是否需要重新生成替换代码或进入下一个处理阶段。在实现上，Agent 通过 \texttt{@tool} 装饰器将 GetFunctionInfo、GetFunctionCallStack、GetMMIOFunctionEmulateInfo 等工具函数注册到 LangGraph 框架中，通过 \texttt{compile()} 方法编译为可执行的 \texttt{CompiledGraph} 对象，由执行器调度节点的执行顺序并管理状态传递。
 
 \subsubsection{Builder Agent 实现}
 
@@ -281,27 +269,11 @@ Analyzer Agent 的关键实现包括：
 
 编译错误的典型成因包括函数未声明、类型不匹配、缺少头文件、链接错误，以及替换代码引用了目标芯片 HAL 中不存在的结构体成员或与头文件声明不一致等。例如，STM32F401 的 TIM\_HandleTypeDef 无 ErrorCode 成员、RCC\_PLLInitTypeDef 无 PLLR 成员时，若替换体仍访问这些成员会导致编译失败；将非静态函数误写为 static 亦会破坏链接一致性。BuilderFixer 针对不同诊断采取补声明、改类型与转换、补 \texttt{\#include}、删改非法成员访问、核对依赖等策略。提示词上约束智能体在构建失败时优先根据 stderr 锁定\textbf{第一个错误}所涉函数再查上下文，避免对多函数无序轮询而浪费步数，从而兼顾修复质量与效率。
 
-Builder Agent 负责将替换后的代码集成到工程并执行编译。该 Agent 的核心功能包括替换代码应用、工程构建和错误解析。
-
-Builder Agent 的关键实现包括：
-
-\textbf{（1）ReplaceFuncs 工具}：该工具接收替换代码列表，将每个函数的替换代码写入对应的源文件。工具实现时需要处理以下几个关键问题：准确定位函数在源文件中的位置、保留函数的注释和格式、处理多行字符串和特殊字符、生成回滚快照。
-
-\textbf{（2）BuildProject 工具}：该工具执行工程构建命令（如 CMake 构建），捕获编译输出和退出码。工具实现时需要处理以下几个关键问题：配置构建环境（设置工具链路径、环境变量）、捕获标准输出和标准错误、解析编译错误信息、生成构建日志。
-
-\textbf{（3）错误解析}：Builder Agent 内置了编译错误解析器，能够将编译器的诊断信息转换为结构化的错误对象。错误解析器支持多种编译器（GCC、Clang、ARMCC），能够识别错误类型（语法错误、链接错误、类型错误）、错误位置（文件名、行号、列号）和错误消息。
+Builder Agent 负责将替换后的代码集成到工程并执行编译，核心功能包括替换代码应用、工程构建和错误解析。替换代码应用通过 ReplaceFuncs 工具实现，需要准确定位函数在源文件中的位置、保留注释和格式、生成回滚快照。工程构建通过 BuildProject 工具执行 CMake 构建，配置 ARM 工具链环境并捕获编译输出。内置的编译错误解析器支持 GCC、Clang、ARMCC 等多种编译器，能够将诊断信息转换为包含错误类型、位置和消息的结构化错误对象，为后续 Fixer Agent 提供精确的输入。
 
 \subsubsection{Fixer Agent 实现}
 
-Fixer Agent 负责分析编译错误和运行时错误，生成修复方案并应用到替换代码。该 Agent 的核心功能包括错误定位、修复策略选择和代码生成。
-
-Fixer Agent 的关键实现包括：
-
-\textbf{（1）错误定位}：Fixer Agent 接收编译错误或运行时错误信息，通过分析错误消息和上下文，定位出错的函数和代码位置。对于编译错误，错误定位相对直接，错误消息通常包含文件名和行号；对于运行时错误，错误定位需要分析调用栈和内存地址。
-
-\textbf{（2）修复策略选择}：Fixer Agent 根据错误类型和函数特征，选择合适的修复策略。修复策略包括补声明、改类型与转换、补 \texttt{\#include}、删改非法成员访问、核对依赖等。策略选择由 LLM 驱动，LLM 根据错误信息和函数上下文，智能地选择最合适的修复策略。
-
-\textbf{（3）代码生成}：Fixer Agent 基于选择的修复策略，生成修复后的代码。代码生成由 LLM 完成，提示词模板包含错误信息、原始代码和修复指导。生成的代码需要经过验证，确保修复是正确的。
+Fixer Agent 负责分析编译错误和运行时错误，生成修复方案并应用到替换代码。对于编译错误，Agent 通过错误消息中的文件名和行号直接定位问题函数；对于运行时错误，则需要分析调用栈和内存地址间接定位。修复策略的选择由 LLM 驱动，LLM 根据错误信息和函数上下文智能地选择补声明、改类型与转换、补 \texttt{\#include}、删改非法成员访问等策略。生成的修复代码经过验证后通过数据管理接口更新替换代码，触发重新构建。
 
 \subsection{提示词工程}
 
