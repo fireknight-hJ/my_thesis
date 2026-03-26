@@ -1,0 +1,727 @@
+\chapter{系统实现}
+\label{chap:implementation}
+
+本章详细阐述基于驱动程序替换的固件仿真系统的具体实现细节。实现工作围绕第三章提出的系统设计方案展开，采用 CodeQL、LangGraph、Unicorn 等技术栈，构建完整的自动化工具链。本章首先介绍实现概述，包括技术栈、目录结构和关键依赖，然后分别阐述各核心模块的具体实现，包括静态分析模块的 CodeQL 查询实现、替换模块的 LangGraph 工作流实现、以及动态反馈模块的仿真平台实现。
+
+\section{实现概述}
+
+\subsection{技术栈}
+
+系统的技术选型如表~\ref{tab:tech-stack}所示。静态分析模块基于 CodeQL 引擎实现，利用其强大的语义级代码分析能力；智能体模块采用 LangChain + LangGraph 框架，结合大语言模型实现代码理解与生成；仿真平台基于 Unicorn 引擎实现，提供精确的 CPU 指令级模拟；通信协议采用 MCP (Model Context Protocol)，实现模块间的标准化数据交换。
+
+\begin{table}[htbp]
+\centering
+\caption{系统技术栈}
+\label{tab:tech-stack}
+\begin{tabular}{ll}
+\toprule
+\textbf{组件} & \textbf{技术选型} \\
+\midrule
+静态分析引擎 & CodeQL \\
+LLM 框架 & LangChain + LangGraph \\
+模型服务 & DeepSeek V3.2 \\
+仿真平台 & Unicorn 2.0.2 \\
+通信协议 & MCP (Model Context Protocol) \\
+编程语言 & Python 3.9+, C (固件源码) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{目录结构}
+
+系统的源代码目录结构如下：
+
+\begin{lstlisting}[language=Python,caption=系统目录结构,label=lst:directory-structure]
+lcmhalmcp/
+├── agents/                 # 智能体实现
+│   ├── analyzer_agent.py   # 分析 Agent
+│   ├── builder_agent.py    # 构建 Agent
+│   ├── fixer_agent.py      # 修复 Agent
+│   └── emulator_runner_agent.py  # 运行 Agent
+├── tools/                  # 工具模块
+│   ├── collector/          # 信息收集工具
+│   ├── builder/            # 构建工具
+│   ├── replacer/           # 替换工具
+│   └── emulator/           # 仿真工具
+├── models/                 # 数据模型
+├── prompts/                # 提示词模板
+├── queries/                # CodeQL 查询
+└── utils/                  # 工具函数
+\end{lstlisting}
+
+\subsection{关键依赖}
+
+系统的主要依赖包括：
+
+\textbf{静态分析依赖}：
+\begin{itemize}
+\item CodeQL CLI：提供语义级代码分析能力
+\item Python codeql 库：封装 CodeQL 查询接口
+\end{itemize}
+
+\textbf{LLM 框架依赖}：
+\begin{itemize}
+\item LangChain：提供 LLM 应用开发框架
+\item LangGraph：提供图式工作流编排能力
+\item OpenAI API：提供大语言模型调用接口
+\end{itemize}
+
+\textbf{仿真依赖}：
+\begin{itemize}
+\item Unicorn：提供 CPU 指令级模拟
+\item Capstone：提供反汇编能力
+\item Keystone：提供汇编能力
+\end{itemize}
+
+\textbf{构建依赖}：
+\begin{itemize}
+\item ARM GCC 工具链：提供交叉编译能力
+\item CMake：提供跨平台构建能力
+\end{itemize}
+
+\section{驱动函数接口静态分析与识别模块实现}
+
+\subsection{CodeQL 查询实现}
+
+本节详细阐述分析与识别模块的具体实现技术。模块采用 CodeQL 静态分析引擎作为底层支撑，CodeQL 通过构建包含语法树、控制流图、数据流图的综合数据库，为语义级代码分析提供了强大的查询能力。
+
+\subsubsection{MMIO 操作定位查询实现}
+
+针对三种 MMIO 定位模式，本研究设计了相应的查询规则。查询从 CodeQL 数据库中提取所有符合 MMIO 结构体特征的变量及其初始化表达式。查询的核心设计思想是将"寄存器字段访问"追溯到一个可被 CodeQL 稳定描述的基对象表达式。
+
+\begin{lstlisting}[style=CodeQL,language=CodeQL, caption={MMIO表达式收集查询示例}]
+import cpp
+import libraries.MMIOAnalyzer
+
+from
+    Function func,
+    InterestingMMIOExpr expr
+where
+    isInterestingMMIOFunction(func) and
+    expr.getEnclosingFunction() = func
+select expr.toString(),
+       expr.getEnclosingFunction().getName(),
+       expr.getFile().getAbsolutePath().toString(),
+       expr.getLocation().getStartLine(),
+       expr.checkExprType(),
+       expr.checkEnclosingType()
+\end{lstlisting}
+
+上述查询通过 \texttt{import libraries.MMIOAnalyzer} 引入 MMIO 分析库，从 CodeQL 数据库中提取所有有趣的 MMIO 表达式。查询的输出包括表达式字符串、所属函数名、文件路径、行号、表达式类型和封闭类型等信息。
+
+对于"间接初始化"和"常量指针参数"模式，查询采用数据流追踪策略，通过追踪赋值语句和函数参数来识别 MMIO 实例。常量基址的追踪利用 CodeQL 提供的数据流和污点追踪能力，将"常量大值表达式（外设基址）"追踪到后续的变量访问/解引用位置。
+
+\begin{lstlisting}[style=CodeQL,language=CodeQL, caption={常量基址数据流追踪查询示例}]
+ predicate isMMIOConstantExpr(ConstantExpr src_mmio) {
+    exists( DataFlow::Node source, DataFlow::Node sink, Expr varAccess,
+             PointerDereferenceExpr deref |
+        source.asExpr() = src_mmio and
+        isConstantBigValueExpr(src_mmio) and
+        sink.asExpr() = varAccess and
+        deref.getOperand() = varAccess and
+        TaintFlow::flow(source, sink) and
+        not sink.asExpr().getFile() instanceof DriverFile
+    )
+}
+
+predicate isMMIOTracedExpr(Expr e) {
+    exists( DataFlow::Node source, DataFlow::Node sink, ConstantExpr src_mmio |
+        source.asExpr() = src_mmio and
+        isMMIOConstantExpr(src_mmio) and
+        sink.asExpr() = e and
+        TaintFlow::flow(source, sink) and
+        not sink.asExpr().getFile() instanceof DriverFile
+    )
+}
+\end{lstlisting}
+
+上述查询定义了两个谓词：\texttt{isMMIOConstantExpr} 识别常量大值表达式（外设基址），\texttt{isMMIOTracedExpr} 通过污点追踪将源点追踪到汇点。查询的逻辑可形式化表示为：当存在一个常量大值表达式作为数据流源点，经过数据流传播到达某个变量访问或解引用操作时，该操作即为 MMIO 相关的表达式。
+
+\begin{lstlisting}[style=CStyle,language=C,caption=常量基址在代码中的传播示例,label=lst:mmio-propagation]
+// 示例：常量基址在代码中的传播
+#define USART1_BASE 0x40011000UL
+USART_TypeDef *USART1 = (USART_TypeDef *)USART1_BASE;  // 基址强转
+huart->Instance = USART1;                              // 赋值给Instance成员
+huart->Instance->DR = data;                            // 最终的字段访问点
+\end{lstlisting}
+
+查询通过污点追踪，将上述代码中的 \texttt{USART1\_BASE}（源点）追踪到最终的 \texttt{huart->Instance->DR}（汇点），从而识别出整个 MMIO 使用链路。
+
+对于"函数第 0 个参数是指针类型，实参是常量大值表达式"的情况，查询通过函数调用关系和参数类型匹配，定位"把常量基址传给接受结构体指针的驱动函数"的调用点。
+
+\begin{lstlisting}[style=CodeQL,language=CodeQL, caption={函数参数类型匹配查询示例}]
+  predicate isMMIOStructure_MK(Struct s){
+     exists( FunctionCall call, Expr e, TypedefType typeDef |
+        call.getTarget().getParameter(0).getType() instanceof PointerType and
+        (
+            (call.getTarget().getParameter(0).getType().(PointerType).getBaseType() = typeDef and
+             typeDef.getBaseType() = s) or
+            call.getTarget().getParameter(0).getType().(PointerType).getBaseType() = s
+        ) and
+        call.getArgument(0) = e and
+        isConstantBigValueExpr(e)
+     )
+ }
+\end{lstlisting}
+
+上述查询通过参数类型匹配（\texttt{PointerType}）和实参的常量大值表达式检查，识别出 MMIO 结构体类型的函数调用点。查询的逻辑可表示为：当函数调用的第 0 个参数类型为结构体指针，且该参数对应的实参是经过数据流追踪的 MMIO 常量表达式时，该调用点即为候选的 MMIO 使用点。
+
+\begin{lstlisting}[style=CStyle,language=C,caption=常量指针参数传递示例,label=lst:pointer-param-pass]
+// 示例：常量指针参数传递
+void uart_send_data(USART_TypeDef *uart, uint8_t *data, uint16_t len);
+
+// 调用时传递MMIO实例
+uart_send_data(USART1, buffer, len);     // 直接传强转实例
+uart_send_data(huart->Instance, buffer, len);  // 传Instance成员
+\end{lstlisting}
+
+查询通过参数类型匹配（\texttt{USART\_TypeDef *}）和实参的数据流追踪，识别出上述调用点中的 MMIO 参数传递关系。
+
+\subsubsection{驱动函数定位查询实现}
+
+驱动函数定位模块的核心任务是根据前述定位准则，从固件源代码中识别出所有驱动函数，并构建驱动函数调用图。模块采用 CodeQL 静态分析技术，通过定义驱动函数的判定规则来实现自动化识别。
+
+模块的核心判定规则是：\textbf{包含 \texttt{DriverFieldAccess} 且不包含 \texttt{MMIOFieldAccess} 的函数被定义为驱动函数}。\texttt{DriverFieldAccess} 指的是通过句柄或间接方式访问 MMIO 寄存器块的字段操作，而 \texttt{MMIOFieldAccess} 指的是直接通过 MMIO 结构体指针访问寄存器的字段操作。这一定义确保了识别出的函数是真正需要替换的驱动层函数，而非底层的硬件抽象层函数。
+
+\begin{lstlisting}[style=CodeQL,language=CodeQL, caption={驱动函数判定规则}]
+class DriverFunction extends Function
+{
+    DriverFunction() {
+        exists(DriverFieldAccess fa | fa.getEnclosingFunction() = this) and
+        not exists(MMIOFieldAccess fa | fa.getEnclosingFunction() = this)
+    }
+}
+\end{lstlisting}
+
+上述查询定义了 \texttt{DriverFunction} 类，该类继承自 \texttt{Function}，通过检查函数内部是否包含 \texttt{DriverFieldAccess} 且不包含 \texttt{MMIOFieldAccess} 来判定函数是否为驱动函数。
+
+在识别出驱动函数列表后，模块进一步分析驱动函数之间的调用关系，构建函数调用图。调用图以驱动函数为节点，函数调用关系为边，记录调用方、被调用方、调用位置等信息。调用图为后续的智能替换模块提供了函数依赖关系，有助于理解函数的调用上下文和语义关联。
+
+\begin{lstlisting}[style=CodeQL,language=CodeQL, caption={驱动函数调用关系查询}]
+from DriverToCall call
+select call.toString2(),
+       call.getTargetFunction().toString(),
+       call.getEnclosingFunction().toString(),
+       call.isDirectCall()
+\end{lstlisting}
+
+上述查询从 \texttt{DriverToCall} 关系中提取驱动函数之间的调用关系，输出调用边的字符串表示、目标函数名、封装函数名以及调用是否为直接调用等信息。
+
+\subsection{数据模型实现}
+
+为便于后续模块使用，静态分析结果被组织为统一的数据模型。数据模型采用 Python 数据类（dataclass）定义，支持序列化和反序列化。
+
+\begin{lstlisting}[style=Python,language=Python,caption=数据模型定义示例,label=lst:data-model]
+# 示例：数据模型定义
+@dataclass
+class MmioAccessInfo:
+    struct_type: str      # 结构体类型，如"USART_TypeDef"
+    field_name: str       # 字段名，如"DR"
+    access_type: str      # 访问类型：READ/WRITE
+    line_number: int      # 行号
+    function_name: str    # 所在函数名
+    context_code: str     # 上下文代码
+
+@dataclass
+class FunctionInfo:
+    name: str             # 函数名
+    file_path: str        # 文件路径
+    line_number: int      # 行号
+    signature: str         # 函数签名
+    mmio_accesses: List[MmioAccessInfo]  # MMIO访问列表
+\end{lstlisting}
+
+数据模型包括函数信息模型（包含函数名、文件路径、行号、签名、返回类型、参数列表、分类、源码、调用关系等信息）、MMIO 访问点模型（包含结构体类型、字段名、访问类型、行号、所在函数、上下文代码等）和项目分析结果模型（包含项目路径、CodeQL 数据库路径、所有函数、MMIO 访问点、函数调用图、驱动函数列表、分析时间戳等）。这些数据模型通过 JSON 序列化存储在缓存层，供后续模块查询和使用。
+
+\subsection{分析流程实现}
+
+静态分析模块的分析流程包括四个主要步骤：CodeQL 数据库构建、查询执行、结果聚合和模型存储。
+
+\textbf{步骤1：数据库构建}。调用 \texttt{codeql database create} 命令构建 CodeQL 数据库，该过程包括源码解析、AST 生成、控制流图和数据流图的构建。数据库构建完成后，可以通过 CodeQL 查询语言对代码进行语义级分析。
+
+\textbf{步骤2：查询执行}。依次执行前述设计的查询规则，包括 MMIO 表达式收集查询、常量基址数据流追踪查询、驱动函数判定查询和调用关系查询。每个查询返回一组结果，这些结果被转换为 Python 对象供后续处理。
+
+\textbf{步骤3：结果聚合}。将各个查询的结果进行聚合和关联。例如，将 MMIO 表达式与函数信息关联，构建完整的函数-MMIO 访问映射；将驱动函数与调用关系关联，构建函数调用图。
+
+\textbf{步骤4：模型存储}。将聚合后的结果存储到统一的数据模型中，并通过 JSON 序列化保存到文件。存储的数据模型包括项目分析结果、函数信息列表、MMIO 访问点列表和调用关系图。这些数据通过文件系统缓存，支持后续模块的快速查询和断点续跑。
+
+\section{驱动函数分析、替换与编译模块实现}
+
+\subsection{LangGraph 工作流实现}
+
+本节阐述基于 LangGraph 框架的智能体工作流实现。LangGraph 是一个用于构建有状态、多智能体应用的框架，它通过图（Graph）来表示应用的状态转换和逻辑流，特别适合本系统这种包含多轮迭代和条件分支的复杂场景。
+
+\subsubsection{Analyzer Agent 实现}
+
+该子模块由 \textbf{Analyzer Agent} 驱动，在 LangGraph 状态机中通过"工具调用—推理—写回"的循环完成单函数处理。执行顺序固定为：\textbf{信息获取} $\rightarrow$ \textbf{代码分类} $\rightarrow$（仅在分类结果认定该函数需要替换时）\textbf{替换代码生成}。
+
+\textbf{信息获取}阶段通过工具调用拉齐该驱动函数在工程中的可观测上下文，包括完整实现或相关片段、函数签名与参数类型、调用关系与 MMIO 仿真侧提示等（如 GetFunctionInfo、GetFunctionCallStack、GetMMIOFunctionEmulateInfo）。\textbf{代码分类}阶段综合源码与静态分析结果，由大语言模型判定函数语义类别及是否属于必须替换的硬件相关行为；分类所依据的类别体系及提示构造方式见第~\ref{sec:driver-replacement-strategy}~节。\textbf{替换代码生成}仅在"需要替换"分支上触发：模型在既定类别上选择替换策略并产出与签名一致的候选实现，具体策略（如 Skip、Strip、Redirect、Event 等）的选择规则与生成约束同样在第~\ref{sec:driver-replacement-strategy}~节展开，本节只给出子模块内的先后次序与数据交接关系。
+
+Analyzer Agent 基于 LangGraph 的 \texttt{StateGraph} 类构建，采用图式状态机架构。智能体的核心状态包括当前处理的函数信息、函数分类结果、替换代码、验证结果和错误信息。智能体的转换逻辑由条件函数决定，根据验证结果决定是否需要重新生成替换代码或进入下一个处理阶段。
+
+Analyzer Agent 的关键实现包括：
+
+\textbf{（1）状态定义}：使用 \texttt{TypedDict} 定义智能体的状态类型，包括函数名、源码、上下文信息、分类结果、替换代码等字段。
+
+\textbf{（2）工具定义}：定义一系列工具函数，包括 GetFunctionInfo（获取函数信息）、GetFunctionCallStack（获取调用栈）、GetMMIOFunctionEmulateInfo（获取 MMIO 函数仿真信息）等。这些工具通过 Python 函数实现，并通过 \texttt{@tool} 装饰器注册到 LangGraph 框架中。
+
+\textbf{（3）节点定义}：定义智能体的处理节点，包括信息获取节点、代码分类节点和替换代码生成节点。每个节点是一个 Python 函数，接收当前状态作为输入，执行相应的处理逻辑，返回更新后的状态。
+
+\textbf{（4）边定义}：定义节点之间的转换关系，包括条件边和无条件边。条件边根据状态中的某个字段（如分类结果或验证结果）决定下一个节点的选择。
+
+\textbf{（5）执行器编译}：通过 \texttt{compile()} 方法编译图，生成可执行的 \texttt{CompiledGraph} 对象。执行器负责调度节点的执行顺序，管理状态的传递，并处理异常和错误。
+
+\subsubsection{Builder Agent 实现}
+
+该子模块在工程目录中对上一子模块输出的\textbf{候选替换代码}做\textbf{二阶段检验与修复}，目标是在真实构建环境下得到可链接、可编译的替换定义。
+
+\textbf{第一阶段（代码合规校验）}调用 VerifyReplacement，依据预置规则与接口契约检查候选替换是否满足替换定义（例如签名一致、禁止引入不兼容的存储类或明显违背仿真假设的写法等），过滤与定义明显不符的实现；未通过时可将反馈交回 Analyzer Agent 侧重新生成或局部修订（图~\ref{fig:analyzer-workflow}中以虚线表示返回替换生成环节）。
+
+\textbf{第二阶段（语法编译检查）}在通过定义校验后，将替换写入目标源文件（如 ReplaceFuncs，并保留回滚所需的原定义快照），再调用工程构建脚本执行完整编译链接（如 BuildProject）。若\textbf{编译失败}，则进入 \textbf{BuilderFixer} 路径：由构建侧智能体解析编译器诊断信息，结合 GetFunctionInfo、GetMMIOFunctionInfo 等工具定位首个关键错误，通过 UpdateFunctionReplacement 或 FixFunctionBuildErrors 等动作修订替换代码，并再次触发构建，形成"编译 $\rightarrow$ 错误解析 $\rightarrow$ 修复 $\rightarrow$ 重新编译"的闭环，直至编译成功或达到步数上限，从而保证最终被采纳的替换函数能够通过工程编译。
+
+编译错误的典型成因包括函数未声明、类型不匹配、缺少头文件、链接错误，以及替换代码引用了目标芯片 HAL 中不存在的结构体成员或与头文件声明不一致等。例如，STM32F401 的 TIM\_HandleTypeDef 无 ErrorCode 成员、RCC\_PLLInitTypeDef 无 PLLR 成员时，若替换体仍访问这些成员会导致编译失败；将非静态函数误写为 static 亦会破坏链接一致性。BuilderFixer 针对不同诊断采取补声明、改类型与转换、补 \texttt{\#include}、删改非法成员访问、核对依赖等策略。提示词上约束智能体在构建失败时优先根据 stderr 锁定\textbf{第一个错误}所涉函数再查上下文，避免对多函数无序轮询而浪费步数，从而兼顾修复质量与效率。
+
+Builder Agent 负责将替换后的代码集成到工程并执行编译。该 Agent 的核心功能包括替换代码应用、工程构建和错误解析。
+
+Builder Agent 的关键实现包括：
+
+\textbf{（1）ReplaceFuncs 工具}：该工具接收替换代码列表，将每个函数的替换代码写入对应的源文件。工具实现时需要处理以下几个关键问题：准确定位函数在源文件中的位置、保留函数的注释和格式、处理多行字符串和特殊字符、生成回滚快照。
+
+\textbf{（2）BuildProject 工具}：该工具执行工程构建命令（如 CMake 构建），捕获编译输出和退出码。工具实现时需要处理以下几个关键问题：配置构建环境（设置工具链路径、环境变量）、捕获标准输出和标准错误、解析编译错误信息、生成构建日志。
+
+\textbf{（3）错误解析}：Builder Agent 内置了编译错误解析器，能够将编译器的诊断信息转换为结构化的错误对象。错误解析器支持多种编译器（GCC、Clang、ARMCC），能够识别错误类型（语法错误、链接错误、类型错误）、错误位置（文件名、行号、列号）和错误消息。
+
+\subsubsection{Fixer Agent 实现}
+
+Fixer Agent 负责分析编译错误和运行时错误，生成修复方案并应用到替换代码。该 Agent 的核心功能包括错误定位、修复策略选择和代码生成。
+
+Fixer Agent 的关键实现包括：
+
+\textbf{（1）错误定位}：Fixer Agent 接收编译错误或运行时错误信息，通过分析错误消息和上下文，定位出错的函数和代码位置。对于编译错误，错误定位相对直接，错误消息通常包含文件名和行号；对于运行时错误，错误定位需要分析调用栈和内存地址。
+
+\textbf{（2）修复策略选择}：Fixer Agent 根据错误类型和函数特征，选择合适的修复策略。修复策略包括补声明、改类型与转换、补 \texttt{\#include}、删改非法成员访问、核对依赖等。策略选择由 LLM 驱动，LLM 根据错误信息和函数上下文，智能地选择最合适的修复策略。
+
+\textbf{（3）代码生成}：Fixer Agent 基于选择的修复策略，生成修复后的代码。代码生成由 LLM 完成，提示词模板包含错误信息、原始代码和修复指导。生成的代码需要经过验证，确保修复是正确的。
+
+\subsection{提示词工程}
+
+提示词工程是确保 LLM 生成高质量替换代码的关键。本研究设计了一套结构化的提示词模板，包括分类提示词、替换提示词和验证提示词。
+
+\textbf{分类提示词}：引导 LLM 识别驱动函数的语义类别。提示词包含函数源码、调用上下文、MMIO 访问信息和类别定义。提示词要求 LLM 输出函数类别、是否需要替换以及分类理由。
+
+\textbf{替换提示词}：引导 LLM 生成替换代码。提示词包含函数源码、分类结果、替换策略指导、MMIO 访问信息和仿真环境约束。提示词要求 LLM 输出替换代码、保留的逻辑说明和潜在风险提示。
+
+\textbf{验证提示词}：引导 LLM 验证替换代码的正确性。提示词包含替换代码、原始代码、验证规则和测试用例。提示词要求 LLM 输出验证结果、发现的问题和修复建议。
+
+\subsection{替换策略实现}
+
+本节详细阐述各种替换策略的具体实现。每种策略都包含详细的代码示例，展示如何将原始驱动函数转换为可在仿真环境中执行的替代实现。
+
+\subsubsection{Skip 策略实现}
+
+Skip 策略的核心思想是移除驱动函数中的硬件交互操作，但保留函数签名和返回值，使函数执行路径能够支持固件正常运行。对于初始化类函数，移除硬件寄存器配置逻辑；对于控制类函数，移除控制命令的硬件执行；对于轮询类函数，移除等待硬件状态的循环逻辑，避免仿真环境中的死循环。
+
+以 UART 初始化函数为例，原始代码包含使能 UART 时钟、配置 UART 寄存器、设置波特率等硬件相关操作。采用 Skip 策略替换后，保留函数签名和必要的结构初始化，跳过所有硬件寄存器配置，直接返回成功状态。代码示例见代码~\ref{lst:skip-strategy}。
+
+\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt,caption=Skip 策略替换示例（初始化类和轮询类）,label=lst:skip-strategy]
+// 原始代码（初始化类）
+void HAL_UART_Enable(UART_HandleTypeDef *huart) {
+    huart->Instance->CR1 |= USART_CR1_UE;
+}
+
+// 替换代码（Skip 策略）
+void HAL_UART_Enable(UART_HandleTypeDef *huart) {
+    (void)huart;
+}
+
+// 原始代码（轮询类）
+HAL_StatusTypeDef HAL_UART_WaitOnFlag(UART_HandleTypeDef *huart, uint32_t Flag, uint32_t Timeout) {
+    while (!(__HAL_UART_GET_FLAG(huart, Flag))) {
+        if (Timeout != HAL_MAX_DELAY) {
+            if ((Timeout--) == 0) return HAL_TIMEOUT;
+        }
+    }
+    return HAL_OK;
+}
+
+// 替换代码（Skip 策略）
+HAL_StatusTypeDef HAL_UART_WaitOnFlag(UART_HandleTypeDef *huart, uint32_t Flag, uint32_t Timeout) {
+    (void)huart;
+    (void)Flag;
+    (void)Timeout;
+    return HAL_OK;
+}
+\end{lstlisting}
+
+\subsubsection{Redirect 策略实现}
+
+Redirect 策略使用自定义的注入函数（如 HAL\_BE\_In、HAL\_BE\_ENET\_ReadFrame、HAL\_BE\_Out）替代硬件访问，为替换后的驱动代码提供与仿真环境交互的标准接口。对于接收类函数，使用 HAL\_BE\_In（固定长度）或 HAL\_BE\_ENET\_ReadFrame（变长报文）将仿真输入数据填充到缓冲区；对于发送类函数，使用 HAL\_BE\_Out 重定向输出或在不影响状态时跳过写操作。
+
+以 UART 接收函数为例，原始代码轮询数据寄存器等待数据到达，然后读取数据并更新驱动状态。采用 Redirect 策略替换后，直接调用 HAL\_BE\_In 函数将仿真数据注入到缓冲区，保留非 I/O 逻辑（如状态字段更新）。代码示例见代码~\ref{lst:redirect-uart}。
+
+\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt,caption=Redirect 策略替换示例（UART 接收函数）,label=lst:redirect-uart]
+// 原始代码
+HAL_StatusTypeDef HAL_UART_Receive(UART_HandleTypeDef *huart, uint8_t *pData,
+                                    uint16_t Size, uint32_t Timeout) {
+    while (!(huart->Instance->SR & USART_SR_RXNE));
+    *pData = huart->Instance->DR;
+    return HAL_OK;
+}
+
+// 替换代码（Redirect 策略）
+HAL_StatusTypeDef HAL_UART_Receive(UART_HandleTypeDef *huart, uint8_t *pData,
+                                    uint16_t Size, uint32_t Timeout) {
+    // Redirect to simulation input function
+    HAL_BE_In(pData, Size);
+    // Preserve non-I/O logic
+    huart->RxXferCount = 0;
+    huart->RxXferSize = Size;
+    huart->RxState = HAL_UART_STATE_READY;
+    return HAL_OK;
+}
+\end{lstlisting}
+
+对于变长报文接收场景（如以太网驱动），Redirect 策略在当前有效 buffer 指针处调用 HAL\_BE\_ENET\_ReadFrame 注入数据，完成一次 buffer descriptor 更新后立即返回。代码示例见代码~\ref{lst:redirect-enet}。
+
+\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt,caption=Redirect 策略替换示例（变长报文接收）,label=lst:redirect-enet]
+// 变长报文接收
+curBuffDescrip = rxBdRing->rxBdBase + rxBdRing->rxGenIdx;
+if (rxBuffer->buffer != NULL && rxBuffer->length > 0) {
+    HAL_BE_ENET_ReadFrame(rxBuffer->buffer, rxBuffer->length);
+}
+rxBdRing->rxGenIdx = ENET_IncreaseIndex(rxBdRing->rxGenIdx, rxBdRing->rxRingLen);
+\end{lstlisting}
+
+\subsubsection{Event 策略实现}
+
+Event 策略通过事件队列模拟硬件中断触发。在仿真环境中，硬件中断信号由仿真器生成的事件触发，而非真实的硬件信号。该策略保留中断处理函数中的数据处理和回调触发逻辑，移除硬件中断标志寄存器的操作，通过控制流改写让中断处理函数必然执行到 OS 通知和回调触发分支。
+
+以 ETH 中断处理函数为例，原始代码检查以太网中断标志位，如果是接收中断，则调用接收完成回调函数。采用 Event 策略替换后，直接触发接收完成回调事件，移除硬件条件判断和标志寄存器操作。
+
+代码示例如下：
+
+\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt]
+// 原始代码
+void HAL_ETH_IRQHandler(ETH_HandleTypeDef *heth) {
+    if (__HAL_ETH_DMA_GET_FLAG(heth, ETH_DMA_FLAG_R)) {
+        HAL_ETH_RxCpltCallback(heth);
+    }
+    __HAL_ETH_DMA_CLEAR_FLAG(heth, ETH_DMA_FLAG_R);
+}
+
+// 替换代码（Event 策略）
+void HAL_ETH_IRQHandler(ETH_HandleTypeDef *heth) {
+    // Trigger Rx complete callback event directly
+    HAL_ETH_RxCpltCallback(heth);
+    // No need to check hardware flags or clear registers
+}
+\end{lstlisting}
+
+该策略通过直接触发事件，保证中断回调在仿真中可达，同时移除与硬件中断标志寄存器相关的操作，避免仿真环境中的不必要判断。
+
+\subsubsection{Steering 策略实现}
+
+Steering 策略通过控制流旁路和改写，将因硬件依赖而"走不到正确路径"的执行导向到"仿真可达且语义保持"的分支。该策略适用于复杂场景，例如依赖硬件标志的循环、基于 DMA+RingBuffer 的数据接收状态机等。Steering 策略的核心思想是：当固件因为硬件依赖导致执行路径不可达时，通过控制流改写把执行导向到仿真可用的路径，同时保证数据传输和状态更新的语义一致性。
+
+Steering 策略包含三个核心动作：一是跳过依赖硬件标志的条件判断，让执行直接进入数据处理分支；二是通过 HAL\_BE\_* 注入函数将仿真数据写入缓冲区；三是保留 buffer 管理、状态标志、Ring 更新等非 I/O 逻辑，确保数据能够被上层协议栈正确消费。
+
+以 NXP 网卡驱动中的 ENET\_GetRxFrame 函数为例，该函数使用 DMA+RingBuffer 机制接收以太网帧，具有复杂的状态机。原始代码包含依赖硬件标志扫描 Ring 的 while/do-while 结构，在仿真环境中这些标志（EMPTY、LAST、OWN）不会被硬件更新，导致执行卡死在循环中。
+
+原始代码的关键逻辑如下（省略条件编译和错误处理细节）：
+
+\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt]
+// 原始代码：依赖硬件标志扫描 Ring，仿真中会卡死
+index = rxBdRing->rxGenIdx;
+while (0U == (curBuffDescrip->control & ENET_BUFFDESCRIPTOR_RX_EMPTY_MASK))
+{
+    if (0U != (curBuffDescrip->control & ENET_BUFFDESCRIPTOR_RX_LAST_MASK)) {
+        result = ENET_GetRxFrameErr(curBuffDescrip, &rxFrame->rxFrameError);
+        break;
+    }
+    index = ENET_IncreaseIndex(index, rxBdRing->rxRingLen);
+    curBuffDescrip = rxBdRing->rxBdBase + index;
+    if (index == rxBdRing->rxGenIdx) break;
+}
+
+// 后续：遍历 BD，拷贝数据到 rxFrame
+do {
+    newBuff = handle->rxBuffAlloc(base, handle->userData, ringId);
+    if (newBuff != 0U) {
+        rxBuffer = &rxFrame->rxBuffArray[index];
+        if (0U != (curBuffDescrip->control & ENET_BUFFDESCRIPTOR_RX_LAST_MASK)) {
+            isLastBuff = true;
+            rxFrame->totLen = curBuffDescrip->length;
+            rxBuffer->length = curBuffDescrip->length - buffLen;
+        } else {
+            rxBuffer->length = curBuffDescrip->length;
+            buffLen += rxBuffer->length;
+        }
+        // ... buffer 管理、BD 状态更新 ...
+    }
+} while (!isLastBuff);
+\end{lstlisting}
+
+采用 Steering 策略替换后，跳过依赖硬件 EMPTY/LAST 等标志的 while 循环，在当前 buffer descriptor 调用 HAL\_BE\_ENET\_ReadFrame 注入数据，完成一次 BD 更新后立即返回。替换代码如下（省略条件编译细节）：
+
+\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt]
+// 替换代码：跳过硬件标志扫描，直接注入数据
+curBuffDescrip = rxBdRing->rxBdBase + rxBdRing->rxGenIdx;
+index = 0;
+do {
+    newBuff = (uintptr_t)(uint8_t *)handle->rxBuffAlloc(base, handle->userData, ringId);
+    if (newBuff != 0U) {
+        rxBuffer = &rxFrame->rxBuffArray[index];
+        rxBuffer->buffer = (void *)(uint8_t *)address;
+
+        if (0U != (curBuffDescrip->control & ENET_BUFFDESCRIPTOR_RX_LAST_MASK)) {
+            isLastBuff       = true;
+            rxFrame->totLen  = curBuffDescrip->length;
+            rxBuffer->length = curBuffDescrip->length - buffLen;
+        } else {
+            rxBuffer->length = curBuffDescrip->length;
+            buffLen += rxBuffer->length;
+        }
+    }
+
+    // Steering 核心：注入仿真数据
+    if (rxBuffer->buffer != NULL && rxBuffer->length > 0)
+        HAL_BE_ENET_ReadFrame(rxBuffer->buffer, rxBuffer->length);
+
+    // 保留 Ring 更新，防止卡在同一 BD
+    index++;
+    rxBdRing->rxGenIdx = ENET_IncreaseIndex(rxBdRing->rxGenIdx, rxBdRing->rxRingLen);
+    curBuffDescrip     = rxBdRing->rxBdBase + rxBdRing->rxGenIdx;
+} while (!isLastBuff);
+\end{lstlisting}
+
+Steering 策略通过三方面实现控制流导向：一是用条件判断旁路掉依赖硬件 flag 的 while/do-while 结构，让代码直接进入处理分支；二是在处理分支中把仿真数据写入 buffer（HAL\_BE\_ENET\_ReadFrame），保证后续 \\texttt{rxFrame}/上层协议栈读取到的内容由**固件仿真模块**在宿主侧注入；三是保留对 BD/\\texttt{rxGenIdx} 的更新，使 RingBuffer 不至于卡死在同一个 BD 上。该策略遵循"单次收一包"的强约束，在保证 RingBuffer 状态正确的前提下，禁止保留依赖 LAST/EMPTY 等硬件 flag 的多帧/环扫描结构。
+
+\subsubsection{ReturnOK 策略实现}
+
+ReturnOK 策略针对 RETURNOK 类函数，这类函数通常是简单的辅助函数，主要功能是设置状态、清理资源或执行简单的检查。该策略的核心思想是：保留函数签名和必要的参数校验，删除函数体的具体实现，直接返回成功状态（如 HAL\_OK）。
+
+以 GPIO 去初始化函数为例，原始代码可能包含对硬件寄存器的复位操作和状态的清理。采用 ReturnOK 策略替换后，保留函数签名和参数校验，直接返回 HAL\_OK，跳过所有硬件相关操作。
+
+代码示例如下：
+
+\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt]
+// 原始代码
+HAL_StatusTypeDef HAL_GPIO_DeInit(GPIO_TypeDef *GPIOx) {
+    if (GPIOx == NULL) return HAL_ERROR;
+    GPIOx->MODER = 0x00000000;
+    GPIOx->OTYPER = 0x00000000;
+    // ... more register operations ...
+    return HAL_OK;
+}
+
+// 替换代码（ReturnOK 策略）
+HAL_StatusTypeDef HAL_GPIO_DeInit(GPIO_TypeDef *GPIOx) {
+    if (GPIOx == NULL) return HAL_ERROR;
+    (void)GPIOx;
+    return HAL_OK;
+}
+\end{lstlisting}
+
+\subsection{编译集成实现}
+
+Builder Agent 负责将替换后的代码集成回工程并执行编译。编译失败时，Fixer Agent 自动解析错误信息、定位问题函数、生成修复方案并重新构建，形成编译错误修复闭环。
+
+\subsubsection{替换代码应用}
+
+ReplaceFuncs 工具负责将替换代码写入源文件。该工具的实现需要处理以下关键问题：
+
+1. \textbf{准确定位函数位置}：通过解析源文件的 AST 或使用正则表达式匹配函数签名，定位函数的起始行和结束行。
+
+2. \textbf{保留格式和注释}：在替换代码时，保留函数的注释、缩进和格式，确保代码风格一致。
+
+3. \textbf{处理特殊字符}：正确处理 C 语言中的转义字符、字符串字面量和预处理指令。
+
+4. \textbf{生成回滚快照}：在修改源文件之前，生成原始代码的快照，支持回滚操作。
+
+\subsubsection{错误解析与修复}
+
+编译错误解析器能够将编译器的诊断信息转换为结构化的错误对象。错误对象包含以下信息：
+
+\begin{itemize}
+\item 错误类型（语法错误、链接错误、类型错误、未声明符号等）
+\item 错误位置（文件名、行号、列号）
+\item 错误消息（编译器的原始输出）
+\item 相关代码片段（错误位置的代码上下文）
+\end{itemize}
+
+Fixer Agent 基于错误对象选择修复策略。常见的修复策略包括：
+
+\begin{itemize}
+\item \textbf{补声明}：为未声明的符号添加声明语句。
+\item \textbf{改类型与转换}：修正类型不匹配的错误，如添加类型转换。
+\item \textbf{补 \texttt{\#include}}：添加缺失的头文件。
+\item \textbf{删改非法成员访问}：删除或修改对不存在成员的访问。
+\item \textbf{核对依赖}：检查并修正依赖关系。
+\end{itemize}
+
+\section{动态测试反馈闭环模块实现}
+
+\subsection{仿真平台实现}
+
+\subsubsection{Unicorn 引擎初始化}
+
+仿真引擎层基于 Unicorn ARM 模拟器实现 ARMv7-M Thumb 指令集的模拟执行，包括寄存器管理、内存访问以及固件映像的加载和地址空间映射配置。
+
+Unicorn 引擎的初始化过程包括以下步骤：
+
+1. \textbf{创建 Unicorn 实例}：调用 \texttt{uc\_open(UC\_ARCH\_ARM, UC\_MODE\_THUMB, \&uc)} 创建 ARM Thumb 模式的模拟器实例。
+
+2. \textbf{配置内存映射}：调用 \texttt{uc\_mem\_map} 函数映射内存区域，包括 Flash、RAM 和外设区域。每个内存区域配置读写权限和访问属性。
+
+3. \textbf{加载固件映像}：将 ELF 或 BIN 格式的固件文件加载到指定的内存区域。
+
+4. \textbf{设置初始寄存器}：设置 PC（程序计数器）、SP（栈指针）等关键寄存器的初始值。
+
+5. \textbf{配置钩子函数}：注册代码钩子、内存钩子和中断钩子，用于监控执行过程和注入回调函数。
+
+\subsubsection{内存映射配置}
+
+系统实现了精确的内存映射管理：
+
+（1）\textbf{受保护的内存类型}：定义了 flash、ram、peripheral\_ram 等不应合并的内存类型，防止不同区域被错误合并。
+
+（2）\textbf{智能 Flash 基址检测}：自动识别代码段而非数据段作为 Flash 基址，确保固件正确加载。
+
+（3）\textbf{VFP 浮点单元支持}：为兼容浮点运算的固件（如图像处理、网络协议栈），启用 VFP 支持。
+
+\subsection{LCMHal 接口实现}
+
+Hook 机制层通过代码 Hook、基本块 Hook、内存读/写 Hook 和中断 Hook 等机制，实现执行过程中的信息采集和干预。该机制主要用于代码覆盖率统计、异常内存访问检测和执行轨迹记录等分析任务。在与替换策略配套时，Hook 机制层承担了关键作用：通过预留 \texttt{HAL\_BE\_*} 系列注入接口进行函数入口级拦截。具体而言，链接阶段的弱符号桩在宿主机侧被接管，当执行流到达约定入口时，不再在模拟 CPU 上执行原函数体，而是转入宿主机例程，完成缓冲区读写、数据帧搬运或块传输等操作，并按照调用约定返回结果和更新内存状态，随后继续执行。通过这种方式，驱动函数使用 Redirect 策略写入固件的 \texttt{HAL\_BE\_*} 接口调用可以被固件仿真模块拦截并执行，以支持固件与仿真平台的数据交互，完成固件与仿真平台的协同工作。
+
+\subsubsection{弱符号桩函数}
+
+弱符号桩函数是连接固件和仿真环境的桥梁。在链接阶段，这些弱符号桩被替换为仿真环境提供的实现。当固件调用这些函数时，控制权转移到仿真环境，由仿真环境处理函数调用并返回结果。
+
+弱符号桩函数的实现示例：
+
+\begin{lstlisting}[style=CStyle,language=C,caption=弱符号桩函数实现示例]
+__attribute__((weak)) void HAL_BE_In(uint8_t *buffer, uint16_t size) {
+    // 该函数在仿真环境中被重写
+    // 实现从仿真输入数据填充缓冲区
+}
+
+__attribute__((weak)) void HAL_BE_Out(const uint8_t *data, uint16_t size) {
+    // 该函数在仿真环境中被重写
+    // 实现将数据输出到仿真环境
+}
+
+__attribute__((weak)) void HAL_BE_ENET_ReadFrame(uint8_t *buffer, uint16_t size) {
+    // 该函数在仿真环境中被重写
+    // 实现从仿真输入数据填充以太网帧
+}
+\end{lstlisting}
+
+\subsubsection{Python 处理器}
+
+Python 处理器是仿真环境的核心组件，负责处理弱符号桩函数的调用。Python 处理器通过 Unicorn 的钩子机制拦截函数调用，将控制权转移到 Python 环境，由 Python 代码处理函数调用并返回结果。
+
+Python 处理器的关键实现包括：
+
+1. \textbf{函数地址解析}：通过符号表解析函数的虚拟地址。
+
+2. \textbf{参数读取}：从 Unicorn 的寄存器和内存中读取函数参数。
+
+3. \textbf{函数调用}：调用 Python 实现的处理函数。
+
+4. \textbf{结果写入}：将处理函数的返回值写入 Unicorn 的寄存器和内存。
+
+5. \textbf{返回地址设置}：将 PC 指针设置为返回地址，继续执行。
+
+\subsubsection{函数跟踪器}
+
+函数跟踪器负责记录函数调用的详细信息，包括函数名、调用地址、参数和返回值。函数跟踪器通过 Unicorn 的代码钩子实现，当执行流到达函数入口时，记录函数调用信息。
+
+函数跟踪器的输出包括：
+
+\begin{itemize}
+\item 函数调用日志（function.txt）：记录所有函数调用的详细信息。
+\item 调试日志（debug.txt）：记录执行过程中的调试信息。
+\item 反馈日志（lcmhal.txt）：记录与驱动替换相关的反馈信息。
+\end{itemize}
+
+\subsection{Emulator Runner Agent 实现}
+
+Emulator Runner Agent 基于 LangGraph 框架实现，采用图式工作流架构。该智能体的核心职责包括：启动仿真运行并监控执行状态、分析仿真输出并判断是否需要修复、在运行失败时调用 Fixer Agent 进行修复、在修复完成后调用 Builder Agent 重新构建、执行回归验证并判断是否需要继续迭代。Emulator Runner Agent 通过工具调用的方式与其他智能体交互，工具绑定包括仿真工具（EmulateProject、GetMMIOFunctionEmulateInfo、GetFunctionCallsEmulateInfo）、修复工具和构建工具。智能体的决策逻辑由 LLM 驱动，LLM 根据当前的运行状态和日志信息，决定是否需要继续运行、是否需要调用修复工具、是否需要触发构建流程。
+
+\subsection{反馈闭环实现}
+
+\subsubsection{多智能体架构实现}
+
+动态测试反馈闭环由三个智能体协同工作完成。Emulator Runner Agent 作为主控智能体，负责驱动整个闭环流程，协调仿真执行、故障诊断和修复验证。Fixer Agent 作为修复智能体，负责分析仿真日志、定位问题函数、生成替换代码。Builder Agent 作为构建智能体，负责将修复后的代码集成到工程并执行编译。三个智能体通过标准化的数据接口进行交互，形成"仿真→诊断→修复→构建→回归"的完整闭环。
+
+Fixer Agent 接收 Emulator Runner Agent 传递的仿真输出信息，包括标准输出、标准错误、MMIO 函数调用日志和函数调用栈信息。该智能体通过分析这些日志定位出错的替换函数，生成修复方案并调用数据管理接口更新替换代码。Fixer Agent 的输出是结构化的 ReplacementUpdate 对象，包含函数名、替换代码和修复原因。Builder Agent 接收 Fixer Agent 生成的替换代码，调用替换工具将代码应用到源文件，然后执行编译构建。该智能体的输出是 BuildOutput 对象，包含退出码、编译输出和错误信息。
+
+\subsubsection{闭环协同工作流实现}
+
+动态测试反馈闭环的工作流程遵循"仿真→诊断→修复→构建→回归"的循环模式。工作流程以任务为单位组织，每个任务对应一个固件工程、一个构建配置和一组待替换函数列表。
+
+闭环协同工作流的核心逻辑如算法~\ref{alg:closed-loop-workflow}所示。该工作流以 LangGraph 框架实现，通过状态管理和条件分支控制执行流程。仿真运行阶段调用 EmulateProject 工具执行固件仿真，采集运行输出、退出码和异常循环检测标志。当仿真成功时，直接返回结果；当仿真失败时，进入故障诊断阶段。
+
+\begin{algorithm}[htbp]
+\caption{闭环协同工作流核心逻辑}
+\label{alg:closed-loop-workflow}
+\small
+\KwIn{固件工程、构建配置、待替换函数列表}
+\KwOut{\texttt{EmulateResult}（成功/失败及原因）}
+
+state $\leftarrow$ \{messages, iteration\_count = 0\}\;
+\While{iteration\_count $<$ MAX\_ITERATIONS}{
+  \tcp{仿真运行阶段}
+  emulate\_result $\leftarrow$ EmulateProject(state)\;
+  \If{emulate\_result.success == true}{
+    \Return EmulateResult(success=true)\;
+  }
+
+  \tcp{故障诊断阶段}
+  mmio\_info $\leftarrow$ GetMMIOFunctionEmulateInfo()\;
+  call\_stack $\leftarrow$ GetFunctionCallsEmulateInfo()\;
+  fault\_func $\leftarrow$ ParseFaultFunction(emulate\_result, mmio\_info, call\_stack)\;
+  \If{fault\_func == null \textbf{or} fault\_func $\in$ processed\_list}{
+    \Return EmulateResult(success=false)\;
+  }
+
+  \tcp{修复阶段}
+  replacement $\leftarrow$ Fixer(emulate\_result, fault\_func)\;
+  update\_function\_replacement(replacement)\;
+
+  \tcp{构建与回归阶段}
+  build\_result $\leftarrow$ Builder()\;
+  generate\_emulator\_configs()\;
+  iteration\_count $\leftarrow$ iteration\_count + 1\;
+}
+
+\Return EmulateResult(success=false, reason="达到最大迭代次数")\;
+\end{algorithm}
+
+故障诊断阶段调用 GetMMIOFunctionEmulateInfo 和 GetFunctionCallsEmulateInfo 工具获取 MMIO 函数调用日志和函数调用栈信息，通过 ParseFaultFunction 函数从崩溃地址或异常循环位置解析问题函数。如果无法解析或该函数已在处理列表中，则终止闭环；否则进入修复阶段。
+
+修复阶段调用 Fixer 工具，Fixer Agent 分析仿真日志，生成 ReplacementUpdate 对象并调用 update\_function\_replacement 接口将更新写入数据管理器。修复策略包括：调整等待条件实现（添加超时机制、修改轮询条件）、修正状态管理逻辑（补充遗漏的状态更新）、调整替换策略（从 Strip 改为 Redirect 等）。
+
+构建阶段调用 Builder 工具，Builder Agent 从数据管理器读取更新后的替换代码，执行 replace\_funcs 和 build\_project 操作。如果编译失败，将编译错误反馈给 Fixer Agent 进行进一步修复；如果编译成功，进入回归验证阶段。
+
+回归验证阶段重新生成仿真配置，再次调用 EmulateProject 工具执行回归测试。如果回归测试成功，任务进入完成状态；如果仍然失败，增加迭代计数并进入下一轮迭代。系统设置了最大迭代次数限制（MAX\_ITERATIONS=3），当达到限制后终止闭环并返回失败结果。
+
+\subsubsection{终止条件与错误处理实现}
+
+动态测试反馈闭环的终止条件包括成功终止和失败终止两种情况。成功终止的条件是仿真工具返回 success 为 true，即退出码为零且未检测到异常循环。此时任务进入"已运行"状态，表示仿真成功完成。失败终止的情况包括多种：达到最大迭代次数限制，即已进行 3 轮修复但仍然失败；无法从崩溃地址或异常循环位置解析出问题函数；解析出的函数已经在 MMIO 信息列表中，说明该函数已经被处理但仍然失败。
+
+错误处理机制包括编译错误处理和运行时错误处理。编译错误由 Builder Agent 检测，如果编译失败，错误信息通过 BuildOutput 返回给 Emulator Runner Agent，LLM 根据错误信息决定是否需要调用 Fixer Agent 进行修复或终止闭环。运行时错误由仿真工具检测，包括内存访问错误、非法指令执行、异常循环等，错误信息包含在标准输出和标准错误中，LLM 分析这些信息定位问题函数。系统还实现了 GraphRecursionError 处理机制，当 LangGraph 框架达到递归深度限制时，系统会分析失败的对话历史，生成详细的故障报告并退出。
+
+通过多智能体协同工作和闭环迭代优化机制，系统能够自动诊断和修复大部分运行时问题，显著减少人工干预的需求。系统记录每次迭代的详细信息，包括失败现象、修复方案、验证结果，便于问题追溯和系统优化。
+
+\section{本章小结}
+
+本章详细阐述了基于驱动程序替换的固件仿真系统的具体实现细节。实现工作围绕第三章提出的设计方案展开，采用 CodeQL、LangGraph、Unicorn 等技术栈，构建了完整的自动化工具链。
+
+在静态分析模块实现方面，本研究基于 CodeQL 引擎实现了 MMIO 访问模式识别、驱动函数定位和数据流追踪等功能。设计了针对三种 MMIO 定位模式的查询规则，构建了统一的数据模型，实现了从源码到硬件依赖信息的自动提取。
+
+在替换模块实现方面，本研究基于 LangGraph 框架实现了多智能体架构。Analyzer Agent 负责函数分析和替换代码生成，Builder Agent 负责代码集成和编译，Fixer Agent 负责错误分析和修复。通过结构化的提示词工程和替换策略实现，系统能够自动生成高质量的替换代码。
+
+在动态反馈模块实现方面，本研究基于 Unicorn 引擎构建了仿真平台。通过弱符号桩函数和 Python 处理器，实现了固件与仿真环境的数据交互。通过多智能体协同工作和闭环迭代优化，系统能够自动诊断和修复运行时问题，显著减少了人工干预。
+
+实现结果表明，系统能够在无人干预的情况下完成从静态分析到动态反馈的完整流程，为后续的实验验证奠定了坚实的技术基础。下一章将通过系统性的实验验证方法的有效性和实用性。
