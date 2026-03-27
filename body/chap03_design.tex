@@ -186,12 +186,14 @@ $$D = \{f \in F \mid \exists m \in M: A(f, m)\}$$
 \end{figure}
 
 \subsubsection{驱动函数分析与替换代码生成模块设计}
+\label{sec:analyzer-workflow}
 
 该子模块由 \textbf{Analyzer Agent} 驱动，在 LangGraph 状态机中通过"工具调用—推理—写回"的循环完成单函数处理。执行顺序固定为：\textbf{信息获取} $\to$ \textbf{代码分类} $\to$（仅在分类结果认定该函数需要替换时）\textbf{替换代码生成}。
 
 \textbf{信息获取}阶段通过工具调用拉齐该驱动函数在工程中的可观测上下文，包括完整实现或相关片段、函数签名与参数类型、调用关系与 MMIO 仿真侧提示等（如 GetFunctionInfo、GetFunctionCallStack、GetMMIOFunctionEmulateInfo）。\textbf{代码分类}阶段综合源码与静态分析结果，由大语言模型判定函数语义类别及是否属于必须替换的硬件相关行为；分类所依据的类别体系及提示构造方式见第~\ref{sec:driver-replacement-strategy}~节。\textbf{替换代码生成}仅在"需要替换"分支上触发：模型在既定类别上选择替换策略并产出与签名一致的候选实现，具体策略（如 Skip、Strip、Redirect、Event 等）的选择规则与生成约束同样在第~\ref{sec:driver-replacement-strategy}~节展开，本节只给出子模块内的先后次序与数据交接关系。
 
 \subsubsection{替换代码修正与编译集成模块设计}
+\label{sec:builder-workflow}
 
 该子模块在工程目录中对上一子模块输出的\textbf{候选替换代码}做\textbf{二阶段检验与修复}，目标是在真实构建环境下得到可链接、可编译的替换定义。
 
