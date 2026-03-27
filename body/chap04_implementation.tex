@@ -117,7 +117,7 @@ class DriverFunction extends Function
 
 上述查询定义了 \texttt{DriverFunction} 类，该类继承自 \texttt{Function}，通过检查函数内部是否包含 \texttt{DriverFieldAccess} 且不包含 \texttt{MMIOFieldAccess} 来判定函数是否为驱动函数。
 
-在识别出驱动函数列表后，模块进一步分析驱动函数之间的调用关系，构建函数调用图。调用图以驱动函数为节点，函数调用关系为边，记录调用方、被调用方、调用位置等信息。调用图为后续的智能替换模块提供了函数依赖关系，有助于理解函数的调用上下文和语义关联。
+在识别出驱动函数列表后，模块进一步分析驱动函数之间的调用关系，构建函数调用图。调用图以驱动函数为节点，函数调用关系为边，记录调用方、被调用方、调用位置等信息。调用图记录了函数间的调用依赖关系，有助于理解函数的调用上下文和语义关联。
 
 \begin{lstlisting}[style=CodeQL,language=CodeQL, caption={驱动函数调用关系查询},label=lst:driver-call-query]
 from DriverToCall call
@@ -183,7 +183,7 @@ Analyzer Agent 基于 LangGraph 的 \texttt{StateGraph} 类构建，采用图式
 
 Builder Agent 的二阶段检验与修复设计逻辑见第~\ref{sec:builder-workflow}~节，本节阐述其具体实现。
 
-Builder Agent 负责将替换后的代码集成到工程并执行编译，核心功能包括替换代码应用、工程构建和错误解析。替换代码应用通过 ReplaceFuncs 工具实现，需要准确定位函数在源文件中的位置、保留注释和格式、生成回滚快照。工程构建通过 BuildProject 工具执行 CMake 构建，配置 ARM 工具链环境并捕获编译输出。内置的编译错误解析器支持 GCC、Clang、ARMCC 等多种编译器，能够将诊断信息转换为包含错误类型、位置和消息的结构化错误对象，为后续 Fixer Agent 提供精确的输入。
+Builder Agent 负责将替换后的代码集成到工程并执行编译，核心功能包括替换代码应用、工程构建和错误解析。替换代码应用通过 ReplaceFuncs 工具实现，需要准确定位函数在源文件中的位置、保留注释和格式、生成回滚快照。工程构建通过 BuildProject 工具执行 CMake 构建，配置 ARM 工具链环境并捕获编译输出。内置的编译错误解析器支持 GCC、Clang、ARMCC 等多种编译器，能够将诊断信息转换为包含错误类型、位置和消息的结构化错误对象，为 Fixer Agent 提供精确的输入。
 
 \subsubsection{Fixer Agent 实现}
 
@@ -504,4 +504,4 @@ state $\leftarrow$ \{messages, iteration\_count = 0\}\;
 
 在动态反馈模块实现方面，本研究基于 Unicorn 引擎构建了仿真平台。通过弱符号桩函数和 Python 处理器，实现了固件与仿真环境的数据交互。通过多智能体协同工作和闭环迭代优化，系统能够自动诊断和修复运行时问题，显著减少了人工干预。
 
-实现结果表明，系统能够在无人干预的情况下完成从静态分析到动态反馈的完整流程，为后续的实验验证奠定了坚实的技术基础。下一章将通过系统性的实验验证方法的有效性和实用性。
+实现结果表明，系统能够在无人干预的情况下完成从静态分析到动态反馈的完整流程。
