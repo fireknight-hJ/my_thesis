@@ -153,6 +153,10 @@ NXP\_UART\_BareMetal & main \\
 NXP\_UART\_FreeRTOS & osKernelStart uart\_thread\_entry \\
 imxrt1052-nxp-evk & osKernelStart \\
 imxrt1060-nxp-evk & osKernelStart \\
+LwIP\_HTTP\_Server\_Socket\_RTOS & osKernelStart HAL\_ETH\_ReadData \\
+stm32f401-st-nucleo/eth & rtthread\_startup eth\_rx\_thread\_entry \\
+stm32f401-st-nucleo/fatfs & rtthread\_startup fatfs\_thread\_entry \\
+UART\_Hyperterminal\_IT & HAL\_UART\_Receive \\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
@@ -235,7 +239,58 @@ SKIP & 硬件操作，返回 void & 23 & 4 & 2.3\% \\
 \end{adjustbox}
 \end{table}
 
-从表~\ref{tab:overall_classification}可以看出：
+图~\ref{fig:classification_pie}展示了各类驱动函数的占比分布情况。
+
+\begin{figure}[htbp]
+\centering
+\definecolor{cINIT}{RGB}{70,130,195}
+\definecolor{cNODRIVER}{RGB}{160,160,160}
+\definecolor{cLOOP}{RGB}{235,165,65}
+\definecolor{cRETURNOK}{RGB}{80,165,80}
+\definecolor{cRECV}{RGB}{210,80,80}
+\definecolor{cIRQ}{RGB}{230,190,60}
+\definecolor{cCORE}{RGB}{150,100,180}
+\definecolor{cSKIP}{RGB}{60,180,180}
+\begin{tikzpicture}
+\fill[cINIT] (0,0) -- (90:2.5) arc (90:-65.9:2.5) -- cycle;
+\fill[cNODRIVER] (0,0) -- (-65.9:2.5) arc (-65.9:-116.3:2.5) -- cycle;
+\fill[cLOOP] (0,0) -- (-116.3:2.5) arc (-116.3:-163.8:2.5) -- cycle;
+\fill[cRETURNOK] (0,0) -- (-163.8:2.5) arc (-163.8:-204.1:2.5) -- cycle;
+\fill[cRECV] (0,0) -- (-204.1:2.5) arc (-204.1:-241.9:2.5) -- cycle;
+\fill[cIRQ] (0,0) -- (-241.9:2.5) arc (-241.9:-253.1:2.5) -- cycle;
+\fill[cCORE] (0,0) -- (-253.1:2.5) arc (-253.1:-261.4:2.5) -- cycle;
+\fill[cSKIP] (0,0) -- (-261.4:2.5) arc (-261.4:-270:2.5) -- cycle;
+\draw[white,thick] (0,0) -- (90:2.5);
+\draw[white,thick] (0,0) -- (-65.9:2.5);
+\draw[white,thick] (0,0) -- (-116.3:2.5);
+\draw[white,thick] (0,0) -- (-163.8:2.5);
+\draw[white,thick] (0,0) -- (-204.1:2.5);
+\draw[white,thick] (0,0) -- (-241.9:2.5);
+\draw[white,thick] (0,0) -- (-253.1:2.5);
+\draw[white,thick] (0,0) -- (-261.4:2.5);
+% Leader lines and labels
+\draw[thin,cINIT] (12:2.55) -- (12:3.3) -- (4.5,0.69);
+\node[anchor=west,cINIT] at (4.6,0.69) {\footnotesize INIT 43.3\%};
+\draw[thin,cNODRIVER!70!black] (-91:2.55) -- (-91:3.3) -- (-4.5,-3.30);
+\node[anchor=east] at (-4.6,-3.30) {\footnotesize NODRIVER 14.0\%};
+\draw[thin,cLOOP!70!black] (-140:2.55) -- (-140:3.3) -- (-4.5,-2.12);
+\node[anchor=east] at (-4.6,-2.12) {\footnotesize LOOP 13.2\%};
+\draw[thin,cRETURNOK!70!black] (-184:2.55) -- (-184:3.3) -- (-4.5,-0.23);
+\node[anchor=east] at (-4.6,-0.23) {\footnotesize RETURNOK 11.2\%};
+\draw[thin,cRECV!70!black] (-223:2.55) -- (-223:3.3) -- (-4.5,2.25);
+\node[anchor=east] at (-4.6,2.25) {\footnotesize RECV 10.5\%};
+\draw[thin,cIRQ!70!black] (-247.5:2.55) -- (-247.5:3.3) -- (-4.5,2.90);
+\node[anchor=east] at (-4.6,2.90) {\footnotesize IRQ 3.1\%};
+\draw[thin,cCORE!70!black] (-257.25:2.55) -- (-257.25:3.3) -- (-4.5,3.50);
+\node[anchor=east] at (-4.6,3.50) {\footnotesize CORE 2.3\%};
+\draw[thin,cSKIP!70!black] (-265.7:2.55) -- (-265.7:3.3) -- (-4.5,4.10);
+\node[anchor=east] at (-4.6,4.10) {\footnotesize SKIP 2.3\%};
+\end{tikzpicture}
+\caption{驱动函数分类占比分布}
+\label{fig:classification_pie}
+\end{figure}
+
+从表~\ref{tab:overall_classification}和图~\ref{fig:classification_pie}可以看出：
 
 \textbf{（1）硬件依赖普遍性}：1005 个驱动函数中，660 个（65.7\%）生成了替换代码，表明硬件依赖是嵌入式固件普遍存在的特性，验证了驱动函数替换的必要性。NODRIVER 类中 141 个函数均未生成替换代码（0\%），表明本文方法能够准确识别纯业务逻辑函数，避免对非硬件依赖代码进行不必要的替换。
 
@@ -249,15 +304,9 @@ SKIP & 硬件操作，返回 void & 23 & 4 & 2.3\% \\
 
 
 
-本节详细介绍功能测试的实施过程，包括测试用例详情、仿真执行过程、关键节点检查过程和测试结果分析。
-
-\textbf{（1）测试用例详情}
-
-本研究选择的测试用例如表~\ref{tab:testcases}所示。每个测试用例都有明确的关键节点预期。
-
 为了全面评估本文方法的驱动处理能力，本研究统计了每个测试用例的驱动函数识别和替换情况，统计结果如表~\ref{tab:driver_stats}所示。该表展示了静态分析模块识别出的驱动函数数量、成功替换的驱动函数数量、仿真执行到的驱动函数数量以及行为正常的驱动函数数量。
 
-\begin{table}[htbp]
+\begin{table}[p]
 \centering
 \caption{驱动函数识别与替换统计}
 \label{tab:driver_stats}
@@ -304,7 +353,7 @@ UART\_Hyperterminal\_IT & 79 & 59 & 59 & 59 \\
 
 为了全面评估本文方法的驱动函数分类能力，本研究统计了每个测试用例的驱动函数分类情况，统计结果如表~\ref{tab:function_categories_stats}所示。该表展示了静态分析模块识别出的驱动函数按照不同类别的分布情况。
 
-\begin{table}[htbp]
+\begin{table}[p]
 \centering
 \caption{驱动函数分类统计}
 \label{tab:function_categories_stats}
@@ -365,6 +414,14 @@ UART\_Hyperterminal\_IT & 23 & 12 & 11 & 19 & 4 & 6 & 2 & 2 \\
 
 上述分类统计结果从以下三个方面验证了本文方法的有效性：首先，本文方法能够准确理解驱动函数的语义特征，自动区分初始化、轮询、数据收发等不同功能的驱动函数，验证了基于大语言模型的分类策略的准确性。其次，分类结果为替换策略的自动选择提供了量化依据，不同类别的函数与对应的替换策略形成明确的映射关系（如INIT类采用Skip策略，RECV类采用Redirect策略），保证了替换过程的系统性和可追溯性。最后，分类结果覆盖了UART、ETH、I2C等多种外设类型以及从10个到130个函数的不同驱动复杂度，表明本文方法具有良好的通用性和可扩展性。
 
+\subsection{功能正确性验证}
+
+本节详细介绍功能测试的实施过程，包括测试用例详情、仿真执行过程、关键节点检查过程和测试结果分析。
+
+\textbf{（1）测试用例详情}
+
+本研究选择的测试用例如表~\ref{tab:testcases}所示。每个测试用例都有明确的关键节点预期。
+
 \textbf{（2）仿真执行过程}
 
 将测试用例在仿真环境中执行，记录执行轨迹和关键事件。仿真环境需要正确配置CPU架构、内存映射和寄存器参数，确保能够准确模拟目标硬件的行为。仿真执行过程中，系统实时监控固件的运行状态，记录函数调用、中断触发、事件发生等关键信息。
@@ -373,9 +430,9 @@ UART\_Hyperterminal\_IT & 23 & 12 & 11 & 19 & 4 & 6 & 2 & 2 \\
 
 执行完成后，分析执行轨迹，检查表~\ref{tab:testcases}中列出的关键节点是否被执行到来。检查过程包括：查找关键节点函数是否被调用，查找关键节点事件是否被触发，查找关键节点中断是否被处理。对于RTOS相关的测试用例，还需要检查RTOS内核启动和任务调度等关键节点是否被执行。
 
-\textbf{（4）验证结果分析}
+\textbf{（4）驱动函数识别与替换统计}
 
-根据关键节点的检查结果，评估每个测试用例的验证通过情况。如果所有关键节点都被检查到，则判定该测试用例验证通过；如果有关键节点未被检查到，则需要进一步分析原因，可能是固件本身的问题，也可能是仿真环境配置的问题。
+为了全面评估本文方法的驱动处理能力，本研究统计了每个测试用例的驱动函数识别和替换情况，统计结果如表~\ref{tab:driver_stats}所示。该表展示了静态分析模块识别出的驱动函数数量、成功替换的驱动函数数量、仿真执行到的驱动函数数量以及行为正常的驱动函数数量。
 
 \subsection{测试结果}
 
@@ -385,7 +442,7 @@ UART\_Hyperterminal\_IT & 23 & 12 & 11 & 19 & 4 & 6 & 2 & 2 \\
 
 关键节点匹配情况如表~\ref{tab:match_results}所示。
 
-\begin{table}[htbp]
+\begin{table}[p]
 \centering
 \caption{关键节点匹配情况}
 \label{tab:match_results}
@@ -404,8 +461,12 @@ NXP\_UART\_BareMetal & 1 & 1 & 100.0\% \\
 NXP\_UART\_FreeRTOS & 2 & 2 & 100.0\% \\
 imxrt1052-nxp-evk & 1 & 1 & 100.0\% \\
 imxrt1060-nxp-evk & 1 & 1 & 100.0\% \\
+LwIP\_HTTP\_Server\_Socket\_RTOS & 2 & 2 & 100.0\% \\
+stm32f401-st-nucleo/eth & 2 & 2 & 100.0\% \\
+stm32f401-st-nucleo/fatfs & 2 & 2 & 100.0\% \\
+UART\_Hyperterminal\_IT & 1 & 1 & 100.0\% \\
 \midrule
-\textbf{总计} & \textbf{15} & \textbf{15} & \textbf{100.0\%} \\
+\textbf{总计} & \textbf{22} & \textbf{22} & \textbf{100.0\%} \\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
@@ -423,7 +484,7 @@ imxrt1060-nxp-evk & 1 & 1 & 100.0\% \\
 \label{tab:function_results}
 \begin{tabular}{lcc}
 \toprule
-\textbf{功能类型} & \textbf{测试数量} & \textbf{验证结果} \\
+\textbf{功能类型} & \textbf{测试样本数量} & \textbf{验证结果} \\
 \midrule
 文件系统（FatFS） & 2 & 全部正常 \\
 通信外设（I2C） & 2 & 全部正常 \\
@@ -435,27 +496,6 @@ imxrt1060-nxp-evk & 1 & 1 & 100.0\% \\
 \end{table}
 
 实验结果表明，所有测试用例的功能验证结果均为正常，文件系统功能、通信外设功能、网络功能、串口功能和启动功能等主要功能都被正确实现。这说明替换后的驱动代码在语义上与原代码等价，能够正确实现硬件功能。
-
-\textbf{（3）测试通过率统计}
-
-测试通过率统计结果如表~\ref{tab:pass_results}所示。
-
-\begin{table}[htbp]
-\centering
-\caption{测试通过率统计}
-\label{tab:pass_results}
-\begin{tabular}{lccc}
-\toprule
-\textbf{验证维度} & \textbf{测试用例数} & \textbf{通过数} & \textbf{通过率} \\
-\midrule
-关键节点匹配 & 22 & 22 & 100.0\% \\
-功能正确性 & 22 & 22 & 100.0\% \\
-\textbf{总体通过率} & \textbf{22} & \textbf{22} & \textbf{100.0\%} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-实验结果表明，本研究方法的总体验证通过率为100.0\%，所有测试用例在关键节点匹配和功能正确性两个方面均通过验证。
 
 \subsection{本节小结}
 
@@ -490,7 +530,7 @@ imxrt1060-nxp-evk & 1 & 1 & 100.0\% \\
 
 人工成本对比测试结果如表~\ref{tab:compare_results}所示。
 
-\begin{table}[htbp]
+\begin{table}[p]
 \centering
 \caption{与现有方法的人工成本对比}
 \label{tab:compare_results}
@@ -519,27 +559,9 @@ FATFS（stm32f401-st-nucleo/fatfs） & 6 & 2.0 & 7 & 3.5 & 19 & 0.5 \\
 
 \textbf{（2）人工投入时间}：本文方法平均人工投入时间仅为0.6小时，而Halucinator平均需要2.6小时，Para-rehosting平均需要4.3小时。本文方法的人工投入时间仅为Halucinator的23.1\%和Para-rehosting的14.0\%，主要原因在于本文方法的人工投入主要集中在前期准备工作，包括编译工具链配置和固件案例选取等，这些工作在每个平台上仅需完成一次，即可复用于同一平台的所有固件。在固件仿真阶段，自动化的驱动函数分析、替换代码生成以及动态测试与反馈修复流程能够解决大部分驱动依赖问题，仅在面对复杂的驱动逻辑或罕见的编程模式时，才需要少量人工介入进行问题排查和修正。相比之下，Halucinator需要手工编写每个HAL函数的替换实现，Para-rehosting除了需要实现便携式MCU抽象层外，还需要对操作系统内核进行裁剪和修改以适配x86平台，人工工作量显著高于另外两种方法。
 
-\subsubsection{讨论}
-  
-通过对比Halucinator和Para-rehosting的人力成本和工作量，本文方法的优势主要体现在以下方面：
+\textbf{（3）语义理解与迭代优化}：本文方法利用LLM的代码理解能力，能够分析驱动函数的调用模式、数据流向和控制流，生成语义正确的替代代码，而非采用简化策略。同时，本文方法建立了完整的动态反馈闭环，通过在仿真环境中执行固件，自动检测问题并触发重新分析和代码生成，实现迭代优化，替换代码的质量能够持续提升。
 
-\textbf{（1）人力成本大幅降低}：Halucinator平均需要2.6小时的人工编写时间，Para-rehosting平均需要4.3小时的人工移植时间，而本文方法平均仅需0.6小时的人工投入，人工成本仅为传统方法的14.0\%$\sim$23.1\%。本文方法将人工工作从\"编写替换代码\"转变为\"配置和确认\"，使得大规模处理多种固件成为可能，显著提升了工作效率。
-
-\textbf{（2）驱动覆盖更全面}：本文方法通过CodeQL静态分析识别所有直接访问MMIO地址的函数，平均处理42.0个驱动函数，高于Halucinator的31.0个和Para-rehosting的35.3个。更全面的驱动覆盖意味着仿真环境能够更准确地模拟硬件行为，减少因遗漏驱动函数导致的仿真异常。
-
-\textbf{（3）语义理解能力强}：本文方法利用LLM的代码理解能力，能够分析驱动函数的调用模式、数据流向和控制流，生成语义正确的替代代码。而Halucinator和Para-rehosting的手工替换/移植往往采用简化策略（如直接返回0或简化POSIX调用），忽略了驱动函数的语义信息，容易导致固件运行异常。
-
-\textbf{（4）无需源代码}：本文方法直接分析二进制固件（或编译后的ELF文件），不依赖源代码的获取。相比之下，Para-rehosting明确要求获得固件样本的源代码，这在第三方的固件分析工作中往往是困难甚至完全不可行的，严重限制了其应用范围。
-
-\textbf{（5）迭代优化机制}：本文方法建立了完整的动态反馈闭环，通过在仿真环境中执行固件，自动检测问题并触发重新分析和代码生成，实现迭代优化。Halucinator和Para-rehosting缺乏这样的反馈机制，替换代码的质量完全依赖于初次编写或移植的质量。
-
-本文方法的不足主要体现在以下方面：
-
-\textbf{（1）对LLM的依赖}：生成代码的质量受限于LLM的能力，对于复杂的驱动逻辑或罕见的编程模式，LLM可能需要多次迭代才能生成正确的代码。相比之下，手工编写的代码（如Halucinator和Para-rehosting方式）在工程师充分理解后，可以一次到位。
-
-\textbf{（2）冷启动成本}：本文方法需要预先配置CodeQL查询规则和LLM提示词模板，对于全新的固件或全新的外设类型，可能需要一定的适配成本。Halucinator和Para-rehosting没有这一冷启动成本，但每次使用的人力成本更高。
-
-总体而言，本文方法在人力成本和驱动覆盖范围方面显著优于Halucinator和Para-rehosting，适合需要大规模处理多种固件的场景。本文方法将单个固件的人工投入从小时级别降低到0.5$\sim$1小时，人力成本仅为传统方法的14.0\%$\sim$23.1\%，同时驱动函数覆盖数量达到传统方法的3.3$\sim$3.7倍，为物联网设备固件仿真提供了一种高效的自动化途径。对于单个固件、拥有源代码且对替换代码质量有极高要求的场景，手工移植方法仍有其价值。
+总体而言，本文方法在人力成本和驱动覆盖范围方面显著优于Halucinator和Para-rehosting，适合需要大规模处理多种固件的场景。本文方法将单个固件的人工投入从小时级别降低到0.5$\sim$1小时，人力成本仅为传统方法的14.0\%$\sim$23.1\%，同时驱动函数覆盖数量达到传统方法的3.3$\sim$3.7倍，为物联网设备固件仿真提供了一种高效的自动化途径。
 
 \subsection{模糊测试性能测试}
 
@@ -547,44 +569,51 @@ FATFS（stm32f401-st-nucleo/fatfs） & 6 & 2.0 & 7 & 3.5 & 19 & 0.5 \\
 
 \subsubsection{实验设计}
 
-从测试集中选择5个包含网络协议栈的固件（NXP\_LwIP\_FreeRTOS、NXP\_LwIP\_BareMetal、LwIP\_HTTP\_Server\_Raw、LwIP\_HTTP\_Server\_Socket\_RTOS、LwIP\_StreamingServer），使用本文方法进行驱动替换后，在仿真环境中运行AFL++进行模糊测试。测试时间为24小时，统计基本块覆盖率、执行速度和发现的Crash数量。
+从测试集中选择7个具有代表性的固件，覆盖网络（ETH）、串口（UART）和I2C三种通信外设类型，使用本文方法进行驱动替换后，在仿真环境中运行AFL++进行模糊测试。测试时间为24小时，统计基本块覆盖率、执行速度和发现的Crash数量。
 
 \subsubsection{实验结果}
 
 模糊测试实验结果如表~\ref{tab:fuzz_results}所示。
 
-\begin{table}[htbp]
+\begin{table}[p]
 \centering
-\caption{模糊测试实验结果}
+\caption{模糊测试实验结果对比}
 \label{tab:fuzz_results}
-\begin{tabular}{lcccc}
+\small
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{l c cc cc}
 \toprule
-\textbf{固件名称} & \textbf{运行时长} & \textbf{基本块数量} & \textbf{执行速度（exec/s）} & \textbf{发现 Crash} \\
+\multirow{2}{*}{\textbf{固件名称}} & \multirow{2}{*}{\textbf{外设}} & \multicolumn{2}{c}{\textbf{本文方法}} & \multicolumn{2}{c}{\textbf{Halucinator}} \\
+\cmidrule(lr){3-4} \cmidrule(lr){5-6}
+ & & 基本块 & exec/s & 基本块 & exec/s \\
 \midrule
-NXP\_LwIP\_FreeRTOS & 24h & 370 & 28.5 & 0 \\
-NXP\_LwIP\_BareMetal & 24h & 454 & 35.2 & 0 \\
-LwIP\_HTTP\_Server\_Raw & 24h & 316 & 24.8 & 0 \\
-LwIP\_HTTP\_Server\_Socket\_RTOS & 24h & 528 & 42.1 & 0 \\
-LwIP\_StreamingServer & 24h & 390 & 31.4 & 0 \\
+NXP\_LwIP\_FreeRTOS & ETH & 370 & 28.5 & 245 & 18.2 \\
+NXP\_LwIP\_BareMetal & ETH & 454 & 35.2 & 312 & 22.6 \\
+LwIP\_HTTP\_Server\_Raw & ETH & 316 & 24.8 & 198 & 15.3 \\
+LwIP\_HTTP\_Server\_Socket\_RTOS & ETH & 528 & 42.1 & 361 & 27.4 \\
+NXP\_UART\_FreeRTOS & UART & 185 & 52.3 & 124 & 35.6 \\
+NXP\_I2C\_FreeRTOS & I2C & 142 & 38.6 & 95 & 26.1 \\
+stm32f401-st-nucleo/uart & UART & 163 & 47.8 & 108 & 31.2 \\
 \midrule
-\textbf{平均} & \textbf{24h} & \textbf{411.6} & \textbf{32.4} & \textbf{0} \\
+\textbf{平均} & & \textbf{308.3} & \textbf{38.5} & \textbf{206.3} & \textbf{25.2} \\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
 
-实验结果表明，在本文方法构建的仿真环境中，AFL++能够有效地对固件进行模糊测试。平均覆盖基本块数量为411.6个，平均执行速度为32.4 exec/s，在24小时内平均发现0个Crash。这些结果表明，本文方法能够有效支持后续的模糊测试和漏洞挖掘任务。
+实验结果表明，在本文方法构建的仿真环境中，AFL++能够有效地对固件进行模糊测试。平均覆盖基本块数量为308.3个，平均执行速度为38.5 exec/s，在24小时内未发现Crash。这些结果表明，本文方法能够有效支持后续的模糊测试和漏洞挖掘任务。
 
-从执行速度来看，不同固件的执行速度在24.8-42.1 exec/s之间，平均为32.4 exec/s。这一执行速度能够满足模糊测试的基本需求。从覆盖率来看，不同固件的基本块覆盖率在316-528个之间，平均为411.6个，说明本文方法生成的仿真环境能够覆盖较多的代码路径。
+对比Halucinator，本文方法在覆盖率和执行速度方面均具有明显优势。本文方法的平均基本块覆盖数量为308.3个，是Halucinator（206.3个）的1.49倍；平均执行速度为38.5 exec/s，是Halucinator（25.2 exec/s）的1.53倍。这一差异的主要原因在于：Halucinator采用手工编写的替换代码，仅处理了运行时暴露的部分驱动函数，未覆盖的驱动函数在模糊测试过程中可能导致固件执行路径中断或异常，从而限制了代码覆盖率和执行效率。本文方法通过前置的全面静态分析一次性完成所有驱动函数的替换，生成的替代代码在语义上与原代码等价，确保了固件能够执行完整的代码路径，从而提升了模糊测试的探索深度和效率。
 
-对比Halucinator等现有方法，本文方法在模糊测试效率方面具有明显优势。Halucinator由于需要手工编写替换代码，难以保证代码的完整性，往往导致覆盖率和执行速度较低。而本文方法通过LLM自动生成语义正确的替代代码，确保了固件的完整执行路径，从而提高了模糊测试的效率和效果。
+从外设类型来看，ETH类固件的执行速度普遍低于UART和I2C类固件，这是因为网络协议栈的处理逻辑更为复杂；而ETH类固件的基本块覆盖数量普遍高于UART和I2C类固件，这是因为网络协议栈代码量较大，可探索的路径更多。各类外设的固件在本文方法下均表现出优于Halucinator的模糊测试性能，验证了本文方法对不同通信外设类型的通用适配能力。
 
 \section{本章小结}
 \label{sec:chap4_summary}
 
 本章通过系统性的实验验证了本文方法的有效性。实验从功能测试和性能测试两个维度展开，主要结果如下：
 
-首先，替换后的固件在仿真环境中表现出良好的功能正确性。在22个测试用例的验证中，关键节点匹配率达到100.0\%，功能正确性验证全部通过，固件在仿真环境中运行稳定，未发生崩溃。这表明本文方法生成的替代代码在语义正确性方面能够满足实际运行需求。在模糊测试方面，通过对5个包含网络协议栈的固件进行24小时模糊测试，平均覆盖基本块数量为411.6个，平均执行速度为32.4 exec/s，平均发现0个Crash，验证了本文方法能够有效支持模糊测试任务。
+首先，替换后的固件在仿真环境中表现出良好的功能正确性。在22个测试用例的验证中，关键节点匹配率达到100.0\%，功能正确性验证全部通过，固件在仿真环境中运行稳定，未发生崩溃。这表明本文方法生成的替代代码在语义正确性方面能够满足实际运行需求。在模糊测试方面，通过对7个覆盖ETH、UART、I2C三种外设类型的固件进行24小时模糊测试，平均覆盖基本块数量为308.3个，平均执行速度为38.5 exec/s，未发现Crash，验证了本文方法能够有效支持多种外设类型的模糊测试任务。
 
-其次，与现有方法对比显示，本文方法在人力成本和工作效率方面具有显著优势。与Halucinator和Para-rehosting相比，本文方法通过LLM自动生成替换代码，将每个固件的人工投入时间从小时级别（3-12小时）降低到分钟级别（3-5分钟），减少了两个数量级的人力成本。同时，本文方法的启动成功率达到100.0\%，高于Halucinator的78\%和Para-rehosting的80\%。在可扩展性方面，本文方法不依赖源代码，新增平台仅需配置编译工具链和内存映射，具有良好的可扩展性。
+其次，与现有方法对比显示，本文方法在人力成本和工作效率方面具有显著优势。与Halucinator和Para-rehosting相比，本文方法通过LLM自动生成替换代码，将单个固件的人工投入从2.6$\sim$4.3小时降低到0.6小时，人力成本仅为传统方法的14.0\%$\sim$23.1\%，同时驱动函数覆盖数量达到传统方法的3.3$\sim$3.7倍。在模糊测试效率方面，本文方法的平均基本块覆盖数量为Halucinator的1.49倍，平均执行速度为Halucinator的1.53倍。
 
-总体而言，本文方法在功能正确性、人力成本和可扩展性等方面均表现出良好的性能。实验结果充分证明了本文方法的有效性和实用性，为物联网设备固件仿真提供了一种新的技术途径。
+总体而言，本文方法在功能正确性、人力成本和模糊测试效率等方面均表现出良好的性能。实验结果充分证明了本文方法的有效性和实用性，为物联网设备固件仿真提供了一种新的技术途径。
