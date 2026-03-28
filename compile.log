@@ -269,6 +269,8 @@ tex))
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
 zlibraryautomata.code.tex)
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibrarypositioning.code.tex)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
 zlibrarydecorations.pathmorphing.code.tex
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
 zlibrarydecorations.code.tex
@@ -302,18 +304,16 @@ Package dot2texi Warning: Shell escape not enabled.
 (/usr/share/texlive/texmf-dist/tex/latex/eepic/epic.sty
 Enhancements to Picture Environment. Version 1.2 - Released June 1, 1986
 )) (/usr/share/texlive/texmf-dist/tex/latex/mathtools/mathtools.sty
-(/usr/share/texlive/texmf-dist/tex/latex/mathtools/mhsetup.sty))) (./main.aux
-(./body/chap01.aux) (./body/chap02.aux) (./body/chap03.aux) (./body/chap04.aux)
-(./body/conclusion.aux
-
-LaTeX Warning: Label `sec:contribution' multiply defined.
-
-) (./body/ack.aux)) (/usr/share/texlive/texmf-dist/tex/latex/base/ts1cmr.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/mathtools/mhsetup.sty))) (./main.aux)
+(/usr/share/texlive/texmf-dist/tex/latex/base/ts1cmr.fd)
 (/usr/share/texlive/texmf-dist/tex/latex/caption/ltcaption.sty)
 (/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
 (/usr/share/texlive/texmf-dist/tex/latex/refcount/refcount.sty)
 (/usr/share/texlive/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty))
 (./main.out) (./main.out)
+
+Package hyperref Warning: Rerun to get /PageLabels entry.
+
 (/usr/share/texlive/texmf-dist/tex/latex/pdflscape/pdflscape.sty
 (/usr/share/texlive/texmf-dist/tex/latex/graphics/lscape.sty))
 (/usr/share/texlive/texmf-dist/tex/latex/translations/translations-basic-dictio
@@ -378,7 +378,9 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
-[3] (./main.toc
+[3]
+No file main.toc.
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -387,17 +389,35 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
-[4])
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
-[5] (./body/chap01.tex
+[4] (./body/chap01.tex
 Chapter 1.
+
+Package natbib Warning: Citation `gsma2020mobile' on page 1 undefined on input 
+line 7.
+
+
+Package natbib Warning: Citation `openharmony' on page 1 undefined on input lin
+e 7.
+
+
+Package natbib Warning: Citation `freertos' on page 1 undefined on input line 7
+.
+
+
+Package natbib Warning: Citation `zephyr' on page 1 undefined on input line 7.
+
+
+Package natbib Warning: Citation `yang2021iotsurvey' on page 1 undefined on inp
+ut line 7.
+
+
+Package natbib Warning: Citation `mirai2018' on page 1 undefined on input line 
+7.
+
+
+Package natbib Warning: Citation `firmadyne' on page 1 undefined on input line 
+9.
+
 
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
@@ -417,6 +437,26 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 [2]
+
+Package natbib Warning: Citation `firmadyne' on page 3 undefined on input line 
+20.
+
+
+Package natbib Warning: Citation `fuzzware' on page 3 undefined on input line 2
+0.
+
+
+Package natbib Warning: Citation `qemu' on page 3 undefined on input line 25.
+
+
+Package natbib Warning: Citation `avatar' on page 3 undefined on input line 27.
+
+
+
+Package natbib Warning: Citation `avatar2' on page 3 undefined on input line 27
+.
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -426,6 +466,38 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 [3]
+
+Package natbib Warning: Citation `pretender' on page 4 undefined on input line 
+33.
+
+
+Package natbib Warning: Citation `fengp2020p2im' on page 4 undefined on input l
+ine 39.
+
+
+Package natbib Warning: Citation `laelaps' on page 4 undefined on input line 39
+.
+
+
+Package natbib Warning: Citation `uemu' on page 4 undefined on input line 39.
+
+
+Package natbib Warning: Citation `fuzzware' on page 4 undefined on input line 3
+9.
+
+
+Package natbib Warning: Citation `firmadyne' on page 4 undefined on input line 
+43.
+
+
+Package natbib Warning: Citation `pararehosting' on page 4 undefined on input l
+ine 43.
+
+
+Package natbib Warning: Citation `clements2020halucinator' on page 4 undefined 
+on input line 43.
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -435,19 +507,24 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 [4]
-Underfull \hbox (badness 10000) in paragraph at lines 61--61
+
+LaTeX Warning: Reference `tab:sim_comparison' on page 5 undefined on input line
+ 49.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 60--60
 []|\TU/TimesNewRoman(0)/m/n/11 QEMU, Pre-
 
-Underfull \hbox (badness 10000) in paragraph at lines 63--63
+Underfull \hbox (badness 10000) in paragraph at lines 62--62
 []|\TU/TimesNewRoman(0)/m/n/11 P2IM, uEmu,
 
-Underfull \hbox (badness 10000) in paragraph at lines 63--63
+Underfull \hbox (badness 10000) in paragraph at lines 62--62
 \TU/TimesNewRoman(0)/m/n/11 Laelaps, Fuz-
 
-Underfull \hbox (badness 10000) in paragraph at lines 65--65
+Underfull \hbox (badness 10000) in paragraph at lines 64--64
 []|\TU/TimesNewRoman(0)/m/n/11 HALucinator,
 
-Underfull \hbox (badness 10000) in paragraph at lines 65--65
+Underfull \hbox (badness 10000) in paragraph at lines 64--64
 \TU/TimesNewRoman(0)/m/n/11 Firmadyne,
 
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
@@ -459,6 +536,22 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 [5]
+
+Package natbib Warning: Citation `iotfuzzer' on page 6 undefined on input line 
+81.
+
+
+Package natbib Warning: Citation `fuzzware' on page 6 undefined on input line 8
+5.
+
+
+Package natbib Warning: Citation `uemu' on page 6 undefined on input line 85.
+
+
+Package natbib Warning: Citation `clements2020halucinator' on page 6 undefined 
+on input line 85.
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -468,6 +561,39 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 [6]
+
+Package natbib Warning: Citation `wei2022finetuned' on page 7 undefined on inpu
+t line 96.
+
+
+Package natbib Warning: Citation `dolphcoder2024' on page 7 undefined on input 
+line 96.
+
+
+Package natbib Warning: Citation `codelsi2024' on page 7 undefined on input lin
+e 96.
+
+
+Package natbib Warning: Citation `chen2023teaching' on page 7 undefined on inpu
+t line 98.
+
+
+Package natbib Warning: Citation `rlcf2024' on page 7 undefined on input line 9
+8.
+
+
+Package natbib Warning: Citation `codedpo2024' on page 7 undefined on input lin
+e 98.
+
+
+Package natbib Warning: Citation `wei2022cot' on page 7 undefined on input line
+ 100.
+
+
+Package natbib Warning: Citation `motcoder2024' on page 7 undefined on input li
+ne 100.
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -477,6 +603,35 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 [7]
+
+Package natbib Warning: Citation `schick2023toolformer' on page 8 undefined on 
+input line 102.
+
+
+Package natbib Warning: Citation `mccoder2024' on page 8 undefined on input lin
+e 102.
+
+
+Package natbib Warning: Citation `rgd2024' on page 8 undefined on input line 10
+2.
+
+
+Package natbib Warning: Citation `gpiot2024' on page 8 undefined on input line 
+106.
+
+
+Package natbib Warning: Citation `spec2code2024' on page 8 undefined on input l
+ine 110.
+
+
+Package natbib Warning: Citation `improvingllm2024' on page 8 undefined on inpu
+t line 112.
+
+
+Package natbib Warning: Citation `agents4plc2024' on page 8 undefined on input 
+line 114.
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -495,6 +650,11 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 [9]
+
+LaTeX Warning: Reference `fig:paper_structure' on page 10 undefined on input li
+ne 149.
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -503,7 +663,7 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
-[10]
+[10])
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -512,7 +672,7 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
-[11])
+[11]
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -521,16 +681,7 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
-[12]
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
-[13] (./body/chap02.tex
+[12] (./body/chap02.tex
 Chapter 2.
 
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
@@ -541,7 +692,34 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
+[13]
+
+Package natbib Warning: Citation `freertos' on page 14 undefined on input line 
+31.
+
+
+Package natbib Warning: Citation `zephyr' on page 14 undefined on input line 31
+.
+
+
+Package natbib Warning: Citation `rtthread' on page 14 undefined on input line 
+31.
+
+
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
 [14]
+
+Package natbib Warning: Citation `Yao_2022' on page 15 undefined on input line 
+52.
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -551,6 +729,11 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 [15]
+
+Package natbib Warning: Citation `dong2024selfcollaboration' on page 16 undefin
+ed on input line 56.
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -569,6 +752,13 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 [17]
+
+Package natbib Warning: Citation `qemu' on page 18 undefined on input line 92.
+
+
+Package natbib Warning: Citation `afl' on page 18 undefined on input line 102.
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -577,7 +767,7 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
-[18]
+[18])
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -586,7 +776,15 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
-[19]
+[19] (./body/chap03.tex
+Chapter 3.
+
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/libraries/pgflibraryarrows.meta.
+code.tex)
+
+LaTeX Warning: Reference `fig:arch' on page 20 undefined on input line 15.
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -604,7 +802,8 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
-[21]
+[21] (/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/listings/lstmisc.sty)
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -613,7 +812,7 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
-[22])
+[22]
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -622,11 +821,11 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
-[23] (./body/chap03.tex
-Chapter 3.
+[23]
 
-Overfull \hbox (72.03004pt too wide) in paragraph at lines 55--56
- [][] 
+LaTeX Warning: Reference `tab:mmio-patterns' on page 24 undefined on input line
+ 130.
+
 
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
@@ -645,8 +844,7 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
-[25] (/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty)
-(/usr/share/texlive/texmf-dist/tex/latex/listings/lstmisc.sty)
+[25]
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -664,7 +862,7 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
-[27]
+[27] (/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty)
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -674,6 +872,19 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 [28]
+
+LaTeX Warning: Reference `fig:analyzer-workflow' on page 29 undefined on input 
+line 320.
+
+
+LaTeX Warning: Reference `sec:driver-replacement-strategy' on page 29 undefined
+ on input line 376.
+
+
+LaTeX Warning: Reference `sec:driver-replacement-strategy' on page 29 undefined
+ on input line 376.
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -683,6 +894,11 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 [29]
+
+LaTeX Warning: Reference `fig:analyzer-workflow' on page 30 undefined on input 
+line 382.
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -692,6 +908,24 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 [30]
+
+LaTeX Warning: Reference `tab:function-categories' on page 31 undefined on inpu
+t line 397.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 411--412
+[]|\TU/lmtt/m/n/11 HAL_UART_WaitOnFlag\TU/TimesNewRoman(0)/m/n/11 ,
+
+Underfull \hbox (badness 10000) in paragraph at lines 412--413
+[]|\TU/lmtt/m/n/11 HAL_UART_IRQHandler\TU/TimesNewRoman(0)/m/n/11 ,
+
+Underfull \hbox (badness 10000) in paragraph at lines 413--414
+[]|\TU/lmtt/m/n/11 HAL_GPIO_DeInit\TU/TimesNewRoman(0)/m/n/11 ,
+
+LaTeX Warning: Reference `tab:replace-strategies' on page 31 undefined on input
+ line 423.
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -700,7 +934,7 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
-[31] (/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty)
+[31]
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -719,6 +953,11 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 [33]
+Overfull \hbox (9.2115pt too wide) in paragraph at lines 487--488
+[]\TU/TimesNewRoman(0)/m/n/12 Redirect \TU/SimSun.ttf(0)/m/n/12 策 略 使 用 自 定 义 的
+ 注 入 函 数  |（如 \TU/TimesNewRoman(0)/m/n/12 HAL_BE_In\TU/SimSun.ttf(0)/m/n/12 、| 
+\TU/TimesNewRoman(0)/m/n/12 HAL_BE_ENET_ReadFrame\TU/SimSun.ttf(0)/m/n/12 、|
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -728,8 +967,10 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 [34]
-Overfull \hbox (23.79022pt too wide) in paragraph at lines 402--416
- [][] 
+Overfull \hbox (4.41534pt too wide) in paragraph at lines 566--567
+[]\TU/SimSun.ttf(0)/m/n/12 以 \TU/TimesNewRoman(0)/m/n/12 NXP \TU/SimSun.ttf(0)/
+m/n/12 网 卡 驱 动 中 的 \TU/TimesNewRoman(0)/m/n/12 ENET_GetRxFrame \TU/SimSun.ttf(0
+)/m/n/12 函 数 为 例，|  该 函 数 使 用 \TU/TimesNewRoman(0)/m/n/12 DMA+RingBuffer
 
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
@@ -749,11 +990,6 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 [36]
-Overfull \hbox (9.2115pt too wide) in paragraph at lines 480--481
-[]\TU/TimesNewRoman(0)/m/n/12 Redirect \TU/SimSun.ttf(0)/m/n/12 策 略 使 用 自 定 义 的
- 注 入 函 数  |（如 \TU/TimesNewRoman(0)/m/n/12 HAL_BE_In\TU/SimSun.ttf(0)/m/n/12 、| 
-\TU/TimesNewRoman(0)/m/n/12 HAL_BE_ENET_ReadFrame\TU/SimSun.ttf(0)/m/n/12 、|
-
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -772,11 +1008,6 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 [38]
-Overfull \hbox (4.41534pt too wide) in paragraph at lines 559--560
-[]\TU/SimSun.ttf(0)/m/n/12 以 \TU/TimesNewRoman(0)/m/n/12 NXP \TU/SimSun.ttf(0)/
-m/n/12 网 卡 驱 动 中 的 \TU/TimesNewRoman(0)/m/n/12 ENET_GetRxFrame \TU/SimSun.ttf(0
-)/m/n/12 函 数 为 例，|  该 函 数 使 用 \TU/TimesNewRoman(0)/m/n/12 DMA+RingBuffer
-
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -795,6 +1026,11 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 [40]
+
+LaTeX Warning: Reference `tab:hal-be-hooks' on page 41 undefined on input line 
+776.
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -804,6 +1040,11 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 [41]
+
+LaTeX Warning: Reference `fig:multiagent-architecture' on page 42 undefined on 
+input line 816.
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -839,7 +1080,7 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
-[45]
+[45])
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -848,7 +1089,15 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
-[46]
+[46] (./body/chap04.tex
+Chapter 4.
+
+LaTeX Warning: Reference `tab:hw_env' on page 47 undefined on input line 13.
+
+
+LaTeX Warning: Reference `tab:sw_env' on page 47 undefined on input line 13.
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -858,6 +1107,356 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 [47]
+
+LaTeX Warning: Reference `tab:peripherals' on page 48 undefined on input line 6
+1.
+
+
+LaTeX Warning: Reference `tab:firmware' on page 48 undefined on input line 85.
+
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+
+Overfull \hbox (4.12459pt too wide) in paragraph at lines 116--116
+[]|\TU/TimesNewRoman(0)/m/n/11 FreeRTOS| 
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+
+Overfull \hbox (4.12459pt too wide) in paragraph at lines 116--116
+[]|\TU/TimesNewRoman(0)/m/n/11 FreeRTOS| 
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+
+Overfull \hbox (4.12459pt too wide) in paragraph at lines 116--116
+[]|\TU/TimesNewRoman(0)/m/n/11 FreeRTOS| 
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+
+Overfull \hbox (4.12459pt too wide) in paragraph at lines 116--116
+[]|\TU/TimesNewRoman(0)/m/n/11 FreeRTOS| 
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+
+Underfull \hbox (badness 10000) in paragraph at lines 116--116
+[]|\TU/TimesNewRoman(0)/m/n/11 RT-
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+
+Underfull \hbox (badness 10000) in paragraph at lines 116--116
+[]|\TU/TimesNewRoman(0)/m/n/11 RT-
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+
+Underfull \hbox (badness 10000) in paragraph at lines 116--116
+[]|\TU/TimesNewRoman(0)/m/n/11 RT-
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+
+Underfull \hbox (badness 10000) in paragraph at lines 116--116
+[]|\TU/TimesNewRoman(0)/m/n/11 RT-
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+
+Underfull \hbox (badness 10000) in paragraph at lines 116--116
+[]|\TU/TimesNewRoman(0)/m/n/11 RT-
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+
+Overfull \hbox (4.12459pt too wide) in paragraph at lines 116--116
+[]|\TU/TimesNewRoman(0)/m/n/11 FreeRTOS| 
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+
+Overfull \hbox (4.12459pt too wide) in paragraph at lines 116--116
+[]|\TU/TimesNewRoman(0)/m/n/11 FreeRTOS| 
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+
+Overfull \hbox (4.12459pt too wide) in paragraph at lines 116--116
+[]|\TU/TimesNewRoman(0)/m/n/11 FreeRTOS| 
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+
+Overfull \hbox (4.12459pt too wide) in paragraph at lines 116--116
+[]|\TU/TimesNewRoman(0)/m/n/11 FreeRTOS| 
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+! Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.116 \end{tabularx}
+                    
+
+LaTeX Warning: Float too large for page by 180.35341pt on input line 117.
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -867,11 +1466,6 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 [48]
-Overfull \hbox (4.24548pt too wide) in paragraph at lines 912--913
-\TU/TimesNewRoman(0)/m/n/12 Fixer Agent \TU/SimSun.ttf(0)/m/n/12 分 析 日 志、|  定 位
- 问 题 函 数、|  生 成 替 换 代 码 并 调 用 \TU/TimesNewRoman(0)/m/n/12 update_function_repla
-cement
-
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -881,6 +1475,11 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 [49]
+
+LaTeX Warning: Reference `tab:testcases' on page 50 undefined on input line 134
+.
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -889,7 +1488,12 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
-[50])
+[50]
+
+LaTeX Warning: Reference `tab:function_detection_strategy' on page 51 undefined
+ on input line 173.
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -898,9 +1502,7 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
-[51] (./body/chap04.tex
-Chapter 4.
-
+[51]
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -910,62 +1512,14 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 [52]
-Overfull \hbox (42.16122pt too wide) in paragraph at lines 41--51
- [][] 
 
-Overfull \hbox (25.04994pt too wide) in paragraph at lines 68--69
-[]|\TU/TimesNewRoman(0)/m/n/11 NXP_FATFS_BareMetal| 
+LaTeX Warning: Reference `tab:overall_classification' on page 53 undefined on i
+nput line 211.
 
-Overfull \hbox (25.43129pt too wide) in paragraph at lines 69--70
-[]|\TU/TimesNewRoman(0)/m/n/11 NXP_FATFS_FreeRTOS| 
 
-Overfull \hbox (10.56947pt too wide) in paragraph at lines 70--71
-[]|\TU/TimesNewRoman(0)/m/n/11 NXP_I2C_BareMetal| 
+LaTeX Warning: Reference `tab:overall_classification' on page 53 undefined on i
+nput line 239.
 
-Overfull \hbox (10.95082pt too wide) in paragraph at lines 71--72
-[]|\TU/TimesNewRoman(0)/m/n/11 NXP_I2C_FreeRTOS| 
-
-Overfull \hbox (18.51332pt too wide) in paragraph at lines 72--73
-[]|\TU/TimesNewRoman(0)/m/n/11 NXP_LwIP_BareMetal| 
-
-Overfull \hbox (18.89467pt too wide) in paragraph at lines 73--74
-[]|\TU/TimesNewRoman(0)/m/n/11 NXP_LwIP_FreeRTOS| 
-
-Overfull \hbox (23.35268pt too wide) in paragraph at lines 74--75
-[]|\TU/TimesNewRoman(0)/m/n/11 NXP_UART_BareMetal| 
-
-Overfull \hbox (23.73402pt too wide) in paragraph at lines 75--76
-[]|\TU/TimesNewRoman(0)/m/n/11 NXP_UART_FreeRTOS| 
-
-Overfull \hbox (26.45717pt too wide) in paragraph at lines 76--77
-[]|\TU/TimesNewRoman(0)/m/n/11 imxrt1052_nxp_evk_uart| 
-
-Overfull \hbox (32.56947pt too wide) in paragraph at lines 77--78
-[]|\TU/TimesNewRoman(0)/m/n/11 imxrt1060_nxp_evk_timer| 
-
-Overfull \hbox (32.30629pt too wide) in paragraph at lines 78--79
-[]|\TU/TimesNewRoman(0)/m/n/11 BLE_HeartRateFreeRTOS| 
-
-Overfull \hbox (19.53383pt too wide) in paragraph at lines 79--80
-[]|\TU/TimesNewRoman(0)/m/n/11 FatFs_USBDisk_RTOS| 
-
-Overfull \hbox (31.95717pt too wide) in paragraph at lines 80--81
-[]|\TU/TimesNewRoman(0)/m/n/11 LwIP_HTTP_Server_Raw| 
-
-Overfull \hbox (68.99086pt too wide) in paragraph at lines 81--82
-[]|\TU/TimesNewRoman(0)/m/n/11 LwIP_HTTP_Server_SocketRTOS| 
-
-Overfull \hbox (74.49086pt too wide) in paragraph at lines 82--83
-[]|\TU/TimesNewRoman(0)/m/n/11 LwIP_HTTP_Server_Socket_RTOS| 
-
-Overfull \hbox (74.49086pt too wide) in paragraph at lines 83--84
-[]|\TU/TimesNewRoman(0)/m/n/11 LwIP_HTTP_Server_Socket_RTOS| 
-
-Overfull \hbox (18.50795pt too wide) in paragraph at lines 84--85
-[]|\TU/TimesNewRoman(0)/m/n/11 LwIP_StreamingServer| 
-
-Overfull \hbox (29.44887pt too wide) in paragraph at lines 85--86
-[]|\TU/TimesNewRoman(0)/m/n/11 UART_Hyperterminal_IT| 
 
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
@@ -976,6 +1530,20 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 [53]
+Overfull \hbox (24.28085pt too wide) in paragraph at lines 247--248
+\TU/SimSun.ttf(0)/m/n/12 等） 、|  以 太 网  |（\TU/TimesNewRoman(0)/m/n/12 ENET_GetRx
+Frame\TU/SimSun.ttf(0)/m/n/12 、| \TU/TimesNewRoman(0)/m/n/12 HAL_ETH_ReadData \
+TU/SimSun.ttf(0)/m/n/12 等）|  以 及 其 他 接 口  |（\TU/TimesNewRoman(0)/m/n/12 HAL_DSI
+_Read\TU/SimSun.ttf(0)/m/n/12 、|
+
+LaTeX Warning: Reference `tab:testcases' on page 54 undefined on input line 255
+.
+
+
+LaTeX Warning: Reference `tab:driver_stats' on page 54 undefined on input line 
+257.
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -985,27 +1553,10 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 [54]
-Underfull \hbox (badness 10000) in paragraph at lines 154--154
-[]|\TU/TimesNewRoman(0)/m/n/11 NXP/FreeRTOS/FatFS/NXP
 
-Underfull \hbox (badness 10000) in paragraph at lines 157--157
-[]|\TU/TimesNewRoman(0)/m/n/11 NXP/\TU/SimSun.ttf(0)/m/n/11 裸 机\TU/TimesNewRoma
-n(0)/m/n/11 /ETH/LwIP/NXP
+LaTeX Warning: Reference `tab:function_categories_stats' on page 55 undefined o
+n input line 301.
 
-Overfull \hbox (6.60124pt too wide) in paragraph at lines 158--158
-[]|\TU/TimesNewRoman(0)/m/n/11 NXP/FreeRTOS/ETH/LwIP/NXP
-
-Underfull \hbox (badness 10000) in paragraph at lines 160--160
-[]|\TU/TimesNewRoman(0)/m/n/11 NXP/FreeRTOS/UART/NXP
-
-Underfull \hbox (badness 10000) in paragraph at lines 161--161
-[]|\TU/TimesNewRoman(0)/m/n/11 STM32/FreeRTOS/\TU/SimSun.ttf(0)/m/n/11 多 外
-
-Underfull \hbox (badness 10000) in paragraph at lines 162--162
-[]|\TU/TimesNewRoman(0)/m/n/11 STM32/FreeRTOS/\TU/SimSun.ttf(0)/m/n/11 多 外
-
-Overfull \hbox (56.12227pt too wide) in paragraph at lines 149--165
- [][] 
 
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
@@ -1025,27 +1576,10 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 [56]
-Underfull \hbox (badness 10000) in paragraph at lines 195--195
-[]|\TU/TimesNewRoman(0)/m/n/11 NXP/FreeRTOS/FatFS/NXP
 
-Underfull \hbox (badness 10000) in paragraph at lines 198--198
-[]|\TU/TimesNewRoman(0)/m/n/11 NXP/\TU/SimSun.ttf(0)/m/n/11 裸 机\TU/TimesNewRoma
-n(0)/m/n/11 /ETH/LwIP/NXP
+LaTeX Warning: Reference `tab:testcases' on page 57 undefined on input line 361
+.
 
-Overfull \hbox (6.60124pt too wide) in paragraph at lines 199--199
-[]|\TU/TimesNewRoman(0)/m/n/11 NXP/FreeRTOS/ETH/LwIP/NXP
-
-Underfull \hbox (badness 10000) in paragraph at lines 201--201
-[]|\TU/TimesNewRoman(0)/m/n/11 NXP/FreeRTOS/UART/NXP
-
-Underfull \hbox (badness 10000) in paragraph at lines 202--202
-[]|\TU/TimesNewRoman(0)/m/n/11 STM32/FreeRTOS/\TU/SimSun.ttf(0)/m/n/11 多 外
-
-Underfull \hbox (badness 10000) in paragraph at lines 203--203
-[]|\TU/TimesNewRoman(0)/m/n/11 STM32/FreeRTOS/\TU/SimSun.ttf(0)/m/n/11 多 外
-
-Overfull \hbox (56.12227pt too wide) in paragraph at lines 190--206
- [][] 
 
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
@@ -1056,6 +1590,15 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 [57]
+
+LaTeX Warning: Reference `tab:match_results' on page 58 undefined on input line
+ 373.
+
+
+LaTeX Warning: Reference `tab:function_results' on page 58 undefined on input l
+ine 405.
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -1065,6 +1608,11 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 [58]
+
+LaTeX Warning: Reference `tab:pass_results' on page 59 undefined on input line 
+432.
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -1083,6 +1631,11 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 [60]
+
+LaTeX Warning: Reference `tab:compare_results' on page 61 undefined on input li
+ne 485.
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -1092,9 +1645,6 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 [61]
-Overfull \hbox (19.03085pt too wide) in paragraph at lines 379--388
- [][] 
-
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -1104,6 +1654,12 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 [62]
+Overfull \hbox (55.6539pt too wide) in paragraph at lines 543--544
+[]\TU/SimSun.ttf(0)/m/n/12 从 测 试 集 中 选 择 \TU/TimesNewRoman(0)/m/n/12 5 \TU/SimS
+un.ttf(0)/m/n/12 个 包 含 网 络 协 议 栈 的 固 件  |（\TU/TimesNewRoman(0)/m/n/12 NXP_LwIP_
+FreeRTOS\TU/SimSun.ttf(0)/m/n/12 、| \TU/TimesNewRoman(0)/m/n/12 NXP_LwIP_BareMe
+tal\TU/SimSun.ttf(0)/m/n/12 、|
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -1113,22 +1669,12 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 [63]
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
 
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
+LaTeX Warning: Reference `tab:fuzz_results' on page 64 undefined on input line 
+547.
 
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
-[64]
-Overfull \hbox (55.6539pt too wide) in paragraph at lines 429--430
-[]\TU/SimSun.ttf(0)/m/n/12 从 测 试 集 中 选 择 \TU/TimesNewRoman(0)/m/n/12 5 \TU/SimS
-un.ttf(0)/m/n/12 个 包 含 网 络 协 议 栈 的 固 件  |（\TU/TimesNewRoman(0)/m/n/12 NXP_LwIP_
-FreeRTOS\TU/SimSun.ttf(0)/m/n/12 、| \TU/TimesNewRoman(0)/m/n/12 NXP_LwIP_BareMe
-tal\TU/SimSun.ttf(0)/m/n/12 、|
 
-Overfull \hbox (22.13535pt too wide) in paragraph at lines 439--452
+Overfull \hbox (27.63535pt too wide) in paragraph at lines 553--566
  [][] 
 
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
@@ -1139,7 +1685,7 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
-[65])
+[64])
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -1148,9 +1694,18 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
-[66] (./body/conclusion.tex
+[65] (./body/conclusion.tex
 Chapter 5.
 
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+[66]
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -1177,7 +1732,7 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
-[69]
+[69])
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -1186,7 +1741,7 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
-[70])
+[70] (./body/ack.tex)
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -1195,16 +1750,7 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
-[71] (./body/ack.tex)
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
-[72] (./main.bbl
+[71] (./main.bbl
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `\sihao' on input line 1.
@@ -1218,7 +1764,7 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
-[73]
+[72]
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -1227,7 +1773,7 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
-[74]) (./body/publications.tex
+[73]) (./body/publications.tex
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -1236,7 +1782,11 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
-[75])
+[74])
+
+Package natbib Warning: There were undefined citations.
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
 
@@ -1245,10 +1795,18 @@ Overfull \hbox (2.0pt too wide) has occurred while \output is active
 
 Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
-[76] (./main.aux (./body/chap01.aux) (./body/chap02.aux) (./body/chap03.aux)
-(./body/chap04.aux) (./body/conclusion.aux) (./body/ack.aux))
+[75] (./main.aux (./body/chap01.aux) (./body/chap02.aux) (./body/chap03.aux)
+(./body/chap04.aux) (./body/conclusion.aux) (./body/ack.aux)
 
-LaTeX Warning: There were multiply-defined labels.
+Package natbib Warning: Citation(s) may have changed.
+(natbib)                Rerun to get citations correct.
+
+)
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 
 
 Package rerunfilecheck Warning: File `main.out' has changed.
@@ -1257,5 +1815,5 @@ Package rerunfilecheck Warning: File `main.out' has changed.
 
  )
 (see the transcript file for additional information)
-Output written on main.pdf (84 pages).
+Output written on main.pdf (82 pages).
 Transcript written on main.log.
