@@ -1,9 +1,12 @@
 \begin{thebibliography}{10}
 
-\bibitem{gsma2020mobile}
-{GSMA}.
-\newblock The Mobile Economy 2020.
-\newblock \url{https://www.gsma.com/mobileeconomy/}, 2020
+\bibitem{statistaIOT2024}
+Statista.
+\newblock Number of Internet of Things (IoT) connections worldwide from 2022 to
+  2023, with forecasts from 2024 to 2033.
+\newblock
+  \url{https://www.statista.com/statistics/1183457/iot-connected-devices-worldwide/},
+  2024
 
 \bibitem{openharmony}
 {OpenHarmony Community}.
@@ -25,11 +28,32 @@
 \newblock 物联网安全研究综述:威胁,检测与防御.
 \newblock 通信学报, 2021, 42(8): 18
 
+\bibitem{iotpot}
+Yin Minn~Pa Pa, et~al.
+\newblock IoTPOT: Analysing and Detecting Malware in IoT.
+\newblock Journal of Computer Virology and Hacking Techniques, 2016
+
 \bibitem{mirai2018}
 Manos Antonakakis, Tim April, Michael Bailey, Mathew Bernhard, Elie Bursztein,
   Jaime Cochran, et~al.
 \newblock Analysis of the Mirai Botnet.
 \newblock In: USENIX Security Symposium, 2018
+
+\bibitem{li2022iotfirmwaresurvey}
+李涛, 田迎军, 葛阳晨, 田源, 李剑.
+\newblock 物联网固件漏洞安全检测综述.
+\newblock 信息安全研究, 2022, 8(12): 1146--1155
+
+\bibitem{liuhangtian2025iotfuzzer}
+刘航天, 甘水滔, 张超, 张红旗, 孙文厚, 高子聪, et~al.
+\newblock 物联网设备固件自动化漏洞挖掘技术研究综述.
+\newblock 网络与信息安全学报, 2025, 11(2): 26--49
+
+\bibitem{clements2020halucinator}
+Abraham~A Clements, Eric Gustafson, Tobias Scharnowski, Paul Grosen, David
+  Fritz, Christopher Kruegel, et~al.
+\newblock HALucinator: Firmware Re-hosting Through Abstraction Layer Emulation.
+\newblock In: 29th USENIX Security Symposium, 2020: 1--18
 
 \bibitem{firmadyne}
 Daming~D Chen, Manuel Egele, Maverick Woo, David Brumley.
@@ -65,6 +89,18 @@ Eric Gustafson, Marius Muench, Chad Spensky, Tobias Scharnowski, Paul Grosen,
 \newblock Pretender: High-Fidelity Peripheral Emulation for Firmware.
 \newblock In: USENIX Security Symposium, 2019
 
+\bibitem{angr2017}
+Fish Wang, Yan Shoshitaishvili.
+\newblock Angr - The Next Generation of Binary Analysis.
+\newblock In: 2017 IEEE Cybersecurity Development (SecDev), 2017: 8-9
+
+\bibitem{zhou2022semu}
+Wei Zhou, Lan Zhang, Le~Guan, Peng Liu, Yuqing Zhang.
+\newblock What your firmware tells you is not how you should emulate it: A
+  specification-guided approach for firmware emulation.
+\newblock In: Proceedings of the 2022 ACM SIGSAC Conference on Computer and
+  Communications Security, 2022: 3269--3283
+
 \bibitem{fengp2020p2im}
 Bo~Feng, Alejandro Mera, Long Lu.
 \newblock P2IM: Scalable and Hardware-independent Firmware Testing via
@@ -83,17 +119,18 @@ Wei Zhou, et~al.
 \newblock uEmu: A Framework for Firmware Emulation and Vulnerability Discovery.
 \newblock In: ACM CCS, 2021
 
+\bibitem{firmalice}
+Yan Shoshitaishvili, Ruoyu Wang, Christophe Hauser, Christopher Kruegel,
+  Giovanni Vigna.
+\newblock Firmalice: Automatic Detection of Authentication Bypass
+  Vulnerabilities in Binary Firmware.
+\newblock In: NDSS, 2015
+
 \bibitem{pararehosting}
 Wenqiang Li, Libo Li, Shenglin Zhang, Tao Xie, Lei Ma, et~al.
 \newblock Para-rehosting: Automatic Payload Generation for Embedded
   Inter-Process Communication.
 \newblock In: USENIX Security Symposium, 2022
-
-\bibitem{clements2020halucinator}
-Abraham~A Clements, Eric Gustafson, Tobias Scharnowski, Paul Grosen, David
-  Fritz, Christopher Kruegel, et~al.
-\newblock HALucinator: Firmware Re-hosting Through Abstraction Layer Emulation.
-\newblock In: 29th USENIX Security Symposium, 2020: 1--18
 
 \bibitem{iotfuzzer}
 Jiongyi Chen, Wenrui Diao, Qingchuan Zhao, Chaoshun Zuo, Zhiqiang Lin, XiaoFeng
@@ -101,6 +138,69 @@ Jiongyi Chen, Wenrui Diao, Qingchuan Zhao, Chaoshun Zuo, Zhiqiang Lin, XiaoFeng
 \newblock IoTFuzzer: Discovering Memory Corruptions in IoT Through App-based
   Fuzzing.
 \newblock In: NDSS, 2018
+
+\bibitem{feng2021snipuzz}
+Xiaotao Feng, Ruoxi Sun, Xiaogang Zhu, Minhui Xue, Sheng Wen, Dongxi Liu,
+  et~al.
+\newblock Snipuzz: Black-box fuzzing of iot firmware via message snippet
+  inference.
+\newblock In: Proceedings of the 2021 ACM SIGSAC conference on computer and
+  communications security, 2021: 337--350
+
+\bibitem{scharnowski2023hoedur}
+Tobias Scharnowski, Simon W{\"o}rner, Felix Buchmann, Nils Bars, Moritz
+  Schloegel, Thorsten Holz.
+\newblock Hoedur: Embedded Firmware Fuzzing using Multi-Stream Inputs.
+\newblock 2023
+
+\bibitem{firmafl}
+Wei Zheng, et~al.
+\newblock FirmAFL: High-Throughput Greybox Fuzzing of IoT Firmware via
+  Augmented Process Emulation.
+\newblock In: USENIX Security, 2019
+
+\bibitem{driller}
+Nick Stephens, Jack Grosen, Christopher Salls, Andrew Dutcher, Ruoyu Wang,
+  Jacopo Corbetta, et~al.
+\newblock Driller: Augmenting Fuzzing Through Selective Symbolic Execution.
+\newblock In: NDSS, 2016
+
+\bibitem{qsym}
+Insu Yun, Sangho Lee, Meng Xu, Yeongjin Jang, Taesoo Kim.
+\newblock QSYM: A Practical Concolic Execution Engine Tailored for Hybrid
+  Fuzzing.
+\newblock In: USENIX Security Symposium, 2018
+
+\bibitem{angora}
+Peng Chen, Hao Chen.
+\newblock Angora: Efficient Fuzzing by Principled Search.
+\newblock In: IEEE Symposium on Security and Privacy, 2018
+
+\bibitem{claude35sonnet}
+Anthropic.
+\newblock Claude 3.5 Sonnet.
+\newblock \url{https://www.anthropic.com/news/claude-3-5-sonnet}, 2024
+
+\bibitem{gemini3}
+Google DeepMind.
+\newblock Gemini 3.
+\newblock \url{https://deepmind.google/technologies/gemini/}, 2025
+
+\bibitem{deepseekr1}
+DeepSeek-AI, et~al.
+\newblock DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via
+  Reinforcement Learning.
+\newblock Nature, 2025, 645: 633--638
+
+\bibitem{glm5}
+Zhipu AI.
+\newblock GLM-5.
+\newblock \url{https://www.zhipuai.cn/}, 2025
+
+\bibitem{minimaxm27}
+MiniMax.
+\newblock MiniMax M2.7.
+\newblock \url{https://www.minimaxi.com/}, 2025
 
 \bibitem{wei2022finetuned}
 Jason Wei, Maarten Bosma, Vincent~Y Zhao, Kelvin Guu, Adams~Wei Yu, Brian
@@ -168,24 +268,6 @@ Zhi Li, et~al.
   Guidance.
 \newblock arXiv preprint, 2024
 
-\bibitem{gpiot2024}
-Hao Li, et~al.
-\newblock GPIoT: Tailoring Small Language Models for IoT Program Synthesis and
-  Development.
-\newblock arXiv preprint, 2024
-
-\bibitem{spec2code2024}
-Simon M{\"u}ller, et~al.
-\newblock Towards Specification-Driven LLM-Based Generation of Embedded
-  Automotive Software.
-\newblock arXiv preprint, 2024
-
-\bibitem{improvingllm2024}
-Yu~Chen, et~al.
-\newblock Improving LLM-Assisted Secure Code Generation through
-  Retrieval-Augmented Generation and Multi-Tool Feedback.
-\newblock arXiv preprint, 2024
-
 \bibitem{agents4plc2024}
 Tianyu Wang, et~al.
 \newblock Agents4PLC: Automating Closed-Loop PLC Code Generation and
@@ -208,6 +290,11 @@ Y.~Dong, X.~Jiang, Z.~Jin, G.~Li.
 \newblock Self-Collaboration Code Generation via ChatGPT.
 \newblock ACM Transactions on Software Engineering and Methodology, 2024,
   33(7): 1--38
+
+\bibitem{unicorn}
+{Nguyen, Anh Quynh}, et~al.
+\newblock Unicorn: The ultimate CPU emulator.
+\newblock \url{https://www.unicorn-engine.org/}
 
 \bibitem{afl}
 Michal Zalewski.
