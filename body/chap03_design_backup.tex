@@ -1,0 +1,833 @@
+\chapter{系统设计与实现}
+\label{chap:design}
+
+\usetikzlibrary{arrows.meta,positioning,calc}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/system_architecture.pdf}
+\caption{系统整体架构图}
+\label{fig:arch}
+\end{figure}
+
+本研究设计并实现了基于驱动程序替换的固件仿真系统，该系统分为三个模块：驱动函数接口静态分析与识别模块、驱动函数分析、替换与编译模块、动态测试反馈闭环模块。整体方案架构图如~\ref{fig:arch}所示。其中，驱动函数接口静态分析与识别模块负责对固件源码进行静态分析，定位硬件相关代码，抽取驱动函数、MMIO 访问点、依赖数据结构、调用关系等信息，并以统一的数据模型对外提供查询接口。驱动函数分析、替换与编译模块根据静态分析模块输出的驱动分析结果，使用大语言模型对驱动函数进行类型分类与语义保留分析，生成可替代实现，同时将替代实现集成回工程并驱动构建。动态测试反馈闭环模块负责在仿真环境中运行固件，采集运行日志、崩溃信息等，并将错误信息结构化，触发重新分析与再生成。
+
+驱动函数接口静态分析与识别模块负责对固件源码进行静态分析，定位硬件相关代码，抽取驱动函数、MMIO 访问点、依赖数据结构、调用关系等信息，并以统一的数据模型对外提供查询接口。该模块基于 CodeQL 静态分析引擎实现，通过预定义的查询规则从固件源码中提取驱动相关信息。
+
+驱动函数分析、替换与编译模块针对各驱动函数进行类型分类与语义保留分析，生成可替代实现，同时将替代实现集成回工程并驱动构建。该模块采用 LangGraph 智能体框架实现复杂的推理和决策流程，确保生成的替换代码既满足语义保持性要求，又能够在仿真环境中正确运行。
+
+动态测试反馈闭环模块负责在仿真环境中运行固件，采集运行日志、崩溃信息等，并将错误信息结构化，触发重新分析与再生成。通过多智能体协作，该模块构建"生成-测试-反馈-修正"的闭环机制，使固件仿真过程实现自动化。
+
+\section{驱动函数接口静态分析与识别模块}
+\label{sec:collector}
+
+针对嵌入式固件中驱动函数与硬件交互位置难以自动识别的问题，本研究采用静态分析技术构建驱动函数接口静态分析与识别模块。该模块从固件源码中提取硬件依赖信息，构建固件的"硬件依赖画像"，为后续的驱动函数替换提供准确的基础数据。
+
+模块的核心职责是建立从源码到硬件依赖信息的映射，识别固件中与硬件交互的函数，确定函数访问硬件的方式（如直接寄存器访问、HAL 库调用或间接句柄操作），并分析函数之间的调用依赖关系。模块采用静态分析技术构建包含语法树、控制流图和数据流图的综合数据库，通过精心设计的查询规则识别 MMIO 结构体实例和字段访问，进而对涉及硬件访问的函数进行语义分类。数据流追踪技术通过污点追踪建立寄存器访问与函数参数之间的关联，为替换模块提供精确的语句定位信息。模块输出的"硬件依赖画像"包含驱动函数列表、MMIO 访问点、函数调用关系图和数据流信息，这些结构化的分析结果被存储在统一的数据模型中，为下游模块提供可查询的知识库。
+
+\subsection{MMIO 访问模式识别}
+
+MMIO（Memory-Mapped I/O，内存映射 I/O）是一种将硬件外设的寄存器映射到处理器内存地址空间的机制。通过 MMIO，软件可以通过访问内存地址的方式与硬件外设进行交互，而不需要特殊的 I/O 指令。嵌入式厂商通常使用 C 语言结构体来定义 MMIO 寄存器映射，结构体的每个字段对应一个硬件寄存器，字段的偏移量与硬件规范中的寄存器地址偏移保持一致。
+
+MMIO 结构体的典型代码示例如下：
+
+\begin{lstlisting}[style=CStyle,language=C,caption=MMIO 结构体示例,label=lst:mmio-struct]
+// STM32 UART寄存器映射示例
+typedef struct {
+    __IO uint32_t CR1;    // 控制寄存器1
+    __IO uint32_t CR2;    // 控制寄存器2
+    __IO uint32_t CR3;    // 控制寄存器3
+    __IO uint32_t BRR;    // 波特率寄存器
+    __IO uint32_t GTPR;   // 保护时间与预分频寄存器
+    __IO uint32_t RTOR;   // 接收超时寄存器
+    __IO uint32_t RQR;    // 请求寄存器
+    __IO uint32_t ISR;    // 中断与状态寄存器
+    __IO uint32_t ICR;    // 中断标志清除寄存器
+    __IO uint32_t RDR;    // 接收数据寄存器
+    __IO uint32_t TDR;    // 发送数据寄存器
+} USART_TypeDef;
+
+// 通过强制类型转换创建MMIO实例
+#define USART1_BASE    (0x40011000UL)
+USART_TypeDef *USART1 = (USART_TypeDef *)USART1_BASE;
+\end{lstlisting}
+
+定位 MMIO 结构体实例是识别硬件相关代码的关键步骤。本研究总结出三种典型的 MMIO 实例定位模式：
+
+\textbf{模式一：直接地址强转}。这类代码将固定外设基地址强制转换为外设寄存器结构体指针，常见于寄存器定义的头文件中。在代码中呈现为类似 \texttt{\#define USART1 ((USART\_TypeDef *)USART1\_BASE)} 的宏定义，后续代码直接对该指针进行字段访问如 \texttt{USART1->DR}、\texttt{USART1->CR1}。
+
+\begin{lstlisting}[style=CStyle,language=C,caption=直接地址强转模式示例,label=lst:direct-cast]
+// 驱动源码示例：直接地址强转模式
+#define USART1_BASE 0x40011000UL
+#define USART1 ((USART_TypeDef *)USART1_BASE)
+#define USART2 ((USART_TypeDef *)USART2_BASE)
+#define USART3 ((USART_TypeDef *)USART3_BASE)
+
+void uart_init_direct(void) {
+    USART1->CR1 = 0x2000;  // 直接对强转实例进行寄存器访问
+    USART1->BRR = 0x0341;
+}
+\end{lstlisting}
+
+\textbf{模式二：间接初始化}。这类代码通过句柄（handle）、配置表（descriptor/config table）等间接结构，将外设基地址赋值给某个"寄存器块指针成员"，后续通过该成员完成寄存器访问。在 STM32 HAL 生态中，这类成员常命名为 \texttt{Instance}。在代码中呈现为初始化时的赋值语句如 \texttt{huart->Instance = COM\_USART[COM]}，后续寄存器访问呈现为多级解引用如 \texttt{huart->Instance->DR}。在基于配置表的驱动中，也可能呈现为 \texttt{handle.Instance = spi\_config[i].Instance} 这种从配置表复制的形式。
+
+\begin{lstlisting}[style=CStyle,language=C,caption=间接初始化模式示例（HAL句柄和配置表）,label=lst:indirect-init]
+// 驱动源码示例：间接初始化模式（HAL句柄）
+UART_HandleTypeDef huart;
+
+void BSP_COM_Init(COM_TypeDef COM) {
+    huart.Instance = COM_USART[COM];  // 将外设基地址赋值给Instance成员
+    HAL_UART_Init(&huart);
+    // 后续访问呈现为多级解引用
+    huart.Instance->DR = data;
+}
+
+// 驱动源码示例：间接初始化模式（配置表）
+typedef struct {
+    USART_TypeDef *Instance;
+    uint32_t BaudRate;
+} SPI_Config;
+
+SPI_Config spi_config[] = {
+    {SPI1, 115200},
+    {SPI2, 9600}
+};
+
+void rt_hw_spi_bus_init(void) {
+    for (int i = 0; i < sizeof(spi_config)/sizeof(spi_config[0]); i++) {
+        spi_bus_obj[i].handle.Instance = spi_config[i].Instance;
+        // 通过配置表中的Instance赋值
+    }
+}
+\end{lstlisting}
+
+\textbf{模式三：常量指针参数}。这类代码通过函数参数接收 MMIO 结构体指针（寄存器块基址），常见于底层驱动或通用外设操作函数。在代码中呈现为函数定义的形参类型是某个寄存器结构体指针，函数体内部通过该参数访问寄存器字段，如 \texttt{void mmio\_uart\_init(USART\_TypeDef *uart) \{ uart->CR1 = 0x2000; \}}。调用者可以将模式一或模式二中的 MMIO 实例作为实参传入，如直接调用 \texttt{mmio\_uart\_init(USART1)} 或传入句柄成员 \texttt{mmio\_uart\_init(huart->Instance)}。
+
+\begin{lstlisting}[style=CStyle,language=C,caption=常量指针参数模式示例,label=lst:pointer-param]
+// 驱动源码示例：常量指针参数模式
+void mmio_uart_init_pointer(USART_TypeDef *uart) {
+    // 通过指针访问MMIO寄存器
+    uart->CR1 = 0x2000;
+    uart->BRR = 0x0341;
+}
+
+// 调用示例
+void main(void) {
+    // 直接传模式一的强转实例
+    mmio_uart_init_pointer(USART1);
+    
+    // 传模式二的句柄成员
+    mmio_uart_init_pointer(huart.Instance);
+    
+    return 0;
+}
+\end{lstlisting}
+
+三种定位模式的对比如表~\ref{tab:mmio-patterns}所示。
+
+\begin{table}[htbp]
+\centering
+\caption{MMIO 结构体实例定位模式对比}
+\label{tab:mmio-patterns}
+\begin{tabular}{lp{5cm}l}
+\toprule
+\textbf{模式} & \textbf{描述} & \textbf{代码呈现} \\
+\midrule
+直接地址强转 & 将固定地址强制转换为外设结构体指针 & 整数常量→结构体指针类型转换 \\
+间接初始化 & 通过配置表将外设基地址赋值给句柄 & 结构体成员赋值为外设宏 \\
+常量指针参数 & 函数以常量指针形式接收外设基址 & 参数类型为 MMIO 结构体指针 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{驱动函数定位}
+
+静态分析模块的核心任务是识别固件中的驱动函数，为后续的智能替换提供目标列表。本研究采用简单直接的定位准则：\textbf{凡是包含 MMIO 访问的函数，均定义为驱动函数}。这一定位准则的合理性在于：MMIO 访问是固件与硬件交互的最底层方式，包含寄存器读写的函数必然与硬件强相关，这类函数在仿真环境中无法直接执行，需要进行替换处理；而不包含 MMIO 访问的函数通常是纯软件逻辑，如数据处理、协议解析、状态管理等，在仿真环境中可以直接运行，无需替换。
+
+设 $F$ 为固件中的函数集合，$M$ 为 MMIO 结构体实例集合，$A(f, m)$ 为谓词"函数 $f$ 访问 MMIO 实例 $m$ 的字段"，则驱动函数集合 $D$ 定义为：
+$$D = \{f \in F \mid \exists m \in M: A(f, m)\}$$
+
+驱动函数识别的流程如下：首先通过三种定位模式识别代码中的所有 MMIO 结构体实例；然后对每个 MMIO 结构体实例，追踪其字段访问表达式，记录访问的字段名、访问类型（读/写）、所在语句和所在函数；接着对所有包含 MMIO 字段访问的函数进行汇总，形成驱动函数列表；最后分析驱动函数之间的调用关系，构建函数调用图。
+
+\subsection{分析与识别模块实现}
+
+本节阐述分析与识别模块的具体实现技术。模块采用 CodeQL 静态分析引擎作为底层支撑，CodeQL 通过构建包含语法树、控制流图、数据流图的综合数据库，为语义级代码分析提供了强大的查询能力。
+
+\subsubsection{MMIO 操作定位模块实现}
+
+针对三种 MMIO 定位模式，本研究设计了相应的查询规则。查询从 CodeQL 数据库中提取所有符合 MMIO 结构体特征的变量及其初始化表达式。查询的核心设计思想是将"寄存器字段访问"追溯到一个可被 CodeQL 稳定描述的基对象表达式。
+
+\begin{lstlisting}[style=CodeQL,language=CodeQL, caption={MMIO表达式收集查询示例}]
+import cpp
+import libraries.MMIOAnalyzer
+
+from
+    Function func,
+    InterestingMMIOExpr expr
+where
+    isInterestingMMIOFunction(func) and
+    expr.getEnclosingFunction() = func
+select expr.toString(),
+       expr.getEnclosingFunction().getName(),
+       expr.getFile().getAbsolutePath().toString(),
+       expr.getLocation().getStartLine(),
+       expr.checkExprType(),
+       expr.checkEnclosingType()
+\end{lstlisting}
+
+上述查询通过 \texttt{import libraries.MMIOAnalyzer} 引入 MMIO 分析库，从 CodeQL 数据库中提取所有有趣的 MMIO 表达式。查询的输出包括表达式字符串、所属函数名、文件路径、行号、表达式类型和封闭类型等信息。
+
+对于"间接初始化"和"常量指针参数"模式，查询采用数据流追踪策略，通过追踪赋值语句和函数参数来识别 MMIO 实例。常量基址的追踪利用 CodeQL 提供的数据流和污点追踪能力，将"常量大值表达式（外设基址）"追踪到后续的变量访问/解引用位置。
+
+\begin{lstlisting}[style=CodeQL,language=CodeQL, caption={常量基址数据流追踪查询示例}]
+ predicate isMMIOConstantExpr(ConstantExpr src_mmio) {
+    exists( DataFlow::Node source, DataFlow::Node sink, Expr varAccess,
+             PointerDereferenceExpr deref |
+        source.asExpr() = src_mmio and
+        isConstantBigValueExpr(src_mmio) and
+        sink.asExpr() = varAccess and
+        deref.getOperand() = varAccess and
+        TaintFlow::flow(source, sink) and
+        not sink.asExpr().getFile() instanceof DriverFile
+    )
+}
+
+predicate isMMIOTracedExpr(Expr e) {
+    exists( DataFlow::Node source, DataFlow::Node sink, ConstantExpr src_mmio |
+        source.asExpr() = src_mmio and
+        isMMIOConstantExpr(src_mmio) and
+        sink.asExpr() = e and
+        TaintFlow::flow(source, sink) and
+        not sink.asExpr().getFile() instanceof DriverFile
+    )
+}
+\end{lstlisting}
+
+上述查询定义了两个谓词：\texttt{isMMIOConstantExpr} 识别常量大值表达式（外设基址），\texttt{isMMIOTracedExpr} 通过污点追踪将源点追踪到汇点。查询的逻辑可形式化表示为：当存在一个常量大值表达式作为数据流源点，经过数据流传播到达某个变量访问或解引用操作时，该操作即为 MMIO 相关的表达式。
+
+\begin{lstlisting}[style=CStyle,language=C,caption=常量基址在代码中的传播示例,label=lst:mmio-propagation]
+// 示例：常量基址在代码中的传播
+#define USART1_BASE 0x40011000UL
+USART_TypeDef *USART1 = (USART_TypeDef *)USART1_BASE;  // 基址强转
+huart->Instance = USART1;                              // 赋值给Instance成员
+huart->Instance->DR = data;                            // 最终的字段访问点
+\end{lstlisting}
+
+查询通过污点追踪，将上述代码中的 \texttt{USART1\_BASE}（源点）追踪到最终的 \texttt{huart->Instance->DR}（汇点），从而识别出整个 MMIO 使用链路。
+
+对于"函数第 0 个参数是指针类型，实参是常量大值表达式"的情况，查询通过函数调用关系和参数类型匹配，定位"把常量基址传给接受结构体指针的驱动函数"的调用点。
+
+\begin{lstlisting}[style=CodeQL,language=CodeQL, caption={函数参数类型匹配查询示例}]
+ predicate isMMIOStructure_MK(Struct s){
+    exists( FunctionCall call, Expr e, TypedefType typeDef |
+        call.getTarget().getParameter(0).getType() instanceof PointerType and
+        (
+            (call.getTarget().getParameter(0).getType().(PointerType).getBaseType() = typeDef and
+             typeDef.getBaseType() = s) or
+            call.getTarget().getParameter(0).getType().(PointerType).getBaseType() = s
+        ) and
+        call.getArgument(0) = e and
+        isConstantBigValueExpr(e)
+    )
+}
+\end{lstlisting}
+
+上述查询通过参数类型匹配（\texttt{PointerType}）和实参的常量大值表达式检查，识别出 MMIO 结构体类型的函数调用点。查询的逻辑可表示为：当函数调用的第 0 个参数类型为结构体指针，且该参数对应的实参是经过数据流追踪的 MMIO 常量表达式时，该调用点即为候选的 MMIO 使用点。
+
+\begin{lstlisting}[style=CStyle,language=C,caption=常量指针参数传递示例,label=lst:pointer-param-pass]
+// 示例：常量指针参数传递
+void uart_send_data(USART_TypeDef *uart, uint8_t *data, uint16_t len);
+
+// 调用时传递MMIO实例
+uart_send_data(USART1, buffer, len);     // 直接传强转实例
+uart_send_data(huart->Instance, buffer, len);  // 传Instance成员
+\end{lstlisting}
+
+查询通过参数类型匹配（\texttt{USART\_TypeDef *}）和实参的数据流追踪，识别出上述调用点中的 MMIO 参数传递关系。
+
+\subsubsection{驱动函数定位模块实现}
+
+驱动函数定位模块的核心任务是根据前述定位准则，从固件源代码中识别出所有驱动函数，并构建驱动函数调用图。模块采用 CodeQL 静态分析技术，通过定义驱动函数的判定规则来实现自动化识别。
+
+模块的核心判定规则是：\textbf{包含 \texttt{DriverFieldAccess} 且不包含 \texttt{MMIOFieldAccess} 的函数被定义为驱动函数}。\texttt{DriverFieldAccess} 指的是通过句柄或间接方式访问 MMIO 寄存器块的字段操作，而 \texttt{MMIOFieldAccess} 指的是直接通过 MMIO 结构体指针访问寄存器的字段操作。这一定义确保了识别出的函数是真正需要替换的驱动层函数，而非底层的硬件抽象层函数。
+
+\begin{lstlisting}[style=CodeQL,language=CodeQL, caption={驱动函数判定规则}]
+class DriverFunction extends Function
+{
+    DriverFunction() {
+        exists(DriverFieldAccess fa | fa.getEnclosingFunction() = this) and
+        not exists(MMIOFieldAccess fa | fa.getEnclosingFunction() = this)
+    }
+}
+\end{lstlisting}
+
+上述查询定义了 \texttt{DriverFunction} 类，该类继承自 \texttt{Function}，通过检查函数内部是否包含 \texttt{DriverFieldAccess} 且不包含 \texttt{MMIOFieldAccess} 来判定函数是否为驱动函数。
+
+在识别出驱动函数列表后，模块进一步分析驱动函数之间的调用关系，构建函数调用图。调用图以驱动函数为节点，函数调用关系为边，记录调用方、被调用方、调用位置等信息。调用图为后续的智能替换模块提供了函数依赖关系，有助于理解函数的调用上下文和语义关联。
+
+\begin{lstlisting}[style=CodeQL,language=CodeQL, caption={驱动函数调用关系查询}]
+from DriverToCall call
+select call.toString2(),
+       call.getTargetFunction().toString(),
+       call.getEnclosingFunction().toString(),
+       call.isDirectCall()
+\end{lstlisting}
+
+上述查询从 \texttt{DriverToCall} 关系中提取驱动函数之间的调用关系，输出调用边的字符串表示、目标函数名、封装函数名以及调用是否为直接调用等信息。
+
+\subsubsection{统一数据模型}
+
+为便于后续模块使用，静态分析结果被组织为统一的数据模型。数据模型采用 Python 数据类（dataclass）定义，支持序列化和反序列化。
+
+\begin{lstlisting}[style=Python,language=Python,caption=数据模型定义示例,label=lst:data-model]
+# 示例：数据模型定义
+@dataclass
+class MmioAccessInfo:
+    struct_type: str      # 结构体类型，如"USART_TypeDef"
+    field_name: str       # 字段名，如"DR"
+    access_type: str      # 访问类型：READ/WRITE
+    line_number: int      # 行号
+    function_name: str    # 所在函数名
+    context_code: str     # 上下文代码
+
+@dataclass
+class FunctionInfo:
+    name: str             # 函数名
+    file_path: str        # 文件路径
+    line_number: int      # 行号
+    signature: str         # 函数签名
+    mmio_accesses: List[MmioAccessInfo]  # MMIO访问列表
+\end{lstlisting}
+
+数据模型包括函数信息模型（包含函数名、文件路径、行号、签名、返回类型、参数列表、分类、源码、调用关系等信息）、MMIO 访问点模型（包含结构体类型、字段名、访问类型、行号、所在函数、上下文代码等）和项目分析结果模型（包含项目路径、CodeQL 数据库路径、所有函数、MMIO 访问点、函数调用图、驱动函数列表、分析时间戳等）。这些数据模型通过 JSON 序列化存储在缓存层，供后续模块查询和使用。
+
+% ============================================================
+% 3.3 驱动函数分析、替换与编译模块
+% ============================================================
+
+\section{驱动函数分析、替换与编译模块}
+\label{sec:builder}
+
+驱动函数分析、替换与编译模块负责语义理解和代码生成，采用大语言模型驱动的智能体架构，通过 LangGraph 框架构建图式工作流，实现从函数分类、代码生成、质量验证到编译集成的完整自动化流程。该模块采用"语义分析→代码生成→质量验证→编译集成→错误修复"的迭代优化模式，通过多轮迭代逐步提升替换质量，直至生成能够在仿真环境中正常运行的替换代码。
+
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{figures/驱动函数分析替换与编译.pdf}
+    \caption{驱动函数分析替换编译模块示意图}
+    \label{fig:analyzer-workflow}
+    \end{figure}
+
+\subsection{分析替换与编译智能体工作流设计}
+
+工作流以\textbf{单个驱动函数}为粒度调度：每轮从静态分析模块或任务队列中取定一条驱动函数记录（含签名、源码片段、MMIO 访问上下文等），在图式状态机中顺序执行，直至该函数被判定为无需替换并结束，或替换实现通过校验与编译并被采纳。为便于叙述与实现解耦，整条流水线在逻辑上划分为\textbf{驱动函数分析与替换代码生成}、\textbf{替换代码修正与编译集成}两个子模块；前者由 Analyzer Agent 主导完成上下文拉取、分类与候选替换生成，后者在工程侧完成定义校验、构建与失败修复。整体编排如图~\ref{fig:analyzer-workflow}所示。
+
+\subsubsection{驱动函数分析与替换代码生成模块}
+
+该子模块由 \textbf{Analyzer Agent} 驱动，在 LangGraph 状态机中通过``工具调用—推理—写回''的循环完成单函数处理。执行顺序固定为：\textbf{信息获取} $\rightarrow$ \textbf{代码分类} $\rightarrow$（仅在分类结果认定该函数需要替换时）\textbf{替换代码生成}。
+
+\textbf{信息获取}阶段通过工具调用拉齐该驱动函数在工程中的可观测上下文，包括完整实现或相关片段、函数签名与参数类型、调用关系与 MMIO 仿真侧提示等（如 GetFunctionInfo、GetFunctionCallStack、GetMMIOFunctionEmulateInfo）。\textbf{代码分类}阶段综合源码与静态分析结果，由大语言模型判定函数语义类别及是否属于必须替换的硬件相关行为；分类所依据的类别体系及提示构造方式见第~\ref{sec:driver-replacement-strategy}~节。\textbf{替换代码生成}仅在``需要替换''分支上触发：模型在既定类别上选择替换策略并产出与签名一致的候选实现，具体策略（如 Skip、Strip、Redirect、Event 等）的选择规则与生成约束同样在第~\ref{sec:driver-replacement-strategy}~节展开，本节只给出子模块内的先后次序与数据交接关系。
+
+\subsubsection{替换代码修正与编译集成模块}
+
+该子模块在工程目录中对上一子模块输出的\textbf{候选替换代码}做\textbf{二阶段检验与修复}，目标是在真实构建环境下得到可链接、可编译的替换定义。
+
+\textbf{第一阶段（代码合规校验）}调用 VerifyReplacement，依据预置规则与接口契约检查候选替换是否满足替换定义（例如签名一致、禁止引入不兼容的存储类或明显违背仿真假设的写法等），过滤与定义明显不符的实现；未通过时可将反馈交回 Analyzer Agent 侧重新生成或局部修订（图~\ref{fig:analyzer-workflow}中以虚线表示返回替换生成环节）。
+
+\textbf{第二阶段（语法编译检查）}在通过定义校验后，将替换写入目标源文件（如 ReplaceFuncs，并保留回滚所需的原定义快照），再调用工程构建脚本执行完整编译链接（如 BuildProject）。若\textbf{编译失败}，则进入 \textbf{BuilderFixer} 路径：由构建侧智能体解析编译器诊断信息，结合 GetFunctionInfo、GetMMIOFunctionInfo 等工具定位首个关键错误，通过 UpdateFunctionReplacement 或 FixFunctionBuildErrors 等动作修订替换代码，并再次触发构建，形成``编译 $\rightarrow$ 错误解析 $\rightarrow$ 修复 $\rightarrow$ 重新编译''的闭环，直至编译成功或达到步数上限，从而保证最终被采纳的替换函数能够通过工程编译。
+
+编译错误的典型成因包括函数未声明、类型不匹配、缺少头文件、链接错误，以及替换代码引用了目标芯片 HAL 中不存在的结构体成员或与头文件声明不一致等。例如，STM32F401 的 TIM\_HandleTypeDef 无 ErrorCode 成员、RCC\_PLLInitTypeDef 无 PLLR 成员时，若替换体仍访问这些成员会导致编译失败；将非静态函数误写为 static 亦会破坏链接一致性。BuilderFixer 针对不同诊断采取补声明、改类型与转换、补 \texttt{\#include}、删改非法成员访问、核对依赖等策略。提示词上约束智能体在构建失败时优先根据 stderr 锁定\textbf{第一个错误}所涉函数再查上下文，避免对多函数无序轮询而浪费步数，从而兼顾修复质量与效率。
+
+\subsection{驱动函数替换策略设计}
+\label{sec:driver-replacement-strategy}
+
+为实现语义保持的驱动函数替换，本研究在替换前先对驱动函数进行语义分类，并基于分类结果选择对应替换策略，避免硬件依赖被误删或替换不足导致仿真异常。
+
+\subsubsection{函数分类策略}
+
+驱动函数替换的核心挑战在于不同类型的驱动函数与硬件交互的方式和语义要求存在显著差异。采用"一刀切"的统一替换策略无法准确处理各类函数的特殊性，容易导致仿真异常或语义丢失。因此，系统在替换前先对驱动函数进行语义分类，根据函数类别选择最合适的替换策略，从而确保替换后代码的正确性和仿真环境的稳定性。
+
+系统基于大语言模型实现驱动函数的自动分类。LLM 通过读取函数源码、识别 MMIO 访问模式、判断函数主要用途等步骤，将函数分类到预定义的类别。分类策略基于对嵌入式驱动函数硬件交互模式的分析，将函数划分为以下类别，如表~\ref{tab:function-categories}所示。
+
+\begin{table}[!htbp]
+\centering
+\caption{驱动函数分类体系}
+\label{tab:function-categories}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}llp{6.6cm}@{}}
+\toprule
+\textbf{缩写} & \textbf{描述} & \textbf{典型函数} \\
+\midrule
+INIT & 外设初始化，影响固件状态机 & \texttt{HAL\_UART\_Init}, \texttt{BOARD\_BootClockRUN} \\
+RECV & 从硬件/DMA 读取数据 & \texttt{HAL\_UART\_Receive}, \texttt{ENET\_GetRxFrame} \\
+LOOP & 轮询等待硬件状态 & \texttt{HAL\_UART\_WaitOnFlag}, \texttt{FLASH\_WaitForLastOperation} \\
+IRQ & 中断处理/回调函数 & \texttt{HAL\_UART\_IRQHandler}, \texttt{ENET\_TransmitIRQHandler} \\
+RETURNOK & 纯硬件操作，返回状态值 & \texttt{HAL\_GPIO\_DeInit}, \texttt{HAL\_I2C\_IsDeviceReady} \\
+SKIP & 纯硬件操作，无返回值 & \texttt{HAL\_ADC\_MspInit}, \texttt{FLASH\_FlushCaches} \\
+\midrule
+CORE & 系统区操作，OS 核心函数 & \texttt{SysTick\_Handler}, \texttt{rt\_thread\_init} \\
+NODRIVER & 存在的驱动操作对固件状态机无影响 & \texttt{main}, \texttt{GPIO\_GetInstance} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{替换策略体系}
+
+本研究总结出四种通用替换策略，每种策略适用于特定的函数类别和使用场景。策略的选择由 LLM 根据函数的语义特征自动决定。不同函数类别对应的推荐策略如表~\ref{tab:replace-strategies}所示。
+
+\begin{table}[!htbp]
+\centering
+\caption{替换策略选择指南}
+\label{tab:replace-strategies}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}llp{5.9cm}@{}}
+\toprule
+\textbf{函数类别} & \textbf{策略类型} & \textbf{说明} \\
+\midrule
+INIT & Skip/Steering & 移除硬件寄存器操作，保留结构体初始化，避免仿真环境中的阻塞 \\
+RECV & Redirect/Steering & 利用 HAL\_BE\_* 注入函数重定向输入输出，实现数据注入 \\
+LOOP & Skip & 移除轮询等待逻辑，避免仿真环境中的死循环，直接返回成功状态 \\
+IRQ & Event & 保留回调函数签名，直接触发事件通知，移除硬件条件判断 \\
+RETURNOK & ReturnOK & 直接返回成功状态值，保留函数签名，不执行硬件操作 \\
+SKIP & Skip & 直接跳过函数执行，保留函数签名和调用路径，函数体为空 \\
+\midrule
+CORE & NoReplacement & 完全不替换，保留原函数代码和调用关系，由仿真器提供底层支持 \\
+NODRIVER & NoReplacement & 不进行任何替换，保留原函数代码和调用关系 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Skip 策略：移除硬件交互操作。}Skip 策略的核心思想是移除驱动函数中的硬件交互操作，但保留函数签名和返回值，使函数执行路径能够支持固件正常运行。对于初始化类函数，移除硬件寄存器配置逻辑；对于控制类函数，移除控制命令的硬件执行；对于轮询类函数，移除等待硬件状态的循环逻辑，避免仿真环境中的死循环。该策略通过跳过与硬件相关的操作，确保程序在仿真环境中能够顺利执行，同时保留了必要的返回值和函数接口，避免了因硬件依赖导致的阻塞或异常。
+
+以 UART 初始化函数为例，原始代码包含使能 UART 时钟、配置 UART 寄存器、设置波特率等硬件相关操作。采用 Skip 策略替换后，保留函数签名和必要的结构初始化，跳过所有硬件寄存器配置，直接返回成功状态。代码示例见代码~\ref{lst:skip-strategy}。
+\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt,caption=Skip 策略替换示例（初始化类和轮询类）,label=lst:skip-strategy]
+// 原始代码（初始化类）
+void HAL_UART_Enable(UART_HandleTypeDef *huart) {
+    huart->Instance->CR1 |= USART_CR1_UE;
+}
+
+// 替换代码（Skip 策略）
+void HAL_UART_Enable(UART_HandleTypeDef *huart) {
+    (void)huart;
+}
+
+// 原始代码（轮询类）
+HAL_StatusTypeDef HAL_UART_WaitOnFlag(UART_HandleTypeDef *huart, uint32_t Flag, uint32_t Timeout) {
+    while (!(__HAL_UART_GET_FLAG(huart, Flag))) {
+        if (Timeout != HAL_MAX_DELAY) {
+            if ((Timeout--) == 0) return HAL_TIMEOUT;
+        }
+    }
+    return HAL_OK;
+}
+
+// 替换代码（Skip 策略）
+HAL_StatusTypeDef HAL_UART_WaitOnFlag(UART_HandleTypeDef *huart, uint32_t Flag, uint32_t Timeout) {
+    (void)huart;
+    (void)Flag;
+    (void)Timeout;
+    return HAL_OK;
+}
+\end{lstlisting}
+
+\textbf{Redirect 策略：重定向到仿真 I/O。}Redirect 策略使用自定义的注入函数（如 HAL\_BE\_In、HAL\_BE\_ENET\_ReadFrame、HAL\_BE\_Out）替代硬件访问，为替换后的驱动代码提供与仿真环境交互的标准接口。对于接收类函数，使用 HAL\_BE\_In（固定长度）或 HAL\_BE\_ENET\_ReadFrame（变长报文）将仿真输入数据填充到缓冲区；对于发送类函数，使用 HAL\_BE\_Out 重定向输出或在不影响状态时跳过写操作。
+
+以 UART 接收函数为例，原始代码轮询数据寄存器等待数据到达，然后读取数据并更新驱动状态。采用 Redirect 策略替换后，直接调用 HAL\_BE\_In 函数将仿真数据注入到缓冲区，保留非 I/O 逻辑（如状态字段更新）。代码示例见代码~\ref{lst:redirect-uart}。
+\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt,caption=Redirect 策略替换示例（UART 接收函数）,label=lst:redirect-uart]
+// 原始代码
+HAL_StatusTypeDef HAL_UART_Receive(UART_HandleTypeDef *huart, uint8_t *pData, 
+                                    uint16_t Size, uint32_t Timeout) {
+    while (!(huart->Instance->SR & USART_SR_RXNE));
+    *pData = huart->Instance->DR;
+    return HAL_OK;
+}
+
+// 替换代码（Redirect 策略）
+HAL_StatusTypeDef HAL_UART_Receive(UART_HandleTypeDef *huart, uint8_t *pData, 
+                                    uint16_t Size, uint32_t Timeout) {
+    // Redirect to simulation input function
+    HAL_BE_In(pData, Size);
+    // Preserve non-I/O logic
+    huart->RxXferCount = 0;
+    huart->RxXferSize = Size;
+    huart->RxState = HAL_UART_STATE_READY;
+    return HAL_OK;
+}
+\end{lstlisting}
+
+对于变长报文接收场景（如以太网驱动），Redirect 策略在当前有效 buffer 指针处调用 HAL\_BE\_ENET\_ReadFrame 注入数据，完成一次 buffer descriptor 更新后立即返回。代码示例见代码~\ref{lst:redirect-enet}。
+
+\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt,caption=Redirect 策略替换示例（变长报文接收）,label=lst:redirect-enet]
+// 变长报文接收
+curBuffDescrip = rxBdRing->rxBdBase + rxBdRing->rxGenIdx;
+if (rxBuffer->buffer != NULL && rxBuffer->length > 0) {
+    HAL\_BE\_ENET\_ReadFrame(rxBuffer->buffer, rxBuffer->length);
+}
+rxBdRing->rxGenIdx = ENET\_IncreaseIndex(rxBdRing->rxGenIdx, rxBdRing->rxRingLen);
+\end{lstlisting}    
+
+\textbf{Event 策略：事件驱动模拟。}Event 策略通过事件队列模拟硬件中断触发。在仿真环境中，硬件中断信号由仿真器生成的事件触发，而非真实的硬件信号。该策略保留中断处理函数中的数据处理和回调触发逻辑，移除硬件中断标志寄存器的操作，通过控制流改写让中断处理函数必然执行到 OS 通知和回调触发分支。
+
+以 ETH 中断处理函数为例，原始代码检查以太网中断标志位，如果是接收中断，则调用接收完成回调函数。采用 Event 策略替换后，直接触发接收完成回调事件，移除硬件条件判断和标志寄存器操作。
+
+代码示例如下：
+
+\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt]
+// 原始代码
+void HAL_ETH_IRQHandler(ETH_HandleTypeDef *heth) {
+    if (__HAL_ETH_DMA_GET_FLAG(heth, ETH_DMA_FLAG_R)) {
+        HAL_ETH_RxCpltCallback(heth);
+    }
+    __HAL_ETH_DMA_CLEAR_FLAG(heth, ETH_DMA_FLAG_R);
+}
+
+// 替换代码（Event 策略）
+void HAL_ETH_IRQHandler(ETH_HandleTypeDef *heth) {
+    // Trigger Rx complete callback event directly
+    HAL_ETH_RxCpltCallback(heth);
+    // No need to check hardware flags or clear registers
+}
+\end{lstlisting}
+
+该策略通过直接触发事件，保证中断回调在仿真中可达，同时移除与硬件中断标志寄存器相关的操作，避免仿真环境中的不必要判断。
+
+\textbf{Steering 策略：执行流导向}
+
+Steering 策略通过控制流旁路和改写，将因硬件依赖而"走不到正确路径"的执行导向到"仿真可达且语义保持"的分支。该策略适用于复杂场景，例如依赖硬件标志的循环、基于 DMA+RingBuffer 的数据接收状态机等。Steering 策略的核心思想是：当固件因为硬件依赖导致执行路径不可达时，通过控制流改写把执行导向到仿真可用的路径，同时保证数据传输和状态更新的语义一致性。
+
+Steering 策略包含三个核心动作：一是跳过依赖硬件标志的条件判断，让执行直接进入数据处理分支；二是通过 HAL\_BE\_* 注入函数将仿真数据写入缓冲区；三是保留 buffer 管理、状态标志、Ring 更新等非 I/O 逻辑，确保数据能够被上层协议栈正确消费。
+
+以 NXP 网卡驱动中的 ENET\_GetRxFrame 函数为例，该函数使用 DMA+RingBuffer 机制接收以太网帧，具有复杂的状态机。原始代码包含依赖硬件标志扫描 Ring 的 while/do-while 结构，在仿真环境中这些标志（EMPTY、LAST、OWN）不会被硬件更新，导致执行卡死在循环中。
+
+原始代码的关键逻辑如下：
+
+\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt]
+/* Check current buffer descriptor's empty flag. If empty means there is no frame received. */
+index = rxBdRing->rxGenIdx;
+while (0U == (curBuffDescrip->control & ENET_BUFFDESCRIPTOR_RX_EMPTY_MASK))
+{
+    /* Find last buffer descriptor. */
+    if (0U != (curBuffDescrip->control & ENET_BUFFDESCRIPTOR_RX_LAST_MASK))
+    {
+        /* The last buffer descriptor stores the error status of this received frame. */
+        result = ENET_GetRxFrameErr((enet_rx_bd_struct_t *)(uintptr_t)curBuffDescrip, &rxFrame->rxFrameError);
+        break;
+    }
+
+    /* Get feedback that no-empty BD takes frame length of 0. Probably an IP issue and drop this BD. */
+    if (curBuffDescrip->length == 0U)
+    {
+        /* Set LAST bit manually to let following drop error frame operation drop this abnormal BD. */
+        curBuffDescrip->control |= ENET_BUFFDESCRIPTOR_RX_LAST_MASK;
+        result = kStatus_ENET_RxFrameError;
+        break;
+    }
+
+    /* Can't find last BD flag, no valid frame. */
+    index          = ENET_IncreaseIndex(index, rxBdRing->rxRingLen);
+    curBuffDescrip = rxBdRing->rxBdBase + index;
+    if (index == rxBdRing->rxGenIdx)
+    {
+        /* kStatus_ENET_RxFrameEmpty. */
+        break;
+    }
+}
+
+/* Get valid frame */
+curBuffDescrip = rxBdRing->rxBdBase + rxBdRing->rxGenIdx;
+index          = 0;
+do
+{
+    newBuff = (uintptr_t)(uint8_t *)handle->rxBuffAlloc(base, handle->userData, ringId);
+    if (newBuff != 0U)
+    {
+        rxBuffer = &rxFrame->rxBuffArray[index];
+
+        /* The last buffer descriptor of a frame. */
+        if (0U != (curBuffDescrip->control & ENET_BUFFDESCRIPTOR_RX_LAST_MASK))
+        {
+            isLastBuff       = true;
+            rxFrame->totLen  = curBuffDescrip->length;
+            rxBuffer->length = curBuffDescrip->length - buffLen;
+        }
+        else
+        {
+            rxBuffer->length = curBuffDescrip->length;
+            buffLen += rxBuffer->length;
+        }
+        /* Give new buffer from application to BD */
+
+#if defined(FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET) && FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET
+        buffer = MEMORY_ConvertMemoryMapAddress(newBuff, kMEMORY_Local2DMA);
+#else
+        buffer = newBuff;
+#endif /* FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET */
+
+#if defined(FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL) && FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL
+        if (handle->rxMaintainEnable[ringId])
+        {
+            DCACHE_InvalidateByRange(buffer, handle->rxBuffSizeAlign[ringId]);
+        }
+#endif /* FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL */
+
+        curBuffDescrip->buffer = (uint32_t)buffer;
+
+        /* Clears status including the owner flag. */
+        curBuffDescrip->control &= ENET_BUFFDESCRIPTOR_RX_WRAP_MASK;
+        /* Sets the receive buffer descriptor with empty flag. */
+        curBuffDescrip->control |= ENET_BUFFDESCRIPTOR_RX_EMPTY_MASK;
+
+        /* Increase Rx array index and buffer descriptor address. */
+        index++;
+        rxBdRing->rxGenIdx = ENET_IncreaseIndex(rxBdRing->rxGenIdx, rxBdRing->rxRingLen);
+        curBuffDescrip     = rxBdRing->rxBdBase + rxBdRing->rxGenIdx;
+    }
+} while (!isLastBuff);
+\end{lstlisting}
+
+采用 Steering 策略替换后，跳过依赖硬件 EMPTY/LAST 等标志的 while 循环，在当前 buffer descriptor 调用 HAL\_BE\_ENET\_ReadFrame 注入数据，完成一次 BD 更新后立即返回。替换代码如下：
+
+\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt]
+/* Get valid frame buffer */
+curBuffDescrip = rxBdRing->rxBdBase + rxBdRing->rxGenIdx;
+index          = 0;
+do
+{
+    newBuff = (uintptr_t)(uint8_t *)handle->rxBuffAlloc(base, handle->userData, ringId);
+    if (newBuff != 0U)
+    {
+        assert((uint64_t)newBuff + handle->rxBuffSizeAlign[ringId] - 1U <= UINT32_MAX);
+        rxBuffer = &rxFrame->rxBuffArray[index];
+
+#if defined(FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET) && FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET
+        address = MEMORY_ConvertMemoryMapAddress(curBuffDescrip->buffer, kMEMORY_DMA2Local);
+#else
+        address = curBuffDescrip->buffer;
+#endif /* FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET */
+
+#if defined(FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL) && FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL
+        if (handle->rxMaintainEnable[ringId])
+        {
+            DCACHE_InvalidateByRange(address, handle->rxBuffSizeAlign[ringId]);
+        }
+#endif /* FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL */
+
+        rxBuffer->buffer = (void *)(uint8_t *)address;
+
+        /* The last buffer descriptor of a frame. */
+        if (0U != (curBuffDescrip->control & ENET_BUFFDESCRIPTOR_RX_LAST_MASK))
+        {
+            /* This is a valid frame. */
+            isLastBuff       = true;
+            rxFrame->totLen  = curBuffDescrip->length;
+            rxBuffer->length = curBuffDescrip->length - buffLen;
+        }
+        else
+        {
+            rxBuffer->length = curBuffDescrip->length;
+            buffLen += rxBuffer->length;
+        }
+    }
+
+    /* Simulate receiving data into buffer */
+    if (rxBuffer->buffer != NULL && rxBuffer->length > 0)
+    {
+        HAL_BE_ENET_ReadFrame(rxBuffer->buffer, rxBuffer->length);
+    }
+
+    /* Increase Rx array index and buffer descriptor address. */
+    index++;
+    rxBdRing->rxGenIdx = ENET_IncreaseIndex(rxBdRing->rxGenIdx, rxBdRing->rxRingLen);
+    curBuffDescrip     = rxBdRing->rxBdBase + rxBdRing->rxGenIdx;
+} while (!isLastBuff);
+\end{lstlisting}
+
+Steering 策略通过三方面实现控制流导向：一是用条件判断旁路掉依赖硬件 flag 的 while/do-while 结构，让代码直接进入处理分支；二是在处理分支中把仿真数据写入 buffer（HAL\_BE\_ENET\_ReadFrame），保证后续 `rxFrame`/上层协议栈读取到的内容由\textbf{固件仿真模块}在宿主侧注入；三是保留对 BD/`rxGenIdx` 的更新，使 RingBuffer 不至于卡死在同一个 BD 上。该策略遵循"单次收一包"的强约束，在保证 RingBuffer 状态正确的前提下，禁止保留依赖 LAST/EMPTY 等硬件 flag 的多帧/环扫描结构。
+
+\textbf{Iterative 策略：迭代优化}
+
+Iterative 策略针对 NEEDCHECK 类函数，这类函数通常具有复杂的语义特征，无法通过一次代码生成就达到正确效果。该策略的核心思想是：通过静态分析提取函数的关键特征（MMIO 访问模式、控制流结构、数据流依赖），结合动态测试反馈进行多轮迭代优化，逐步提升替换代码的正确性和稳定性。
+
+Iterative 策略的实现依赖于系统的动态测试反馈闭环模块。当第一轮生成的替换代码在仿真环境中执行失败时，系统会捕获错误信息（如崩溃、超时、执行路径异常等），并将这些信息结构化反馈给 LLM 智能体。LLM 智能体基于反馈信息重新分析函数语义，调整生成策略并生成新的替换代码，然后再次进入测试循环。这个过程持续进行，直到替换代码能够在仿真环境中稳定运行，或达到最大迭代次数。
+
+以复杂的时钟配置函数为例，这类函数通常包含多个条件分支、多层嵌套的寄存器访问和复杂的计算逻辑。初始生成的替换代码可能因为遗漏某些分支或计算错误导致仿真失败。通过 Iterative 策略，系统能够根据仿真反馈逐步修正这些问题，最终生成语义正确且稳定的替换代码。
+
+\textbf{ReturnOK 策略：直接返回成功}
+
+ReturnOK 策略针对 RETURNOK 类函数，这类函数通常是简单的辅助函数，主要功能是设置状态、清理资源或执行简单的检查。该策略的核心思想是：保留函数签名和必要的参数校验，删除函数体的具体实现，直接返回成功状态（如 HAL\_OK）。
+
+ReturnOK 策略的优势在于简单高效，避免了不必要的代码生成和测试开销。对于这类函数，保留原始实现往往会导致仿真异常（因为涉及硬件依赖），而直接返回成功通常不会影响固件的正常运行逻辑。
+
+以 GPIO 去初始化函数为例，原始代码可能包含对硬件寄存器的复位操作和状态的清理。采用 ReturnOK 策略替换后，保留函数签名和参数校验，直接返回 HAL\_OK，跳过所有硬件相关操作。
+
+代码示例如下：
+
+\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt]
+// 原始代码
+HAL_StatusTypeDef HAL_GPIO_DeInit(GPIO_TypeDef *GPIOx) {
+    if (GPIOx == NULL) return HAL_ERROR;
+    GPIOx->MODER = 0x00000000;
+    GPIOx->OTYPER = 0x00000000;
+    // ... more register operations ...
+    return HAL_OK;
+}
+
+// 替换代码（ReturnOK 策略）
+HAL_StatusTypeDef HAL_GPIO_DeInit(GPIO_TypeDef *GPIOx) {
+    if (GPIOx == NULL) return HAL_ERROR;
+    (void)GPIOx;
+    return HAL_OK;
+}
+\end{lstlisting}
+
+\textbf{SKIP 和 NODRIVER 策略}
+
+SKIP 类函数是那些可以直接删除函数体但保留签名的函数，这类函数通常不影响固件的核心功能，或者其功能已经被仿真环境接管。采用 Skip 策略后，函数体被删除，直接返回或空实现。
+
+NODRIVER 类函数是那些不涉及硬件操作的纯业务逻辑函数，这类函数不需要任何替换，直接保留原始代码即可。识别 NODRIVER 类函数可以避免不必要的替换操作，提升系统效率。
+
+% ============================================================
+% 3.4 动态测试反馈闭环模块
+% ============================================================
+
+\section{动态测试反馈闭环模块}
+\label{sec:feedback}
+
+动态测试反馈闭环模块是系统的"验证官"，负责在仿真环境中检验替换效果，并将发现的问题反馈给上游模块。该模块体现了软件工程中"测试驱动"的思想：静态分析和代码替换的正确性最终需要通过实际运行来验证。
+
+\subsection{动态执行环境}
+
+动态测试反馈模块负责将替换后的固件部署到仿真平台执行，采集运行信息并分析反馈。该模块是整个系统的闭环环节，通过实际运行验证静态分析和代码替换的正确性，同时为上游模块提供结构化的反馈信息以支持迭代优化。
+
+\subsubsection{固件仿真子模块架构}
+
+系统采用基于 Unicorn 引擎的固件仿真框架进行动态测试。Unicorn 是一款轻量级的 CPU 模拟器，支持 ARM、MIPS、X86 等多种架构，本研究使用其 ARM Thumb 模式模拟 ARM Cortex-M 系列微控制器。固件仿真子模块采用双层架构设计，由\textbf{仿真引擎层}与\textbf{Hook 机制层}构成。仿真引擎层负责提供指令集执行、内存映射等基础仿真能力；Hook 机制层则在指令流和访存路径上设置回调机制，实现函数入口的拦截和宿主侧逻辑的调用，从而支持驱动替换后注入接口的执行。
+
+仿真引擎层基于 Unicorn ARM 模拟器实现 ARMv7-M Thumb 指令集的模拟执行，包括寄存器管理、内存访问以及固件映像的加载和地址空间映射配置。
+
+Hook 机制层通过代码 Hook、基本块 Hook、内存读/写 Hook 和中断 Hook 等机制，实现执行过程中的信息采集和干预。该机制主要用于代码覆盖率统计、异常内存访问检测和执行轨迹记录等分析任务。在与替换策略配套时，Hook 机制层承担了关键作用：通过预留 \texttt{HAL\_BE\_*} 系列注入接口进行函数入口级拦截。具体而言，链接阶段的弱符号桩在宿主机侧被接管，当执行流到达约定入口时，不再在模拟 CPU 上执行原函数体，而是转入宿主机例程，完成缓冲区读写、数据帧搬运或块传输等操作，并按照调用约定返回结果和更新内存状态，随后继续执行。通过这种方式，驱动函数使用 Redirect 策略写入固件的 \texttt{HAL\_BE\_*} 接口调用可以被固件仿真模块拦截并执行，以支持固件与仿真平台的数据交互，完成固件与仿真平台的协同工作。
+
+表~\ref{tab:hal-be-hooks}归纳\textbf{固件仿真模块}中与驱动替换配套的注入接口及其使用场景。
+
+\begin{table}[!htbp]
+\centering
+\caption{固件仿真模块注入接口与使用场景}
+\label{tab:hal-be-hooks}
+\small
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{5.05cm}p{7.7cm}@{}}
+\toprule
+\textbf{注入接口} & \textbf{使用场景} \\
+\midrule
+\texttt{HAL\_BE\_return\_0} & 恒定返回 0，多用作成功码或空操作占位；替换侧用于仅需固定``成功''语义、无需真实硬件操作。 \\
+\texttt{HAL\_BE\_return\_1} & 恒定返回 1，多用作布尔真或约定非零语义。 \\
+\texttt{HAL\_BE\_Out} & 以输出长度表征一次发送语义，常见于类 SEND 的 输出重定向策略。 \\
+\texttt{HAL\_BE\_In} & 定长接收：将仿真输入写入缓冲区，常见于类 RECV 的 输入重定向策略。 \\
+\texttt{HAL\_BE\_ENET\_ReadFrame} & 在变长上界内填充一帧网络类数据，常见于类 RECV 的 输入重定向策略。 \\
+\texttt{HAL\_BE\_Block\_Read} & 按块大小与块数从虚拟介质读入缓冲区，常见于存储或块设备类替换。 \\
+\texttt{HAL\_BE\_Block\_Write} & 按块粒度写出缓冲区内容，常见于块设备或大块 I/O 类替换。 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{执行监控与反馈}
+
+系统在仿真运行过程中采集多种类型的运行信息，用于评估替换效果和指导迭代优化。运行监控采集的信息包括执行状态（成功、失败、超时）、程序计数器的最终值、执行的基本块数量、执行的指令总数、标准输出和标准错误输出等。系统定义了统一的数据结构来表示执行结果，包含上述所有采集的信息，该数据结构作为动态测试反馈模块的输出传递给上游模块。
+
+覆盖率统计用于评估固件代码的执行覆盖程度，系统支持基本块级覆盖率统计，通过块 Hook 记录执行过程中访问的所有基本块的地址。错误分类系统将运行过程中发生的各种错误按照类型进行分类，包括执行崩溃错误（访问无效内存、执行非法指令等）、执行超时错误（死循环、阻塞等待等）以及外设或 MMIO 访问相关的异常。
+
+仿真运行产生的原始日志通常是大量的非结构化文本信息，系统对原始日志进行结构化处理，提取关键信息形成反馈摘要。反馈摘要包含迭代轮次、失败类型、错误地址、崩溃信息、相关驱动函数列表和修复建议等字段。反馈信息结构化处理流程包括日志解析、关键信息提取、相关驱动函数分析和摘要生成四个阶段，通过调用栈分析确定错误发生时正在执行的驱动函数及其调用链。
+
+\subsection{动态测试反馈闭环}
+
+动态测试反馈闭环模块采用多智能体架构实现自动化的仿真运行、故障诊断、代码修复和回归验证。该闭环的核心目标是在发现仿真运行问题时，通过多轮迭代逐步修复，最终实现稳定运行或达到终止条件。
+
+\subsubsection{多智能体架构设计}
+
+动态测试反馈闭环由三个智能体协同工作完成。Emulator Runner Agent 作为主控智能体，负责驱动整个闭环流程，协调仿真执行、故障诊断和修复验证。Fixer Agent 作为修复智能体，负责分析仿真日志、定位问题函数、生成替换代码。Builder Agent 作为构建智能体，负责将修复后的代码集成到工程并执行编译。三个智能体通过标准化的数据接口进行交互，形成"仿真→诊断→修复→构建→回归"的完整闭环。
+
+多智能体架构如图~\ref{fig:multiagent-architecture}所示。Emulator Runner Agent 基于 LangGraph 框架构建图式工作流，通过工具调用的方式与 Fixer Agent 和 Builder Agent 交互。Fixer Agent 和 Builder Agent 作为子图工具被主控 Agent 调用，它们各自拥有独立的工具链和状态管理能力，能够执行特定的任务并返回结构化结果。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/multiagent_architecture.pdf}
+\caption{动态执行与反馈多智能体架构图}
+\label{fig:multiagent-architecture}
+\end{figure}
+
+Emulator Runner Agent 基于 LangGraph 框架实现，采用图式工作流架构。该智能体的核心职责包括：启动仿真运行并监控执行状态、分析仿真输出并判断是否需要修复、在运行失败时调用 Fixer Agent 进行修复、在修复完成后调用 Builder Agent 重新构建、执行回归验证并判断是否需要继续迭代。Emulator Runner Agent 通过工具调用的方式与其他智能体交互，工具绑定包括仿真工具（EmulateProject、GetMMIOFunctionEmulateInfo、GetFunctionCallsEmulateInfo）、修复工具和构建工具。智能体的决策逻辑由 LLM 驱动，LLM 根据当前的运行状态和日志信息，决定是否需要继续运行、是否需要调用修复工具、是否需要触发构建流程。
+
+Fixer Agent 接收 Emulator Runner Agent 传递的仿真输出信息，包括标准输出、标准错误、MMIO 函数调用日志和函数调用栈信息。该智能体通过分析这些日志定位出错的替换函数，生成修复方案并调用数据管理接口更新替换代码。Fixer Agent 的输出是结构化的 ReplacementUpdate 对象，包含函数名、替换代码和修复原因。Builder Agent 接收 Fixer Agent 生成的替换代码，调用替换工具将代码应用到源文件，然后执行编译构建。该智能体的输出是 BuildOutput 对象，包含退出码、编译输出和错误信息。
+
+\subsubsection{闭环协同工作流}
+
+动态测试反馈闭环的工作流程遵循"仿真→诊断→修复→构建→回归"的循环模式。工作流程以任务为单位组织，每个任务对应一个固件工程、一个构建配置和一组待替换函数列表。
+
+闭环协同工作流的核心逻辑如 {alg:closed-loop-workflow} 所示。该工作流以 LangGraph 框架实现，通过状态管理和条件分支控制执行流程。仿真运行阶段调用 EmulateProject 工具执行固件仿真，采集运行输出、退出码和异常循环检测标志。当仿真成功时，直接返回结果；当仿真失败时，进入故障诊断阶段。
+
+
+\begin{algorithm}[htbp]
+\caption{闭环协同工作流核心逻辑}
+\label{alg:closed-loop-workflow}
+\small
+\KwIn{固件工程、构建配置、待替换函数列表}
+\KwOut{\texttt{EmulateResult}（成功/失败及原因）}
+
+state $\leftarrow$ \{messages, iteration\_count = 0\}\;
+\While{iteration\_count $<$ MAX\_ITERATIONS}{
+  \tcp{仿真运行阶段}
+  emulate\_result $\leftarrow$ EmulateProject(state)\;
+  \If{emulate\_result.success == true}{
+    \Return EmulateResult(success=true)\;
+  }
+
+  \tcp{故障诊断阶段}
+  mmio\_info $\leftarrow$ GetMMIOFunctionEmulateInfo()\;
+  call\_stack $\leftarrow$ GetFunctionCallsEmulateInfo()\;
+  fault\_func $\leftarrow$ ParseFaultFunction(emulate\_result, mmio\_info, call\_stack)\;
+  \If{fault\_func == null \textbf{or} fault\_func $\in$ processed\_list}{
+    \Return EmulateResult(success=false)\;
+  }
+
+  \tcp{修复阶段}
+  replacement $\leftarrow$ Fixer(emulate\_result, fault\_func)\;
+  update\_function\_replacement(replacement)\;
+
+  \tcp{构建与回归阶段}
+  build\_result $\leftarrow$ Builder()\;
+  generate\_emulator\_configs()\;
+  iteration\_count $\leftarrow$ iteration\_count + 1\;
+}
+
+\Return EmulateResult(success=false, reason="达到最大迭代次数")\;
+\end{algorithm}
+
+故障诊断阶段调用 GetMMIOFunctionEmulateInfo 和 GetFunctionCallsEmulateInfo 工具获取 MMIO 函数调用日志和函数调用栈信息，通过 ParseFaultFunction 函数从崩溃地址或异常循环位置解析问题函数。如果无法解析或该函数已在处理列表中，则终止闭环；否则进入修复阶段。
+
+修复阶段调用 Fixer 工具，Fixer Agent 分析仿真日志，生成 ReplacementUpdate 对象并调用 update\_function\_replacement 接口将更新写入数据管理器。修复策略包括：调整等待条件实现（添加超时机制、修改轮询条件）、修正状态管理逻辑（补充遗漏的状态更新）、调整替换策略（从 Strip 改为 Redirect 等）。
+
+构建阶段调用 Builder 工具，Builder Agent 从数据管理器读取更新后的替换代码，执行 replace\_funcs 和 build\_project 操作。如果编译失败，将编译错误反馈给 Fixer Agent 进行进一步修复；如果编译成功，进入回归验证阶段。
+
+回归验证阶段重新生成仿真配置，再次调用 EmulateProject 工具执行回归测试。如果回归测试成功，任务进入完成状态；如果仍然失败，增加迭代计数并进入下一轮迭代。系统设置了最大迭代次数限制（MAX\_ITERATIONS=3），当达到限制后终止闭环并返回失败结果。
+
+\subsubsection{终止条件与错误处理}
+
+动态测试反馈闭环的终止条件包括成功终止和失败终止两种情况。成功终止的条件是仿真工具返回 success 为 true，即退出码为零且未检测到异常循环。此时任务进入"已运行"状态，表示仿真成功完成。失败终止的情况包括多种：达到最大迭代次数限制，即已进行 3 轮修复但仍然失败；无法从崩溃地址或异常循环位置解析出问题函数；解析出的函数已经在 MMIO 信息列表中，说明该函数已经被处理但仍然失败。
+
+错误处理机制包括编译错误处理和运行时错误处理。编译错误由 Builder Agent 检测，如果编译失败，错误信息通过 BuildOutput 返回给 Emulator Runner Agent，LLM 根据错误信息决定是否需要调用 Fixer Agent 进行修复或终止闭环。运行时错误由仿真工具检测，包括内存访问错误、非法指令执行、异常循环等，错误信息包含在标准输出和标准错误中，LLM 分析这些信息定位问题函数。系统还实现了 GraphRecursionError 处理机制，当 LangGraph 框架达到递归深度限制时，系统会分析失败的对话历史，生成详细的故障报告并退出。
+
+通过多智能体协同工作和闭环迭代优化机制，系统能够自动诊断和修复大部分运行时问题，显著减少人工干预的需求。系统记录每次迭代的详细信息，包括失败现象、修复方案、验证结果，便于问题追溯和系统优化。
+
+\section{本章小结}
+\label{sec:design_summary}
+
+本章详细阐述了基于驱动程序替换的固件仿真系统的设计与实现。系统采用分层模块化架构，实现了从静态识别到动态反馈的完整闭环。
+
+驱动函数接口静态分析与识别模块基于 CodeQL 实现，通过三种 MMIO 定位模式识别固件中的硬件交互位置，提取驱动函数、数据结构和调用关系等信息，构建"硬件依赖画像"，为后续的智能替换提供准确的基础数据。
+
+驱动函数分析、替换与编译模块采用大语言模型驱动的智能体架构，通过 LangGraph 框架构建图式工作流。该模块对驱动函数进行语义分类，并根据语义特征自主选择替换策略，生成替换代码并通过质量验证和编译集成实现自动化处理。
+
+动态测试反馈闭环模块采用多智能体架构，由 Emulator Runner Agent 作为主控智能体，Fixer Agent 和 Builder Agent 作为子智能体协同工作。该闭环遵循"仿真→诊断→修复→构建→回归"的循环模式，通过多轮迭代逐步修复运行时问题。
