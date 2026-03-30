@@ -1,0 +1,54 @@
+This is BibTeX, Version 0.99d (TeX Live 2022/dev/Debian)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: main.aux
+A level-1 auxiliary file: body/chap01.aux
+A level-1 auxiliary file: body/chap02.aux
+A level-1 auxiliary file: body/chap03_design.aux
+A level-1 auxiliary file: body/chap04_implementation.aux
+A level-1 auxiliary file: body/chap05_experiment.aux
+A level-1 auxiliary file: body/conclusion.aux
+The style file: HUSTThesis.bst
+Database file #1: ref/refs.bib
+Warning--empty journal in scharnowski2023hoedur
+You've used 52 entries,
+            2256 wiz_defined-function locations,
+            731 strings with 12302 characters,
+and the built_in function-call counts, 10778 in all, are:
+= -- 881
+> -- 846
+< -- 0
++ -- 402
+- -- 201
+* -- 493
+:= -- 1733
+add.period$ -- 104
+call.type$ -- 52
+change.case$ -- 0
+chr.to.int$ -- 0
+cite$ -- 53
+duplicate$ -- 404
+empty$ -- 929
+format.name$ -- 243
+if$ -- 2460
+int.to.chr$ -- 0
+int.to.str$ -- 52
+missing$ -- 40
+newline$ -- 263
+num.names$ -- 52
+pop$ -- 257
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 0
+skip$ -- 458
+stack$ -- 0
+substring$ -- 186
+swap$ -- 32
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 1
+while$ -- 62
+width$ -- 54
+write$ -- 519
+(There was 1 warning)
