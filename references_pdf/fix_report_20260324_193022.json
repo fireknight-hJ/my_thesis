@@ -1,0 +1,319 @@
+[
+  {
+    "file": "agents4plc2024.pdf",
+    "bibkey": "agents4plc2024",
+    "ok": true,
+    "bytes": 819631
+  },
+  {
+    "file": "angora2018.pdf",
+    "bibkey": "angora",
+    "ok": true,
+    "bytes": 252093
+  },
+  {
+    "file": "austin2021program.pdf",
+    "bibkey": "austin2021program",
+    "ok": true,
+    "bytes": 1540169
+  },
+  {
+    "file": "avatar2015.pdf",
+    "bibkey": "avatar",
+    "ok": false,
+    "error": "HTTP Error 404: Not Found"
+  },
+  {
+    "file": "avatar22018.pdf",
+    "bibkey": "avatar2",
+    "ok": false,
+    "error": "HTTP Error 404: Not Found"
+  },
+  {
+    "file": "brown2020language.pdf",
+    "bibkey": "brown2020language",
+    "ok": true,
+    "bytes": 6768044
+  },
+  {
+    "file": "chen2021evaluating.pdf",
+    "bibkey": "chen2021evaluating",
+    "ok": true,
+    "bytes": 1885177
+  },
+  {
+    "file": "chen2023teaching.pdf",
+    "bibkey": "chen2023teaching",
+    "ok": true,
+    "bytes": 1419448
+  },
+  {
+    "file": "clements2020halucinator.pdf",
+    "bibkey": "clements2020halucinator",
+    "ok": true,
+    "bytes": 1699112
+  },
+  {
+    "file": "codedpo2024.pdf",
+    "bibkey": "codedpo2024",
+    "ok": true,
+    "bytes": 1032161
+  },
+  {
+    "file": "codelsi2024.pdf",
+    "bibkey": "codelsi2024",
+    "ok": true,
+    "bytes": 759585
+  },
+  {
+    "file": "driller2016.pdf",
+    "bibkey": "driller",
+    "ok": false,
+    "error": "HTTP Error 404: Not Found"
+  },
+  {
+    "file": "du2022glm.pdf",
+    "bibkey": "du2022glm",
+    "ok": true,
+    "bytes": 723218
+  },
+  {
+    "file": "fan2023automated.pdf",
+    "bibkey": "fan2023automated",
+    "ok": true,
+    "bytes": 808548
+  },
+  {
+    "file": "feng2020codebert.pdf",
+    "bibkey": "feng2020codebert",
+    "ok": true,
+    "bytes": 1320360
+  },
+  {
+    "file": "fengp2020p2im.pdf",
+    "bibkey": "fengp2020p2im",
+    "ok": false,
+    "error": "HTTP Error 404: Not Found"
+  },
+  {
+    "file": "firmadyne2016.pdf",
+    "bibkey": "firmadyne",
+    "ok": false,
+    "error": "HTTP Error 404: Not Found"
+  },
+  {
+    "file": "firmafl2019.pdf",
+    "bibkey": "firmafl",
+    "ok": false,
+    "error": "HTTP Error 404: Not Found"
+  },
+  {
+    "file": "firmalice2015.pdf",
+    "bibkey": "firmalice",
+    "ok": false,
+    "error": "HTTP Error 404: Not Found"
+  },
+  {
+    "file": "fuzzware2022.pdf",
+    "bibkey": "fuzzware",
+    "ok": true,
+    "bytes": 325995
+  },
+  {
+    "file": "gpiot2024.pdf",
+    "bibkey": "gpiot2024",
+    "ok": true,
+    "bytes": 3438483
+  },
+  {
+    "file": "hendrycks2021measuring.pdf",
+    "bibkey": "hendrycks2021measuring",
+    "ok": true,
+    "bytes": 594435
+  },
+  {
+    "file": "improvingllm2024.pdf",
+    "bibkey": "improvingllm2024",
+    "ok": true,
+    "bytes": 185716
+  },
+  {
+    "file": "industroyer2017.pdf",
+    "bibkey": "industroyer2017",
+    "ok": true,
+    "bytes": 702481
+  },
+  {
+    "file": "iotfuzzer2018.pdf",
+    "bibkey": "iotfuzzer",
+    "ok": false,
+    "error": "HTTP Error 404: Not Found"
+  },
+  {
+    "file": "laelaps2021.pdf",
+    "bibkey": "laelaps",
+    "action": "skip_no_url"
+  },
+  {
+    "file": "li2022iotfirmwaresurvey.pdf",
+    "bibkey": "li2022iotfirmwaresurvey",
+    "action": "skip_no_url"
+  },
+  {
+    "file": "li2023starcoder.pdf",
+    "bibkey": "li2023starcoder",
+    "ok": true,
+    "bytes": 1174499
+  },
+  {
+    "file": "liuhangtian2025iotfuzzer.pdf",
+    "bibkey": "liuhangtian2025iotfuzzer",
+    "action": "skip_no_url"
+  },
+  {
+    "file": "maxiaocheng2025iotfirmwaresurvey.pdf",
+    "bibkey": "maxiaocheng2025iotfirmwaresurvey",
+    "action": "skip_no_url"
+  },
+  {
+    "file": "mccoder2024.pdf",
+    "bibkey": "mccoder2024",
+    "ok": true,
+    "bytes": 4514975
+  },
+  {
+    "file": "mirai2018.pdf",
+    "bibkey": "mirai2018",
+    "ok": false,
+    "error": "HTTP Error 404: Not Found"
+  },
+  {
+    "file": "motcoder2024.pdf",
+    "bibkey": "motcoder2024",
+    "ok": true,
+    "bytes": 1358831
+  },
+  {
+    "file": "openai2023gpt4.pdf",
+    "bibkey": "openai2023gpt4",
+    "ok": true,
+    "bytes": 5245564
+  },
+  {
+    "file": "pararehosting2022.pdf",
+    "bibkey": "pararehosting",
+    "ok": false,
+    "error": "HTTP Error 404: Not Found"
+  },
+  {
+    "file": "pearce2022examining.pdf",
+    "bibkey": "pearce2022examining",
+    "ok": true,
+    "bytes": 3911760
+  },
+  {
+    "file": "pretender2019.pdf",
+    "bibkey": "pretender",
+    "ok": false,
+    "error": "HTTP Error 404: Not Found"
+  },
+  {
+    "file": "qsym2018.pdf",
+    "bibkey": "qsym",
+    "ok": false,
+    "error": "HTTP Error 404: Not Found"
+  },
+  {
+    "file": "radford2018improving.pdf",
+    "bibkey": "radford2018improving",
+    "ok": true,
+    "bytes": 541036
+  },
+  {
+    "file": "rgd2024.pdf",
+    "bibkey": "rgd2024",
+    "ok": true,
+    "bytes": 1035543
+  },
+  {
+    "file": "rlcf2024.pdf",
+    "bibkey": "rlcf2024",
+    "ok": true,
+    "bytes": 3558401
+  },
+  {
+    "file": "roziere2023code.pdf",
+    "bibkey": "roziere2023code",
+    "ok": true,
+    "bytes": 1623794
+  },
+  {
+    "file": "schick2023toolformer.pdf",
+    "bibkey": "schick2023toolformer",
+    "ok": true,
+    "bytes": 657966
+  },
+  {
+    "file": "spec2code2024.pdf",
+    "bibkey": "spec2code2024",
+    "ok": true,
+    "bytes": 3390159
+  },
+  {
+    "file": "touvron2023llama.pdf",
+    "bibkey": "touvron2023llama",
+    "ok": true,
+    "bytes": 726566
+  },
+  {
+    "file": "uemu2021.pdf",
+    "bibkey": "uemu",
+    "action": "skip_no_url"
+  },
+  {
+    "file": "vaswani2017attention.pdf",
+    "bibkey": "vaswani2017attention",
+    "ok": true,
+    "bytes": 2215244
+  },
+  {
+    "file": "wang2021codet5.pdf",
+    "bibkey": "wang2021codet5",
+    "ok": true,
+    "bytes": 495072
+  },
+  {
+    "file": "wei2022cot.pdf",
+    "bibkey": "wei2022cot",
+    "ok": true,
+    "bytes": 891773
+  },
+  {
+    "file": "wei2022finetuned.pdf",
+    "bibkey": "wei2022finetuned",
+    "ok": true,
+    "bytes": 1626775
+  },
+  {
+    "file": "yang2021iotsurvey.pdf",
+    "bibkey": "yang2021iotsurvey",
+    "action": "skip_no_url"
+  },
+  {
+    "file": "zhangyuqing2017iotsurvey.pdf",
+    "bibkey": "zhangyuqing2017iotsurvey",
+    "action": "skip_no_url"
+  },
+  {
+    "file": "zheng2023codegeex.pdf",
+    "bibkey": "zheng2023codegeex",
+    "ok": true,
+    "bytes": 21104369
+  },
+  {
+    "file": "ziegler2022productivity.pdf",
+    "bibkey": "ziegler2022productivity",
+    "ok": false,
+    "error": "title_mismatch 0.000"
+  }
+]
