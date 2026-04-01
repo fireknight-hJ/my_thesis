@@ -1,2 +1,5 @@
 core
 core.*
+
+# Clash subscription export (secrets)
+speedcat.yaml
