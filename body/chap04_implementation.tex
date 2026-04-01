@@ -433,7 +433,7 @@ __attribute__((weak)) void HAL_BE_ENET_ReadFrame(uint8_t *buffer, uint16_t size)
 \item 反馈日志（lcmhal.txt）：记录与驱动替换相关的反馈信息。
 \end{itemize}
 
-\subsection{Emulator Runner Agent 实现}
+\subsection{仿真执行智能体实现}
 
 Emulator Runner Agent 基于 LangGraph 框架实现，采用图式工作流架构。该智能体的核心职责包括：启动仿真运行并监控执行状态、分析仿真输出并判断是否需要修复、在运行失败时调用 Fixer Agent 进行修复、在修复完成后调用 Builder Agent 重新构建、执行回归验证并判断是否需要继续迭代。Emulator Runner Agent 通过工具调用的方式与其他智能体交互，工具绑定包括仿真工具（EmulateProject、GetMMIOFunctionEmulateInfo、GetFunctionCallsEmulateInfo）、修复工具和构建工具。智能体的决策逻辑由 LLM 驱动，LLM 根据当前的运行状态和日志信息，决定是否需要继续运行、是否需要调用修复工具、是否需要触发构建流程。
 
