@@ -591,9 +591,9 @@ INPUT /opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/latex/listings/
 INPUT /opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/latex/listings/lstmisc.sty
 INPUT /opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/latex/listings/lstmisc.sty
 INPUT /opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/latex/listings/lstmisc.sty
-INPUT ./figures/驱动函数分析替换与编译.pdf
-INPUT ./figures/驱动函数分析替换与编译.pdf
-INPUT ./figures/驱动函数分析替换与编译.pdf
+INPUT ./figures/驱动函数分析替换与编译.png
+INPUT ./figures/驱动函数分析替换与编译.png
+INPUT ./figures/驱动函数分析替换与编译.png
 INPUT ./body/chap04_implementation.tex
 INPUT ./body/chap04_implementation.tex
 OUTPUT body/chap04_implementation.aux
