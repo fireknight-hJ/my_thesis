@@ -134,7 +134,7 @@
 
 \begin{table}[htbp]
 \centering
-\caption{测试用例详细信息}
+\caption{测试用例与关键节点对照表}
 \label{tab:testcases}
 \small
 \begin{adjustbox}{max width=\textwidth}
@@ -256,7 +256,50 @@ UART\_Hyperterminal\_IT & 79 & 59 & 38 & 38 \\
 \end{adjustbox}
 \end{table}
 
+图~\ref{fig:classification_pie}展示了各类驱动函数的占比分布情况。
 
+\begin{figure}[htbp]
+\centering
+\definecolor{cINIT}{RGB}{70,130,195}
+\definecolor{cNODRIVER}{RGB}{160,160,160}
+\definecolor{cLOOP}{RGB}{235,165,65}
+\definecolor{cRETURNOK}{RGB}{80,165,80}
+\definecolor{cRECV}{RGB}{210,80,80}
+\definecolor{cIRQ}{RGB}{230,190,60}
+\definecolor{cCORE}{RGB}{150,100,180}
+\definecolor{cSKIP}{RGB}{60,180,180}
+\begin{tikzpicture}
+\fill[cINIT] (0,0) -- (90:2.5) arc (90:-65.9:2.5) -- cycle;
+\fill[cNODRIVER] (0,0) -- (-65.9:2.5) arc (-65.9:-116.3:2.5) -- cycle;
+\fill[cLOOP] (0,0) -- (-116.3:2.5) arc (-116.3:-163.8:2.5) -- cycle;
+\fill[cRETURNOK] (0,0) -- (-163.8:2.5) arc (-163.8:-204.1:2.5) -- cycle;
+\fill[cRECV] (0,0) -- (-204.1:2.5) arc (-204.1:-241.9:2.5) -- cycle;
+\fill[cIRQ] (0,0) -- (-241.9:2.5) arc (-241.9:-253.1:2.5) -- cycle;
+\fill[cCORE] (0,0) -- (-253.1:2.5) arc (-253.1:-261.4:2.5) -- cycle;
+\fill[cSKIP] (0,0) -- (-261.4:2.5) arc (-261.4:-270:2.5) -- cycle;
+\draw[white,thick] (0,0) -- (90:2.5);
+\draw[white,thick] (0,0) -- (-65.9:2.5);
+\draw[white,thick] (0,0) -- (-116.3:2.5);
+\draw[white,thick] (0,0) -- (-163.8:2.5);
+\draw[white,thick] (0,0) -- (-204.1:2.5);
+\draw[white,thick] (0,0) -- (-241.9:2.5);
+\draw[white,thick] (0,0) -- (-253.1:2.5);
+\draw[white,thick] (0,0) -- (-261.4:2.5);
+\node[white,font=\footnotesize,align=center] at (12:1.2) {\textbf{INIT}\\[-1pt]43.3\%};
+\node[white,font=\footnotesize,align=center] at (-94:1.6) {\textbf{NODRIVER}\\[-1pt]14.0\%};
+\node[white,font=\footnotesize,align=center] at (-140:1.4) {\textbf{LOOP}\\[-1pt]13.2\%};
+\node[white,font=\footnotesize,align=center] at (-184:1.5) {\textbf{RETURNOK}\\[-1pt]11.2\%};
+\node[white,font=\footnotesize,align=center] at (-223:1.5) {\textbf{RECV}\\[-1pt]10.5\%};
+\draw[thin,cIRQ!70!black] (-247.5:2.6) -- (120:2.9);
+\node[anchor=south east,font=\footnotesize] at (120:2.9) {IRQ 3.1\%};
+\draw[thin,cCORE!70!black] (-257.25:2.6) -- (103:2.9);
+\node[anchor=south,font=\footnotesize] at (103:2.9) {CORE 2.3\%};
+\draw[thin,cSKIP!70!black] (-265.7:2.6) -- (80:2.9);
+\node[anchor=south west,font=\footnotesize] at (80:2.9) {SKIP 2.3\%};
+\end{tikzpicture}
+\caption{驱动函数分类占比分布}
+\label{fig:classification_pie}
+\end{figure}
 
 从图~\ref{fig:classification_pie}可以看出：
 
@@ -481,8 +524,6 @@ UART\_Hyperterminal\_IT & 1 & 1 & 100.0\% \\
 \textbf{（2）Para-rehosting}：通过POSIX接口抽象实现便携式MCU，将嵌入式系统源代码重新编译到x86平台的本机可执行文件中。该方法允许利用x86平台上丰富的测试工具进行固件分析。与本文方法相比，Para-rehosting的核心差异在于需要获取固件样本的源代码，这在第三方的固件分析工作中往往是困难甚至完全不可行的。此外，Para-rehosting需要实现完整的便携式MCU抽象层，工作量大且难以覆盖所有外设功能。
 
 \subsubsection{测试方法}
-
-本节介绍人工成本对比测试的设计思路和对比方法。
 
 从测试集中选取4个具有代表性的STM32固件，分别覆盖UART、I2C、ETH、FATFS四种主要外设类型，分别使用三种方法进行驱动处理，对比驱动函数处理数量和人工投入时间。对于Halucinator，由熟悉嵌入式开发的工程师根据固件代码和硬件规格，手工编写HAL函数的替换实现，记录所需时间和工作量。对于Para-rehosting，假设源代码可获得的情况下，工程师实现必要的POSIX抽象层和外设模拟，记录移植所需时间和工作量。对于本文方法，使用完整的自动化流程运行，记录人工介入（配置、调试、确认等）所需时间。
 
