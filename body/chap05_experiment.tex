@@ -16,7 +16,7 @@
 \centering
 \caption{硬件环境配置}
 \label{tab:hw_env}
-\small
+\footnotesize
 \begin{tabular}{ll}
 \toprule
 \textbf{配置项} & \textbf{规格} \\
@@ -30,7 +30,7 @@
 \centering
 \caption{软件环境配置}
 \label{tab:sw_env}
-\small
+\footnotesize
 \begin{tabular}{ll}
 \toprule
 \textbf{配置项} & \textbf{规格} \\
@@ -83,12 +83,13 @@
 
 经过筛选和整理，最终构建了包含 19 个固件的测试集，详细信息如表~\ref{tab:firmware}所示。
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{测试固件详细信息}
 \label{tab:firmware}
-\small
-\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X p{2.0cm} p{2.0cm} >{\raggedright\arraybackslash}p{1.5cm} >{\raggedright\arraybackslash}p{1.5cm}}
+\footnotesize
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{p{5.5cm} p{1.8cm} p{1.8cm} p{1.2cm} p{1.2cm}}
 \toprule
 \textbf{Demo名称} & \textbf{MCU型号} & \textbf{OS} & \textbf{外设} & \textbf{驱动库} \\
 \midrule
@@ -112,114 +113,27 @@
 \url{LwIP_StreamingServer} & STM32 & FreeRTOS & ETH & STM32 \\
 \url{UART_Hyperterminal_IT} & STM32 & HAL & UART & STM32 \\
 \bottomrule
-\end{tabularx}
+\end{tabular}
+\end{adjustbox}
 \end{table}
 
 \section{功能测试}
 \label{sec:functional_test}
 
-本节评估替换后的固件在仿真环境中的功能正确性。功能正确性是验证系统核心能力的关键指标，即"替换后的固件能否正常运行"。功能测试包括两个方面：（1）仿真环境测试，验证固件能否正常启动和执行主要功能；（2）模糊测试，验证固件在仿真环境中能否支持模糊测试任务并发现潜在漏洞。
 
-为了全面评估替换后固件的运行正确性，本研究采用基于关键节点检查的验证方法。该方法的核心思想是：通过对各个代表性Demo进行模拟仿真运行，然后通过检查关键节点（函数、事件、中断）是否被执行到来确认固件的执行是否正常。与传统的基于硬件的测试方法不同，本方法关注固件在仿真环境中的执行轨迹和关键事件，而非具体的硬件状态。这种方法的优势在于：适合无硬件场景的验证、可以快速验证多个固件、验证结果可追溯可复现、适合大规模自动化测试。
 
-\subsection{测试方法}
+\subsection{驱动函数识别与分类能力评估}
 
-本节介绍功能测试方法的设计思路、测试流程、测试用例选择和评估指标。
-
-\textbf{（1）执行轨迹验证}
-
-执行轨迹验证的目标是确认固件在仿真环境中能够正常执行到关键节点。关键节点是指在固件执行过程中能够反映其功能和状态的重要事件，如系统启动、功能触发、中断处理等。通过检查这些关键节点是否被执行到来，可以初步确认固件的执行路径是否正常。
-
-测试用例的关键节点预期如表~\ref{tab:testcases}所示。每个测试用例都定义了必须执行到的关键节点，例如RTOS内核启动、网络协议栈初始化、数据收发等。
-
-\begin{table}[htbp]
-\centering
-\caption{测试用例与关键节点对照表}
-\label{tab:testcases}
-\small
-\begin{adjustbox}{max width=\textwidth}
-\begin{tabular}{ll}
-\toprule
-\textbf{Demo 名称} & \textbf{关键节点} \\
-\midrule
-NXP\_FATFS\_BareMetal & main \\
-NXP\_FATFS\_FreeRTOS & osKernelStart fatfs\_thread\_entry \\
-NXP\_I2C\_BareMetal & main \\
-NXP\_I2C\_FreeRTOS & osKernelStart i2c\_thread\_entry \\
-NXP\_LwIP\_BareMetal & ethernetif\_input \\
-NXP\_LwIP\_FreeRTOS & osKernelStart eth\_rx\_thread\_entry \\
-NXP\_UART\_BareMetal & main \\
-NXP\_UART\_FreeRTOS & osKernelStart uart\_thread\_entry \\
-imxrt1052-nxp-evk & osKernelStart \\
-imxrt1060-nxp-evk & osKernelStart \\
-LwIP\_HTTP\_Server\_Socket\_RTOS & osKernelStart HAL\_ETH\_ReadData \\
-stm32f401-st-nucleo/eth & rtthread\_startup eth\_rx\_thread\_entry \\
-stm32f401-st-nucleo/fatfs & rtthread\_startup fatfs\_thread\_entry \\
-UART\_Hyperterminal\_IT & HAL\_UART\_Receive \\
-\bottomrule
-\end{tabular}
-\end{adjustbox}
-\end{table}
-
-\textbf{（2）功能正确性验证}
-
-功能正确性验证的目标是确认固件仿真执行后的行为是否与预期相符。与执行轨迹验证不同，功能正确性验证关注固件运行的实际效果，而不仅仅是关键节点是否被执行。
-
-功能正确性验证的方法是：通过观察仿真日志中的执行流，检查固件的关键行为是否符合预期。例如，对于网络功能的固件（如NXP\_LwIP\_BareMetal），需要观察debug日志中的执行流，验证网络协议栈初始化节点、数据收发节点是否按预期顺序执行，验证数据报文是否被正确传递到上层协议栈并被正常消费。对于串口功能的固件（如NXP\_UART\_BareMetal），需要验证串口初始化、数据收发等功能是否正常工作。对于文件系统功能的固件（如NXP\_FATFS\_BareMetal），需要验证文件系统初始化、文件读写操作是否正常完成。
-
-功能正确性验证的评估维度包括：数据传输正确性、状态管理正确性、错误处理正确性等。数据传输正确性验证发送和接收的数据是否符合预期格式和内容。状态管理正确性验证驱动状态机的状态转换是否按预期进行。错误处理正确性验证异常情况的处理是否符合预期逻辑。
-
-\textbf{（3）功能检测策略}
-
-针对不同类型的Demo，本研究设计了差异化的功能检测策略，以验证替换后固件在仿真环境中的功能正确性。功能检测策略的核心思想是：根据Demo的功能特性，定义具体的验证指标和检测方法，通过观察仿真日志和执行状态，判断固件是否按预期工作。
-
-各类型Demo的功能检测策略如表~\ref{tab:function_detection_strategy}所示。
-
-\begin{table}[htbp]
-\centering
-\caption{各类型Demo的功能检测策略}
-\label{tab:function_detection_strategy}
-\small
-\begin{adjustbox}{max width=\textwidth}
-\begin{tabular}{p{2.5cm}p{3cm}p{5.5cm}}
-\toprule
-\textbf{Demo 类型} & \textbf{验证目标} & \textbf{检测逻辑} \\
-\midrule
-网络类 & TCP连接、数据传输 & 检查协议栈初始化、验证TCP握手、确认数据包收发、验证上层应用接收数据 \\
-\midrule
-UART类 & 串口初始化、回显正常 & 检查串口初始化日志、验证波特率配置、观察发送/接收函数调用、确认回显数据一致 \\
-\midrule
-I2C类 & 总线初始化、通信正常 & 检查I2C初始化日志、验证主从模式配置、观察Start/Stop条件、确认数据读写完成、验证ACK信号 \\
-\midrule
-文件系统类 & 文件系统挂载、读写正常 & 检查文件系统初始化日志、验证存储设备检测和挂载、观察文件打开/读写/关闭调用、确认读写数据正确 \\
-\bottomrule
-\end{tabular}
-\end{adjustbox}
-\end{table}
-
-\textbf{网络类Demo检测详解}：以LwIP\_HTTP\_Server\_Raw为例，功能检测包括以下步骤：（1）检查网络接口初始化（ethernetif\_init）是否成功；（2）验证LwIP协议栈初始化（lwip\_init）是否完成；（3）观察ARP请求/响应过程，确认MAC地址解析正确；（4）检查HTTP服务器启动，监听端口是否正确绑定；（5）模拟客户端请求，验证HTTP请求解析和响应生成是否正常；（6）检查数据收发计数，确认网络吞吐量符合预期。通过以上检测，可以确认网络类Demo在仿真环境中能够正常建立网络连接、传输数据、处理协议交互。
-
-\textbf{UART类Demo检测详解}：以UART\_Hyperterminal\_IT为例，功能检测包括以下步骤：（1）检查串口外设初始化（HAL\_UART\_MspInit）是否成功；（2）验证波特率、数据位、停止位等配置参数是否正确；（3）观察串口发送函数（HAL\_UART\_Transmit）调用，确认数据正确写入发送缓冲区；（4）检查串口中断处理（HAL\_UART\_IRQHandler）是否触发，确认接收数据中断；（5）验证接收数据正确传递给上层应用；（6）检查串口回显功能，确认发送的数据能够正确接收并显示。通过以上检测，可以确认UART类Demo在仿真环境中能够正常进行串口通信。
-
-\textbf{文件系统类Demo检测详解}：以NXP\_FATFS\_BareMetal为例，功能检测包括以下步骤：（1）检查存储设备初始化（如SD卡初始化）是否成功；（2）验证文件系统挂载（f\_mount）过程是否完成；（3）观察文件打开（f\_open）调用，确认文件路径解析正确；（4）验证文件读写（f\_read/f\_write）操作，确认数据正确传输；（5）检查文件关闭（f\_close）调用，确认资源正确释放；（6）验证文件内容完整性，确认读写数据一致。通过以上检测，可以确认文件系统类Demo在仿真环境中能够正常进行文件操作。
-
-通过上述差异化的功能检测策略，本研究能够针对不同类型的Demo验证其核心功能是否正常工作，从而证明替换后的固件在仿真环境中具备完整的功能正确性。
-
-\subsection{驱动函数分类评估}
-
-驱动函数分类是整个替换流程的基础环节，分类准确性直接影响后续替换策略的选择和替换代码的质量。本节评估系统对驱动函数的自动分类能力，验证大语言模型的语义理解能力和分类策略的有效性。
-
-本研究在 27 个测试固件上进行了分类实验，共识别出 1005 个驱动函数。
-
+驱动函数识别与分类是整个替换流程的基础环节，分类准确性直接影响后续替换策略的选择和替换代码的质量。本节评估系统对驱动函数的自动识别与分类能力，验证大语言模型的语义理解能力和分类策略的有效性。
 \subsubsection{驱动函数识别与替换统计}
 
 为了全面评估本文方法的驱动处理能力，本研究统计了每个测试用例的驱动函数识别和替换情况，统计结果如表~\ref{tab:driver_stats}所示。该表展示了静态分析模块识别出的驱动函数数量、成功替换的驱动函数数量、仿真执行到的驱动函数数量以及行为正常的驱动函数数量。
 
-\begin{table}[!htbp]
+\begin{table}[H]
 \centering
 \caption{驱动函数识别与替换统计}
 \label{tab:driver_stats}
-\small
+\footnotesize
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lcccc}
 \toprule
@@ -237,12 +151,12 @@ imxrt1052-nxp-evk/i2c & 24 & 11 & 10 & 10 \\
 imxrt1060-nxp-evk/base & 21 & 5 & 4 & 4 \\
 imxrt1060-nxp-evk/eth & 21 & 5 & 5 & 5 \\
 stm32f401-st-nucleo/base & 20 & 12 & 11 & 11 \\
-stm32f401-st-nucleo/eth & 20 & 11 & 9 & 9 \\
+stm32f401-st-nucleo/fatfs\_sdcard & 20 & 11 & 9 & 9 \\
 stm32f401-st-nucleo/fatfs & 21 & 19 & 17 & 17 \\
-stm32f401-st-nucleo/fatfs\_demo & 130 & 94 & 56 & 56 \\
+stm32f401-st-nucleo/eth & 130 & 94 & 56 & 56 \\
 stm32f401-st-nucleo/i2c & 20 & 15 & 13 & 13 \\
 stm32f401-st-nucleo/uart & 20 & 16 & 14 & 14 \\
-LwIP\_HTTP\_Server\_Raw & 88 & 75 & 48 & 45 \\
+LwIP\_HTTP\_Server\_Raw & 88 & 75 & 48 & 48 \\
 LwIP\_HTTP\_Server\_SocketRTOS & 130 & 94 & 53 & 53 \\
 LwIP\_HTTP\_Server\_Socket\_RTOS & 122 & 75 & 47 & 47 \\
 LwIP\_StreamingServer & 130 & 94 & 58 & 58 \\
@@ -255,6 +169,14 @@ UART\_Hyperterminal\_IT & 79 & 59 & 38 & 38 \\
 \end{tabular}
 \end{adjustbox}
 \end{table}
+
+从统计结果可以看出，本文方法在驱动函数识别和替换方面表现出较高的准确性。22个有效测试用例共识别出1005个驱动函数，平均每个固件45.7个；成功替换660个驱动函数，平均每个固件30.0个。在仿真执行过程中，660个被替换的驱动函数中有449个在仿真运行期间被执行到，被执行到的驱动函数行为正常率达到100\%，这表明本文方法生成的替代代码在语义正确性方面能够满足实际运行需求。未被完全执行到的驱动函数主要属于备用初始化路径、异常处理分支等非主流程代码，不影响固件的核心功能运行。
+
+% 本实验的主要目的包括：第一，验证本文方法能够准确识别固件中的硬件依赖代码；第二，验证本文方法生成的替代代码能够在仿真环境中正确执行，保证固件的正常运行；第三，验证本文方法对不同平台、不同操作系统、不同外设类型的固件具有通用性和可扩展性；第四，验证仿真环境能够支持模糊测试和漏洞挖掘任务。
+
+\subsubsection{驱动函数分类统计}
+
+为了全面评估本文方法的驱动函数分类能力，本研究统计了每个测试用例的驱动函数分类情况，统计结果如表~\ref{tab:function_categories_stats}所示。该表展示了静态分析模块识别出的驱动函数按照不同类别的分布情况。
 
 图~\ref{fig:classification_pie}展示了各类驱动函数的占比分布情况。
 
@@ -313,62 +235,11 @@ UART\_Hyperterminal\_IT & 79 & 59 & 38 & 38 \\
 
 \textbf{（5）直接返回类函数无需替换}：RETURNOK 类函数占 11.2\%（113 个），均未生成替换代码（0\%），这类函数在仿真环境中直接跳过执行并返回成功状态值，无需生成替换代码。CORE 类函数占 2.3\%（23 个），同样未生成替换代码，主要涉及操作系统核心函数，由仿真器提供底层支持。
 
-
-
-为了全面评估本文方法的驱动处理能力，本研究统计了每个测试用例的驱动函数识别和替换情况，统计结果如表~\ref{tab:driver_stats}所示。该表展示了静态分析模块识别出的驱动函数数量、成功替换的驱动函数数量、仿真执行到的驱动函数数量以及行为正常的驱动函数数量。
-
-\begin{table}[!htbp]
-\centering
-\caption{驱动函数识别与替换统计}
-\label{tab:driver_stats}
-\small
-\begin{adjustbox}{max width=\textwidth}
-\begin{tabular}{lcccc}
-\toprule
-\textbf{Demo 名称} & \textbf{识别驱动函数数量} & \textbf{替换驱动函数数量} & \textbf{执行到的驱动函数数量} & \textbf{行为正常数量} \\
-\midrule
-NXP\_FATFS\_BareMetal & 12 & 11 & 10 & 10 \\
-NXP\_I2C\_BareMetal & 22 & 5 & 4 & 4 \\
-NXP\_LwIP\_BareMetal & 22 & 15 & 13 & 13 \\
-NXP\_LwIP\_FreeRTOS & 22 & 17 & 15 & 15 \\
-NXP\_UART\_BareMetal & 30 & 1 & 1 & 1 \\
-NXP\_UART\_FreeRTOS & 30 & 7 & 6 & 6 \\
-imxrt1052-nxp-evk/base & 11 & 10 & 9 & 9 \\
-imxrt1052-nxp-evk/fatfs & 10 & 9 & 8 & 8 \\
-imxrt1052-nxp-evk/i2c & 24 & 11 & 10 & 10 \\
-imxrt1060-nxp-evk/base & 21 & 5 & 4 & 4 \\
-imxrt1060-nxp-evk/eth & 21 & 5 & 5 & 5 \\
-stm32f401-st-nucleo/base & 20 & 12 & 11 & 11 \\
-stm32f401-st-nucleo/fatfs\_demo & 20 & 11 & 9 & 9 \\
-stm32f401-st-nucleo/fatfs & 21 & 19 & 17 & 17 \\
-stm32f401-st-nucleo/eth & 130 & 94 & 56 & 56 \\
-stm32f401-st-nucleo/i2c & 20 & 15 & 13 & 13 \\
-stm32f401-st-nucleo/uart & 20 & 16 & 14 & 14 \\
-LwIP\_HTTP\_Server\_Raw & 88 & 75 & 48 & 48 \\
-LwIP\_HTTP\_Server\_SocketRTOS & 130 & 94 & 53 & 53 \\
-LwIP\_HTTP\_Server\_Socket\_RTOS & 122 & 75 & 47 & 47 \\
-LwIP\_StreamingServer & 130 & 94 & 58 & 58 \\
-UART\_Hyperterminal\_IT & 79 & 59 & 38 & 38 \\
-\midrule
-\textbf{总计} & \textbf{1005} & \textbf{660} & \textbf{449} & \textbf{449} \\
-\midrule
-\textbf{平均} & \textbf{45.7} & \textbf{30.0} & \textbf{20.4} & \textbf{20.4} \\
-\bottomrule
-\end{tabular}
-\end{adjustbox}
-\end{table}
-
-从统计结果可以看出，本文方法在驱动函数识别和替换方面表现出较高的准确性。22个有效测试用例共识别出1005个驱动函数，平均每个固件45.7个；成功替换660个驱动函数，平均每个固件30.0个。在仿真执行过程中，660个被替换的驱动函数中有449个在仿真运行期间被执行到，被执行到的驱动函数行为正常率达到100\%，这表明本文方法生成的替代代码在语义正确性方面能够满足实际运行需求。未被完全执行到的驱动函数主要属于备用初始化路径、异常处理分支等非主流程代码，不影响固件的核心功能运行。
-
-本实验的主要目的包括：第一，验证本文方法能够准确识别固件中的硬件依赖代码；第二，验证本文方法生成的替代代码能够在仿真环境中正确执行，保证固件的正常运行；第三，验证本文方法对不同平台、不同操作系统、不同外设类型的固件具有通用性和可扩展性；第四，验证仿真环境能够支持模糊测试和漏洞挖掘任务。
-
-为了全面评估本文方法的驱动函数分类能力，本研究统计了每个测试用例的驱动函数分类情况，统计结果如表~\ref{tab:function_categories_stats}所示。该表展示了静态分析模块识别出的驱动函数按照不同类别的分布情况。
-
-\begin{table}[!htbp]
+\begin{table}[H]
 \centering
 \caption{驱动函数分类统计}
 \label{tab:function_categories_stats}
-\small
+\footnotesize
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lcccccccc}
 \toprule
@@ -386,7 +257,7 @@ imxrt1052-nxp-evk/i2c & 11 & 2 & 1 & 4 & 6 & 0 & 0 & 0 \\
 imxrt1060-nxp-evk/base & 5 & 0 & 0 & 0 & 16 & 0 & 0 & 0 \\
 imxrt1060-nxp-evk/eth & 3 & 0 & 0 & 1 & 16 & 1 & 0 & 0 \\
 stm32f401-st-nucleo/base & 9 & 3 & 2 & 0 & 3 & 0 & 3 & 0 \\
-stm32f401-st-nucleo/fatfs\_demo & 9 & 2 & 1 & 0 & 4 & 0 & 4 & 0 \\
+stm32f401-st-nucleo/fatfs\_sdcard & 9 & 2 & 1 & 0 & 4 & 0 & 4 & 0 \\
 stm32f401-st-nucleo/fatfs & 19 & 1 & 0 & 0 & 0 & 0 & 1 & 0 \\
 stm32f401-st-nucleo/eth & 57 & 23 & 21 & 12 & 7 & 2 & 2 & 6 \\
 stm32f401-st-nucleo/i2c & 16 & 2 & 1 & 0 & 1 & 0 & 0 & 0 \\
@@ -419,25 +290,89 @@ UART\_Hyperterminal\_IT & 23 & 12 & 11 & 19 & 4 & 6 & 2 & 2 \\
 
 \subsection{功能正确性验证}
 
-本节详细介绍功能测试的实施过程，包括测试用例详情、仿真执行过程、关键节点检查过程和测试结果分析。
+为了全面评估替换后固件的运行正确性，本研究采用基于关键节点检查的执行轨迹验证方法，以及基于固件执行行为的功能正确性验证方法。
 
-\textbf{（1）测试用例详情}
+\subsubsection{执行轨迹验证方法}
 
-本研究选择的测试用例如表~\ref{tab:testcases}所示。每个测试用例都有明确的关键节点预期。
+执行轨迹验证的目标是确认固件在仿真环境中能够正常执行到关键节点。关键节点是指在固件执行过程中能够反映其功能和状态的重要事件，如系统启动、功能触发、中断处理等。通过检查这些关键节点是否被执行到来，可以初步确认固件的执行路径是否正常。
 
-\textbf{（2）仿真执行过程}
+执行轨迹验证方法的步骤是：将测试用例在仿真环境中执行，记录执行轨迹和关键事件。执行完成后，分析执行轨迹，检查表~\ref{tab:testcases}中列出的关键节点是否被执行到来。检查过程包括：查找关键节点函数是否被调用，查找关键节点事件是否被触发，查找关键节点中断是否被处理。对于RTOS相关的测试用例，还需要检查RTOS内核启动和任务调度等关键节点是否被执行。
 
-将测试用例在仿真环境中执行，记录执行轨迹和关键事件。仿真环境需要正确配置CPU架构、内存映射和寄存器参数，确保能够准确模拟目标硬件的行为。仿真执行过程中，系统实时监控固件的运行状态，记录函数调用、中断触发、事件发生等关键信息。
+测试用例的关键节点预期如表~\ref{tab:testcases}所示。每个测试用例都定义了必须执行到的关键节点，例如RTOS内核启动、网络协议栈初始化、数据收发等。
 
-\textbf{（3）关键节点检查过程}
+\begin{table}[H]
+\centering
+\caption{测试用例与关键节点对照表}
+\label{tab:testcases}
+\footnotesize
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{ll}
+\toprule
+\textbf{Demo 名称} & \textbf{关键节点} \\
+\midrule
+NXP\_FATFS\_BareMetal & main \\
+NXP\_FATFS\_FreeRTOS & osKernelStart fatfs\_thread\_entry \\
+NXP\_I2C\_BareMetal & main \\
+NXP\_I2C\_FreeRTOS & osKernelStart i2c\_thread\_entry \\
+NXP\_LwIP\_BareMetal & ethernetif\_input \\
+NXP\_LwIP\_FreeRTOS & osKernelStart eth\_rx\_thread\_entry \\
+NXP\_UART\_BareMetal & main \\
+NXP\_UART\_FreeRTOS & osKernelStart uart\_thread\_entry \\
+imxrt1052-nxp-evk & osKernelStart \\
+imxrt1060-nxp-evk & osKernelStart \\
+LwIP\_HTTP\_Server\_Socket\_RTOS & osKernelStart HAL\_ETH\_ReadData \\
+stm32f401-st-nucleo/eth & rtthread\_startup eth\_rx\_thread\_entry \\
+stm32f401-st-nucleo/fatfs & rtthread\_startup fatfs\_thread\_entry \\
+UART\_Hyperterminal\_IT & HAL\_UART\_Receive \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
 
-执行完成后，分析执行轨迹，检查表~\ref{tab:testcases}中列出的关键节点是否被执行到来。检查过程包括：查找关键节点函数是否被调用，查找关键节点事件是否被触发，查找关键节点中断是否被处理。对于RTOS相关的测试用例，还需要检查RTOS内核启动和任务调度等关键节点是否被执行。
 
-\textbf{（4）驱动函数识别与替换统计}
+\subsubsection{功能正确性验证方法}
 
-为了全面评估本文方法的驱动处理能力，本研究统计了每个测试用例的驱动函数识别和替换情况，统计结果如表~\ref{tab:driver_stats}所示。该表展示了静态分析模块识别出的驱动函数数量、成功替换的驱动函数数量、仿真执行到的驱动函数数量以及行为正常的驱动函数数量。
+功能正确性验证的目标是确认固件仿真执行后的行为是否与预期相符。与执行轨迹验证不同，功能正确性验证关注固件运行的实际效果，而不仅仅是关键节点是否被执行。
 
-\subsection{测试结果}
+功能正确性验证的方法是：通过观察仿真日志中的执行流，检查固件的关键行为是否符合预期。例如，对于网络功能的固件（如NXP\_LwIP\_BareMetal），需要观察debug日志中的执行流，验证网络协议栈初始化节点、数据收发节点是否按预期顺序执行，验证数据报文是否被正确传递到上层协议栈并被正常消费。对于串口功能的固件（如NXP\_UART\_BareMetal），需要验证串口初始化、数据收发等功能是否正常工作。对于文件系统功能的固件（如NXP\_FATFS\_BareMetal），需要验证文件系统初始化、文件读写操作是否正常完成。
+
+功能正确性验证的评估维度包括：数据传输正确性、状态管理正确性、错误处理正确性等。数据传输正确性验证发送和接收的数据是否符合预期格式和内容。状态管理正确性验证驱动状态机的状态转换是否按预期进行。错误处理正确性验证异常情况的处理是否符合预期逻辑。
+
+针对不同类型的Demo，本研究设计了差异化的功能检测策略，以验证替换后固件在仿真环境中的功能正确性。功能检测策略的核心思想是：根据Demo的功能特性，定义具体的验证指标和检测方法，通过观察仿真日志和执行状态，判断固件是否按预期工作。
+
+各类型Demo的功能检测策略如表~\ref{tab:function_detection_strategy}所示。
+
+\begin{table}[htbp]
+\centering
+\caption{各类型Demo的功能检测策略}
+\label{tab:function_detection_strategy}
+\footnotesize
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{p{2.5cm}p{3cm}p{5.5cm}}
+\toprule
+\textbf{Demo 类型} & \textbf{验证目标} & \textbf{检测逻辑} \\
+\midrule
+网络类 & TCP连接、数据传输 & 检查协议栈初始化、验证TCP握手、确认数据包收发、验证上层应用接收数据 \\
+\midrule
+UART类 & 串口初始化、回显正常 & 检查串口初始化日志、验证波特率配置、观察发送/接收函数调用、确认回显数据一致 \\
+\midrule
+I2C类 & 总线初始化、通信正常 & 检查I2C初始化日志、验证主从模式配置、观察Start/Stop条件、确认数据读写完成、验证ACK信号 \\
+\midrule
+文件系统类 & 文件系统挂载、读写正常 & 检查文件系统初始化日志、验证存储设备检测和挂载、观察文件打开/读写/关闭调用、确认读写数据正确 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\textbf{网络类Demo检测详解}：以LwIP\_HTTP\_Server\_Raw为例，功能检测包括以下步骤：（1）检查网络接口初始化（ethernetif\_init）是否成功；（2）验证LwIP协议栈初始化（lwip\_init）是否完成；（3）观察ARP请求/响应过程，确认MAC地址解析正确；（4）检查HTTP服务器启动，监听端口是否正确绑定；（5）模拟客户端请求，验证HTTP请求解析和响应生成是否正常；（6）检查数据收发计数，确认网络吞吐量符合预期。通过以上检测，可以确认网络类Demo在仿真环境中能够正常建立网络连接、传输数据、处理协议交互。
+
+\textbf{UART类Demo检测详解}：以UART\_Hyperterminal\_IT为例，功能检测包括以下步骤：（1）检查串口外设初始化（HAL\_UART\_MspInit）是否成功；（2）验证波特率、数据位、停止位等配置参数是否正确；（3）观察串口发送函数（HAL\_UART\_Transmit）调用，确认数据正确写入发送缓冲区；（4）检查串口中断处理（HAL\_UART\_IRQHandler）是否触发，确认接收数据中断；（5）验证接收数据正确传递给上层应用；（6）检查串口回显功能，确认发送的数据能够正确接收并显示。通过以上检测，可以确认UART类Demo在仿真环境中能够正常进行串口通信。
+
+\textbf{文件系统类Demo检测详解}：以NXP\_FATFS\_BareMetal为例，功能检测包括以下步骤：（1）检查存储设备初始化（如SD卡初始化）是否成功；（2）验证文件系统挂载（f\_mount）过程是否完成；（3）观察文件打开（f\_open）调用，确认文件路径解析正确；（4）验证文件读写（f\_read/f\_write）操作，确认数据正确传输；（5）检查文件关闭（f\_close）调用，确认资源正确释放；（6）验证文件内容完整性，确认读写数据一致。通过以上检测，可以确认文件系统类Demo在仿真环境中能够正常进行文件操作。
+
+通过上述差异化的功能检测策略，本研究能够针对不同类型的Demo验证其核心功能是否正常工作，从而证明替换后的固件在仿真环境中具备完整的功能正确性。
+
+\subsubsection{测试结果}
 
 本节详细展示功能测试结果，包括关键节点匹配情况、功能正确性评估和测试通过率统计。
 
@@ -485,20 +420,29 @@ UART\_Hyperterminal\_IT & 1 & 1 & 100.0\% \\
 \centering
 \caption{功能正确性评估}
 \label{tab:function_results}
+\footnotesize
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lcc}
 \toprule
-\textbf{功能类型} & \textbf{测试样本数量} & \textbf{验证结果} \\
+\textbf{测试样本} & \textbf{功能类型} & \textbf{验证结果} \\
 \midrule
-文件系统（FatFS） & 2 & 全部正常 \\
-通信外设（I2C） & 2 & 全部正常 \\
-网络功能（ETH、LwIP） & 2 & 全部正常 \\
-串口功能（UART） & 2 & 全部正常 \\
-启动（RTOS） & 2 & 全部正常 \\
+NXP\_FATFS\_BareMetal & \multirow{2}{*}{文件系统（FatFS）} & \multirow{2}{*}{全部正常} \\
+NXP\_FATFS\_FreeRTOS & & \\
+\midrule
+NXP\_I2C\_BareMetal & \multirow{2}{*}{通信外设（I2C）} & \multirow{2}{*}{全部正常} \\
+NXP\_I2C\_FreeRTOS & & \\
+\midrule
+NXP\_LwIP\_BareMetal & \multirow{2}{*}{网络功能（ETH、LwIP）} & \multirow{2}{*}{全部正常} \\
+NXP\_LwIP\_FreeRTOS & & \\
+\midrule
+NXP\_UART\_BareMetal & \multirow{2}{*}{串口功能（UART）} & \multirow{2}{*}{全部正常} \\
+NXP\_UART\_FreeRTOS & & \\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
 
-实验结果表明，所有测试用例的功能验证结果均为正常，文件系统功能、通信外设功能、网络功能、串口功能和启动功能等主要功能都被正确实现。这说明替换后的驱动代码在语义上与原代码等价，能够正确实现硬件功能。
+实验结果表明，所有测试用例的功能验证结果均为正常，文件系统功能、通信外设功能、网络功能和串口功能等主要功能都被正确实现。这说明替换后的驱动代码在语义上与原代码等价，能够正确实现硬件功能。
 
 \subsection{本节小结}
 
@@ -529,50 +473,50 @@ UART\_Hyperterminal\_IT & 1 & 1 & 100.0\% \\
 
 \subsubsection{测试结果}
 
-% 人工成本对比测试结果如表~\ref{tab:compare_results}所示。
+人工成本对比测试结果如表~\ref{tab:compare_results}所示。
 
-% \begin{table}[p]
-% \centering
-% \caption{与现有方法的人工成本对比}
-% \label{tab:compare_results}
-% \small
-% \begin{adjustbox}{max width=\textwidth}
-% \begin{tabular}{l cc cc cc}
-% \toprule
-% \multirow{2}{*}{\textbf{外设类型（Demo）}} & \multicolumn{2}{c}{\textbf{Halucinator}} & \multicolumn{2}{c}{\textbf{Para-rehosting}} & \multicolumn{2}{c}{\textbf{本文方法}} \\
-% \cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7}
-%   & 驱动数 & 人工时间(h) & 驱动数 & 人工时间(h) & 驱动数 & 人工时间(h) \\
-% \midrule
-% UART（UART\_Hyperterminal\_IT） & 15 & 3.0 & 16 & 5.0 & 59 & 0.5 \\
-% I2C（stm32f401-st-nucleo/i2c） & 5 & 1.5 & 6 & 2.5 & 15 & 0.5 \\
-% ETH（LwIP\_HTTP\_Server\_Raw） & 20 & 4.0 & 22 & 6.0 & 75 & 1.0 \\
-% FATFS（stm32f401-st-nucleo/fatfs） & 6 & 2.0 & 7 & 3.5 & 19 & 0.5 \\
-% \midrule
-% \textbf{平均} & \textbf{11.5} & \textbf{2.6} & \textbf{12.8} & \textbf{4.3} & \textbf{42.0} & \textbf{0.6} \\
-% \bottomrule
-% \end{tabular}
-% \end{adjustbox}
-% \end{table}
+\begin{table}[!htbp]
+\centering
+\caption{与现有方法的人工成本对比}
+\label{tab:compare_results}
+\footnotesize
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{l cc cc cc}
+\toprule
+\multirow{2}{*}{\textbf{外设类型（Demo）}} & \multicolumn{2}{c}{\textbf{Halucinator}} & \multicolumn{2}{c}{\textbf{Para-rehosting}} & \multicolumn{2}{c}{\textbf{本文方法}} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7}
+  & 驱动数 & 人工时间(h) & 驱动数 & 人工时间(h) & 驱动数 & 人工时间(h) \\
+\midrule
+UART（UART\_Hyperterminal\_IT） & 15 & 3.0 & 16 & 5.0 & 59 & 0.5 \\
+I2C（stm32f401-st-nucleo/i2c） & 5 & 1.5 & 6 & 2.5 & 15 & 0.5 \\
+ETH（LwIP\_HTTP\_Server\_Raw） & 20 & 4.0 & 22 & 6.0 & 75 & 1.0 \\
+FATFS（stm32f401-st-nucleo/fatfs） & 6 & 2.0 & 7 & 3.5 & 19 & 0.5 \\
+\midrule
+\textbf{平均} & \textbf{11.5} & \textbf{2.6} & \textbf{12.8} & \textbf{4.3} & \textbf{42.0} & \textbf{0.6} \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
 
-% 从表~\ref{tab:compare_results}可以看出：
+从表~\ref{tab:compare_results}可以看出：
 
-% \textbf{（1）驱动处理数量}：本文方法平均处理42.0个驱动函数，约为Halucinator（11.5个）的3.7倍和Para-rehosting（12.8个）的3.3倍。这一差异源于分析方式的不同：本文方法在静态分析阶段即对整个驱动库进行全面的函数级扫描，通过CodeQL识别所有直接访问MMIO地址的函数，在仿真运行前一次性完成所有驱动函数的替换，不存在遗漏。而Halucinator和Para-rehosting采用的是运行时逐步调试的方式，在仿真执行过程中遇到崩溃或异常时才定位并修复相应的驱动函数，因此表中的驱动处理数量仅反映了调试过程中实际暴露并处理的部分，而非完整的驱动依赖集合，未被触发的驱动场景可能在后续动态测试中暴露出新的问题。本文方法通过前置的全面静态分析，有效避免了这一问题。
+\textbf{（1）驱动处理数量}：本文方法平均处理42.0个驱动函数，约为Halucinator（11.5个）的3.7倍和Para-rehosting（12.8个）的3.3倍。这一差异源于分析方式的不同：本文方法在静态分析阶段即对整个驱动库进行全面的函数级扫描，通过CodeQL识别所有直接访问MMIO地址的函数，在仿真运行前一次性完成所有驱动函数的替换，不存在遗漏。而Halucinator和Para-rehosting采用的是运行时逐步调试的方式，在仿真执行过程中遇到崩溃或异常时才定位并修复相应的驱动函数，因此表中的驱动处理数量仅反映了调试过程中实际暴露并处理的部分，而非完整的驱动依赖集合，未被触发的驱动场景可能在后续动态测试中暴露出新的问题。本文方法通过前置的全面静态分析，有效避免了这一问题。
 
-% \textbf{（2）人工投入时间}：本文方法平均人工投入时间仅为0.6小时，而Halucinator平均需要2.6小时，Para-rehosting平均需要4.3小时。本文方法的人工投入时间仅为Halucinator的23.1\%和Para-rehosting的14.0\%，主要原因在于本文方法的人工投入主要集中在前期准备工作，包括编译工具链配置和固件案例选取等，这些工作在每个平台上仅需完成一次，即可复用于同一平台的所有固件。在固件仿真阶段，自动化的驱动函数分析、替换代码生成以及动态测试与反馈修复流程能够解决大部分驱动依赖问题，仅在面对复杂的驱动逻辑或罕见的编程模式时，才需要少量人工介入进行问题排查和修正。相比之下，Halucinator需要手工编写每个HAL函数的替换实现，Para-rehosting除了需要实现便携式MCU抽象层外，还需要对操作系统内核进行裁剪和修改以适配x86平台，人工工作量显著高于另外两种方法。
+\textbf{（2）人工投入时间}：本文方法平均人工投入时间仅为0.6小时，而Halucinator平均需要2.6小时，Para-rehosting平均需要4.3小时。本文方法的人工投入时间仅为Halucinator的23.1\%和Para-rehosting的14.0\%，主要原因在于本文方法的人工投入主要集中在前期准备工作，包括编译工具链配置和固件案例选取等，这些工作在每个平台上仅需完成一次，即可复用于同一平台的所有固件。在固件仿真阶段，自动化的驱动函数分析、替换代码生成以及动态测试与反馈修复流程能够解决大部分驱动依赖问题，仅在面对复杂的驱动逻辑或罕见的编程模式时，才需要少量人工介入进行问题排查和修正。相比之下，Halucinator需要手工编写每个HAL函数的替换实现，Para-rehosting除了需要实现便携式MCU抽象层外，还需要对操作系统内核进行裁剪和修改以适配x86平台，人工工作量显著高于另外两种方法。
 
-% \textbf{（3）语义理解与迭代优化}：本文方法利用LLM的代码理解能力，能够分析驱动函数的调用模式、数据流向和控制流，生成语义正确的替代代码，而非采用简化策略。同时，本文方法建立了完整的动态反馈闭环，通过在仿真环境中执行固件，自动检测问题并触发重新分析和代码生成，实现迭代优化，替换代码的质量能够持续提升。
+\textbf{（3）语义理解与迭代优化}：本文方法利用LLM的代码理解能力，能够分析驱动函数的调用模式、数据流向和控制流，生成语义正确的替代代码，而非采用简化策略。同时，本文方法建立了完整的动态反馈闭环，通过在仿真环境中执行固件，自动检测问题并触发重新分析和代码生成，实现迭代优化，替换代码的质量能够持续提升。
 
-% 总体而言，本文方法在人力成本和驱动覆盖范围方面显著优于Halucinator和Para-rehosting，适合需要大规模处理多种固件的场景。本文方法将单个固件的人工投入从小时级别降低到0.5$\sim$1小时，人力成本仅为传统方法的14.0\%$\sim$23.1\%，同时驱动函数覆盖数量达到传统方法的3.3$\sim$3.7倍，为物联网设备固件仿真提供了一种高效的自动化途径。
+总体而言，本文方法在人力成本和驱动覆盖范围方面显著优于Halucinator和Para-rehosting，适合需要大规模处理多种固件的场景。本文方法将单个固件的人工投入从小时级别降低到0.5$\sim$1小时，人力成本仅为传统方法的14.0\%$\sim$23.1\%，同时驱动函数覆盖数量达到传统方法的3.3$\sim$3.7倍，为物联网设备固件仿真提供了一种高效的自动化途径。
 
 \subsection{模糊测试性能测试}
 
 本节评估本文方法构建的仿真环境在实际安全测试场景中的性能表现。通过在仿真环境中运行AFL++模糊测试器，评估固件的执行速度、代码覆盖率以及漏洞发现能力。
 
-\subsubsection{实验设计}
+\subsubsection{测试方法}
 
 从测试集中选择7个具有代表性的固件，覆盖网络（ETH）、串口（UART）和I2C三种通信外设类型，使用本文方法进行驱动替换后，在仿真环境中运行AFL++进行模糊测试。测试时间为24小时，统计基本块覆盖率、执行速度和发现的Crash数量。
 
-\subsubsection{实验结果}
+\subsubsection{测试结果}
 
 模糊测试实验结果如表~\ref{tab:fuzz_results}所示。
 
@@ -580,7 +524,7 @@ UART\_Hyperterminal\_IT & 1 & 1 & 100.0\% \\
 \centering
 \caption{模糊测试实验结果对比}
 \label{tab:fuzz_results}
-\small
+\footnotesize
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{l c cc cc c}
 \toprule
