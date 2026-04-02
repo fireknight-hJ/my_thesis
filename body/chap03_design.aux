@@ -8,51 +8,48 @@
 \@writefile{lof}{\contentsline {figure}{\numberline {3.1}{\ignorespaces 系统整体架构图}}{20}{figure.caption.8}\protected@file@percent }
 \newlabel{fig:arch}{{3.1}{20}{系统整体架构图}{figure.caption.8}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {3.1}驱动函数接口静态分析与识别模块设计}{21}{section.3.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1.1}模块概述}{21}{subsection.3.1.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1.2}MMIO 访问模式识别方法}{22}{subsection.3.1.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1.1}MMIO 访问模式识别方法}{22}{subsection.3.1.1}\protected@file@percent }
 \newlabel{lst:mmio-struct}{{3.1}{22}{MMIO 结构体示例}{lstlisting.3.1}{}}
 \@writefile{lol}{\contentsline {lstlisting}{\numberline {3.1}{\ignorespaces MMIO 结构体示例}}{22}{lstlisting.3.1}\protected@file@percent }
-\newlabel{lst:direct-cast}{{3.2}{23}{直接地址强转模式示例}{lstlisting.3.2}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {3.2}{\ignorespaces 直接地址强转模式示例}}{23}{lstlisting.3.2}\protected@file@percent }
+\newlabel{lst:direct-cast}{{3.2}{22}{直接地址强转模式示例}{lstlisting.3.2}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {3.2}{\ignorespaces 直接地址强转模式示例}}{22}{lstlisting.3.2}\protected@file@percent }
 \newlabel{lst:indirect-init}{{3.3}{23}{间接初始化模式示例（HAL句柄和配置表）}{lstlisting.3.3}{}}
 \@writefile{lol}{\contentsline {lstlisting}{\numberline {3.3}{\ignorespaces 间接初始化模式示例（HAL句柄和配置表）}}{23}{lstlisting.3.3}\protected@file@percent }
-\newlabel{lst:pointer-param}{{3.4}{24}{常量指针参数模式示例}{lstlisting.3.4}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {3.4}{\ignorespaces 常量指针参数模式示例}}{24}{lstlisting.3.4}\protected@file@percent }
+\newlabel{lst:pointer-param}{{3.4}{23}{常量指针参数模式示例}{lstlisting.3.4}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {3.4}{\ignorespaces 常量指针参数模式示例}}{23}{lstlisting.3.4}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {3.1}{\ignorespaces MMIO 结构体实例定位模式对比}}{24}{table.caption.9}\protected@file@percent }
 \newlabel{tab:mmio-patterns}{{3.1}{24}{MMIO 结构体实例定位模式对比}{table.caption.9}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1.3}驱动函数定位准则}{24}{subsection.3.1.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1.4}数据流追踪目标}{25}{subsection.3.1.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1.5}统一数据模型设计}{25}{subsection.3.1.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {3.2}驱动函数分析、替换与编译模块设计}{26}{section.3.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2.1}模块概述}{26}{subsection.3.2.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2.2}分析替换与编译智能体工作流设计}{26}{subsection.3.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1.2}驱动函数定位准则}{24}{subsection.3.1.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1.3}数据流追踪目标}{25}{subsection.3.1.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1.4}统一数据模型设计}{25}{subsection.3.1.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3.2}驱动函数分析、替换与编译模块设计}{25}{section.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2.1}分析替换与编译智能体工作流设计}{26}{subsection.3.2.1}\protected@file@percent }
 \@writefile{lof}{\contentsline {figure}{\numberline {3.2}{\ignorespaces 驱动函数分析替换编译模块示意图}}{26}{figure.caption.10}\protected@file@percent }
 \newlabel{fig:analyzer-workflow}{{3.2}{26}{驱动函数分析替换编译模块示意图}{figure.caption.10}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.2.1}驱动函数分析与替换代码生成模块设计}{27}{subsubsection.3.2.2.1}\protected@file@percent }
-\newlabel{sec:analyzer-workflow}{{3.2.2.1}{27}{驱动函数分析与替换代码生成模块设计}{subsubsection.3.2.2.1}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.2.2}替换代码修正与编译集成模块设计}{27}{subsubsection.3.2.2.2}\protected@file@percent }
-\newlabel{sec:builder-workflow}{{3.2.2.2}{27}{替换代码修正与编译集成模块设计}{subsubsection.3.2.2.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2.3}驱动函数替换策略设计}{28}{subsection.3.2.3}\protected@file@percent }
-\newlabel{sec:driver-replacement-strategy}{{3.2.3}{28}{驱动函数替换策略设计}{subsection.3.2.3}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.3.1}函数分类策略设计}{28}{subsubsection.3.2.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.1.1}驱动函数分析与替换代码生成模块设计}{26}{subsubsection.3.2.1.1}\protected@file@percent }
+\newlabel{sec:analyzer-workflow}{{3.2.1.1}{26}{驱动函数分析与替换代码生成模块设计}{subsubsection.3.2.1.1}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.1.2}替换代码修正与编译集成模块设计}{27}{subsubsection.3.2.1.2}\protected@file@percent }
+\newlabel{sec:builder-workflow}{{3.2.1.2}{27}{替换代码修正与编译集成模块设计}{subsubsection.3.2.1.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2.2}驱动函数替换策略设计}{28}{subsection.3.2.2}\protected@file@percent }
+\newlabel{sec:driver-replacement-strategy}{{3.2.2}{28}{驱动函数替换策略设计}{subsection.3.2.2}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.2.1}函数分类策略设计}{28}{subsubsection.3.2.2.1}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {3.2}{\ignorespaces 驱动函数分类体系}}{29}{table.caption.11}\protected@file@percent }
 \newlabel{tab:function-categories}{{3.2}{29}{驱动函数分类体系}{table.caption.11}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.3.2}替换策略体系设计}{29}{subsubsection.3.2.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.2.2}替换策略体系设计}{29}{subsubsection.3.2.2.2}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {3.3}{\ignorespaces 替换策略选择指南}}{30}{table.caption.12}\protected@file@percent }
 \newlabel{tab:replace-strategies}{{3.3}{30}{替换策略选择指南}{table.caption.12}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2.4}替换验证机制设计}{31}{subsection.3.2.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2.3}替换验证机制设计}{31}{subsection.3.2.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {3.3}动态测试反馈闭环模块设计}{32}{section.3.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.1}模块概述}{32}{subsection.3.3.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.2}动态执行环境设计}{32}{subsection.3.3.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.2.1}仿真平台架构设计}{32}{subsubsection.3.3.2.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.3}仿真执行智能体设计}{33}{subsection.3.3.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.3.1}职责定义与工具链设计}{33}{subsubsection.3.3.3.1}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {3.4}{\ignorespaces 固件仿真模块注入接口与使用场景}}{34}{table.caption.13}\protected@file@percent }
-\newlabel{tab:hal-be-hooks}{{3.4}{34}{固件仿真模块注入接口与使用场景}{table.caption.13}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.3.2}决策逻辑设计}{34}{subsubsection.3.3.3.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.3.3}仿真执行流程设计}{35}{subsubsection.3.3.3.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.4}反馈信息结构化设计}{35}{subsection.3.3.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.5}迭代优化机制设计}{36}{subsection.3.3.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.1}动态执行环境设计}{32}{subsection.3.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.1.1}仿真平台架构设计}{32}{subsubsection.3.3.1.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3.4}{\ignorespaces 固件仿真模块注入接口与使用场景}}{33}{table.caption.13}\protected@file@percent }
+\newlabel{tab:hal-be-hooks}{{3.4}{33}{固件仿真模块注入接口与使用场景}{table.caption.13}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.2}仿真执行智能体设计}{33}{subsection.3.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.2.1}职责定义与工具链设计}{34}{subsubsection.3.3.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.2.2}决策逻辑设计}{34}{subsubsection.3.3.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.2.3}仿真执行流程设计}{34}{subsubsection.3.3.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.3}反馈信息结构化设计}{35}{subsection.3.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.4}迭代优化机制设计}{35}{subsection.3.3.4}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {3.4}本章小结}{36}{section.3.4}\protected@file@percent }
 \@setckpt{body/chap03_design}{
 \setcounter{page}{37}

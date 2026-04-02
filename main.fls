@@ -564,9 +564,9 @@ INPUT /opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/fonts/tfm/public/am
 INPUT /opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/fonts/tfm/public/yhmath/yhcmex10.tfm
 INPUT /opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/fonts/tfm/public/yhmath/yhcmex10.tfm
 INPUT /opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/fonts/tfm/public/yhmath/yhcmex10.tfm
-INPUT ./figures/论文组织结构图.png
-INPUT ./figures/论文组织结构图.png
-INPUT ./figures/论文组织结构图.png
+INPUT ./figures/文章架构图.png
+INPUT ./figures/文章架构图.png
+INPUT ./figures/文章架构图.png
 INPUT ./body/chap02.tex
 INPUT ./body/chap02.tex
 OUTPUT body/chap02.aux

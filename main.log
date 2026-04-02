@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026/Homebrew) (preloaded format=xelatex 2026.3.4)  2 APR 2026 08:52
+This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026/Homebrew) (preloaded format=xelatex 2026.3.4)  2 APR 2026 13:50
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1526,7 +1526,7 @@ utils.tex
 File: xkeyval.tex 2014/12/03 v2.7a key=value parser (HA)
 ))
 \verbatim@out=\write4
-runsystem(echo 'write18-test-202642532'>"main.w18")...disabled (restricted).
+runsystem(echo 'write18-test-202642830'>"main.w18")...disabled (restricted).
 
 
 
@@ -2233,8 +2233,8 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [9]
-File: figures/论文组织结构图.png Graphic file (type bmp)
-<figures/论文组织结构图.png>
+File: figures/文章架构图.png Graphic file (type bmp)
+<figures/文章架构图.png>
 
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
@@ -2458,11 +2458,11 @@ isc.sty
 File: lstmisc.sty 2025/11/14 1.11b (Carsten Heinz)
 )
 Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on i
-nput line 39.
+nput line 32.
 LaTeX Font Info:    Font shape `TU/lmtt/bx/n' in size <8> not available
-(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 39.
+(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 32.
 LaTeX Font Info:    Font shape `TU/lmtt/bx/n' in size <12> not available
-(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 58.
+(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 51.
 
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
@@ -2557,22 +2557,22 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [27]
-Underfull \hbox (badness 10000) in paragraph at lines 229--230
+Underfull \hbox (badness 10000) in paragraph at lines 220--221
 []|\TU/lmtt/m/n/11 HAL_UART_WaitOnFlag\TU/TimesNewRoman(0)/m/n/11 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 230--231
+Underfull \hbox (badness 10000) in paragraph at lines 221--222
 []|\TU/lmtt/m/n/11 HAL_UART_IRQHandler\TU/TimesNewRoman(0)/m/n/11 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 231--232
+Underfull \hbox (badness 10000) in paragraph at lines 222--223
 []|\TU/lmtt/m/n/11 HAL_GPIO_DeInit\TU/TimesNewRoman(0)/m/n/11 ,
  []
 
 
-Overfull \hbox (1.50378pt too wide) in paragraph at lines 223--238
+Overfull \hbox (1.50378pt too wide) in paragraph at lines 214--229
  [][] 
  []
 
@@ -3099,11 +3099,6 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [60]
-
-LaTeX Warning: Reference `fig:classification_pie' on page 61 undefined on input
- line 261.
-
-
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3164,7 +3159,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [64]
-Overfull \hbox (7.84819pt too wide) in paragraph at lines 369--370
+Overfull \hbox (7.84819pt too wide) in paragraph at lines 412--413
 []|\TU/SimSun.ttf(0)/b/n/12 （\TU/TimesNewRoman(0)/b/n/12 2\TU/SimSun.ttf(0)/b/n
 /12 ）|  驱 动 库 层 级 影 响 \TU/TimesNewRoman(0)/b/n/12 NODRIVER \TU/SimSun.ttf(0)/b/
 n/12 函 数 比 例\TU/SimSun.ttf(0)/m/n/12 。| \TU/TimesNewRoman(0)/m/n/12 NXP_UART_Ba
@@ -3187,7 +3182,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [65]
-Overfull \hbox (23.29443pt too wide) in paragraph at lines 373--374
+Overfull \hbox (23.29443pt too wide) in paragraph at lines 416--417
 []|\TU/SimSun.ttf(0)/b/n/12 （\TU/TimesNewRoman(0)/b/n/12 4\TU/SimSun.ttf(0)/b/n
 /12 ）| \TU/TimesNewRoman(0)/b/n/12 RTOS \TU/SimSun.ttf(0)/b/n/12 与 裸 机 固 件 的 \T
 U/TimesNewRoman(0)/b/n/12 IRQ \TU/SimSun.ttf(0)/b/n/12 函 数 分 布\TU/SimSun.ttf(0)
@@ -3513,21 +3508,18 @@ L3 programming layer <2022/08/05>
  ***********
 
 
-LaTeX Warning: There were undefined references.
-
-
 LaTeX Warning: There were multiply-defined labels.
 
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: F45492FD2AF0EA560AC5267CA70AA734;4667.
+(rerunfilecheck)             Checksum: F95307A2E1868021E4ECE7EF0D26302B;4667.
  ) 
 Here is how much of TeX's memory you used:
- 43836 strings out of 468168
- 984407 string characters out of 5423555
- 1907174 words of memory out of 5000000
- 71691 multiletter control sequences out of 15000+600000
- 648358 words of font info for 199 fonts, out of 8000000 for 9000
+ 44030 strings out of 468168
+ 988767 string characters out of 5423555
+ 1907219 words of memory out of 5000000
+ 71883 multiletter control sequences out of 15000+600000
+ 648374 words of font info for 201 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
  99i,15n,108p,1208b,2537s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on main.xdv (92 pages, 1576576 bytes).
+Output written on main.xdv (92 pages, 1586624 bytes).

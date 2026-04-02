@@ -39,30 +39,27 @@
 \contentsline {section}{\numberline {2.6}本章小结}{19}{section.2.6}%
 \contentsline {chapter}{\numberline {3}系统设计}{20}{chapter.3}%
 \contentsline {section}{\numberline {3.1}驱动函数接口静态分析与识别模块设计}{21}{section.3.1}%
-\contentsline {subsection}{\numberline {3.1.1}模块概述}{21}{subsection.3.1.1}%
-\contentsline {subsection}{\numberline {3.1.2}MMIO 访问模式识别方法}{22}{subsection.3.1.2}%
-\contentsline {subsection}{\numberline {3.1.3}驱动函数定位准则}{24}{subsection.3.1.3}%
-\contentsline {subsection}{\numberline {3.1.4}数据流追踪目标}{25}{subsection.3.1.4}%
-\contentsline {subsection}{\numberline {3.1.5}统一数据模型设计}{25}{subsection.3.1.5}%
-\contentsline {section}{\numberline {3.2}驱动函数分析、替换与编译模块设计}{26}{section.3.2}%
-\contentsline {subsection}{\numberline {3.2.1}模块概述}{26}{subsection.3.2.1}%
-\contentsline {subsection}{\numberline {3.2.2}分析替换与编译智能体工作流设计}{26}{subsection.3.2.2}%
-\contentsline {subsubsection}{\numberline {3.2.2.1}驱动函数分析与替换代码生成模块设计}{27}{subsubsection.3.2.2.1}%
-\contentsline {subsubsection}{\numberline {3.2.2.2}替换代码修正与编译集成模块设计}{27}{subsubsection.3.2.2.2}%
-\contentsline {subsection}{\numberline {3.2.3}驱动函数替换策略设计}{28}{subsection.3.2.3}%
-\contentsline {subsubsection}{\numberline {3.2.3.1}函数分类策略设计}{28}{subsubsection.3.2.3.1}%
-\contentsline {subsubsection}{\numberline {3.2.3.2}替换策略体系设计}{29}{subsubsection.3.2.3.2}%
-\contentsline {subsection}{\numberline {3.2.4}替换验证机制设计}{31}{subsection.3.2.4}%
+\contentsline {subsection}{\numberline {3.1.1}MMIO 访问模式识别方法}{22}{subsection.3.1.1}%
+\contentsline {subsection}{\numberline {3.1.2}驱动函数定位准则}{24}{subsection.3.1.2}%
+\contentsline {subsection}{\numberline {3.1.3}数据流追踪目标}{25}{subsection.3.1.3}%
+\contentsline {subsection}{\numberline {3.1.4}统一数据模型设计}{25}{subsection.3.1.4}%
+\contentsline {section}{\numberline {3.2}驱动函数分析、替换与编译模块设计}{25}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}分析替换与编译智能体工作流设计}{26}{subsection.3.2.1}%
+\contentsline {subsubsection}{\numberline {3.2.1.1}驱动函数分析与替换代码生成模块设计}{26}{subsubsection.3.2.1.1}%
+\contentsline {subsubsection}{\numberline {3.2.1.2}替换代码修正与编译集成模块设计}{27}{subsubsection.3.2.1.2}%
+\contentsline {subsection}{\numberline {3.2.2}驱动函数替换策略设计}{28}{subsection.3.2.2}%
+\contentsline {subsubsection}{\numberline {3.2.2.1}函数分类策略设计}{28}{subsubsection.3.2.2.1}%
+\contentsline {subsubsection}{\numberline {3.2.2.2}替换策略体系设计}{29}{subsubsection.3.2.2.2}%
+\contentsline {subsection}{\numberline {3.2.3}替换验证机制设计}{31}{subsection.3.2.3}%
 \contentsline {section}{\numberline {3.3}动态测试反馈闭环模块设计}{32}{section.3.3}%
-\contentsline {subsection}{\numberline {3.3.1}模块概述}{32}{subsection.3.3.1}%
-\contentsline {subsection}{\numberline {3.3.2}动态执行环境设计}{32}{subsection.3.3.2}%
-\contentsline {subsubsection}{\numberline {3.3.2.1}仿真平台架构设计}{32}{subsubsection.3.3.2.1}%
-\contentsline {subsection}{\numberline {3.3.3}仿真执行智能体设计}{33}{subsection.3.3.3}%
-\contentsline {subsubsection}{\numberline {3.3.3.1}职责定义与工具链设计}{33}{subsubsection.3.3.3.1}%
-\contentsline {subsubsection}{\numberline {3.3.3.2}决策逻辑设计}{34}{subsubsection.3.3.3.2}%
-\contentsline {subsubsection}{\numberline {3.3.3.3}仿真执行流程设计}{35}{subsubsection.3.3.3.3}%
-\contentsline {subsection}{\numberline {3.3.4}反馈信息结构化设计}{35}{subsection.3.3.4}%
-\contentsline {subsection}{\numberline {3.3.5}迭代优化机制设计}{36}{subsection.3.3.5}%
+\contentsline {subsection}{\numberline {3.3.1}动态执行环境设计}{32}{subsection.3.3.1}%
+\contentsline {subsubsection}{\numberline {3.3.1.1}仿真平台架构设计}{32}{subsubsection.3.3.1.1}%
+\contentsline {subsection}{\numberline {3.3.2}仿真执行智能体设计}{33}{subsection.3.3.2}%
+\contentsline {subsubsection}{\numberline {3.3.2.1}职责定义与工具链设计}{34}{subsubsection.3.3.2.1}%
+\contentsline {subsubsection}{\numberline {3.3.2.2}决策逻辑设计}{34}{subsubsection.3.3.2.2}%
+\contentsline {subsubsection}{\numberline {3.3.2.3}仿真执行流程设计}{34}{subsubsection.3.3.2.3}%
+\contentsline {subsection}{\numberline {3.3.3}反馈信息结构化设计}{35}{subsection.3.3.3}%
+\contentsline {subsection}{\numberline {3.3.4}迭代优化机制设计}{35}{subsection.3.3.4}%
 \contentsline {section}{\numberline {3.4}本章小结}{36}{section.3.4}%
 \contentsline {chapter}{\numberline {4}系统实现}{37}{chapter.4}%
 \contentsline {section}{\numberline {4.1}驱动函数接口静态分析与识别模块实现}{37}{section.4.1}%
@@ -120,5 +117,5 @@
 \contentsline {section}{\numberline {6.5}未来工作展望}{76}{section.6.5}%
 \ttl@change@i {\@ne }{chapter}{0.0em}{\vspace {0.3em}\bfseries \hei \sihao \addvspace {6bp minus6bp}}{\thecontentslabel \hspace {1em}}{}{\normalfont \dotfill \textrm {\contentspage [(\thecontentspage )]}}\relax 
 \ttl@change@v {chapter}{}{}{}\relax 
-\contentsline {chapter}{\sihao 参考文献}{79}{section*.27}%
+\contentsline {chapter}{\sihao 参考文献}{79}{section*.28}%
 \contentsfinish 
