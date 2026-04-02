@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026/Homebrew) (preloaded format=xelatex 2026.3.4)  2 APR 2026 13:50
+This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026/Homebrew) (preloaded format=xelatex 2026.3.4)  2 APR 2026 21:39
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1526,7 +1526,7 @@ utils.tex
 File: xkeyval.tex 2014/12/03 v2.7a key=value parser (HA)
 ))
 \verbatim@out=\write4
-runsystem(echo 'write18-test-202642830'>"main.w18")...disabled (restricted).
+runsystem(echo 'write18-test-2026421299'>"main.w18")...disabled (restricted).
 
 
 
@@ -1685,11 +1685,7 @@ Package translations Info: No language package found. I am going to use `englis
 h' as default language. on input line 61.
  (./main.aux (./body/chap01.aux) (./body/chap02.aux)
 (./body/chap03_design.aux) (./body/chap04_implementation.aux)
-(./body/chap05_experiment.aux
-
-LaTeX Warning: Label `tab:driver_stats' multiply defined.
-
-) (./body/conclusion.aux))
+(./body/chap05_experiment.aux) (./body/conclusion.aux))
 \openout1 = `main.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 61.
@@ -2126,34 +2122,34 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [4]
-LaTeX Font Info:    Calculating math sizes for size <11> on input line 55.
+LaTeX Font Info:    Calculating math sizes for size <11> on input line 56.
 
-Underfull \hbox (badness 10000) in paragraph at lines 59--59
+Underfull \hbox (badness 10000) in paragraph at lines 60--60
 []|\TU/TimesNewRoman(0)/m/n/11 QEMU, Pre-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 61--61
+Underfull \hbox (badness 10000) in paragraph at lines 62--62
 []|\TU/TimesNewRoman(0)/m/n/11 P2IM, uEmu,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 61--61
+Underfull \hbox (badness 10000) in paragraph at lines 62--62
 \TU/TimesNewRoman(0)/m/n/11 Laelaps, Fuz-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 63--63
+Underfull \hbox (badness 10000) in paragraph at lines 64--64
 []|\TU/TimesNewRoman(0)/m/n/11 HALucinator,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 63--63
+Underfull \hbox (badness 10000) in paragraph at lines 64--64
 \TU/TimesNewRoman(0)/m/n/11 SAFIREFUZZ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 63--63
+Underfull \hbox (badness 10000) in paragraph at lines 64--64
 \TU/TimesNewRoman(0)/m/n/11 Firmadyne,
  []
 
@@ -2557,22 +2553,22 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [27]
-Underfull \hbox (badness 10000) in paragraph at lines 220--221
+Underfull \hbox (badness 10000) in paragraph at lines 221--222
 []|\TU/lmtt/m/n/11 HAL_UART_WaitOnFlag\TU/TimesNewRoman(0)/m/n/11 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 221--222
+Underfull \hbox (badness 10000) in paragraph at lines 222--223
 []|\TU/lmtt/m/n/11 HAL_UART_IRQHandler\TU/TimesNewRoman(0)/m/n/11 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 222--223
+Underfull \hbox (badness 10000) in paragraph at lines 223--224
 []|\TU/lmtt/m/n/11 HAL_GPIO_DeInit\TU/TimesNewRoman(0)/m/n/11 ,
  []
 
 
-Overfull \hbox (1.50378pt too wide) in paragraph at lines 214--229
+Overfull \hbox (1.50378pt too wide) in paragraph at lines 215--230
  [][] 
  []
 
@@ -3024,6 +3020,21 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
 
 
 ]
+Overfull \hbox (5.02031pt too wide) in paragraph at lines 106--106
+[]|\TU/TimesNewRoman(0)/m/n/11 STM32F401| 
+ []
+
+
+Overfull \hbox (5.02031pt too wide) in paragraph at lines 107--107
+[]|\TU/TimesNewRoman(0)/m/n/11 STM32F401| 
+ []
+
+
+Overfull \hbox (5.02031pt too wide) in paragraph at lines 108--108
+[]|\TU/TimesNewRoman(0)/m/n/11 STM32F401| 
+ []
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3099,6 +3110,23 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [60]
+Overfull \hbox (7.84819pt too wide) in paragraph at lines 283--284
+[]|\TU/SimSun.ttf(0)/b/n/12 （\TU/TimesNewRoman(0)/b/n/12 2\TU/SimSun.ttf(0)/b/n
+/12 ）|  驱 动 库 层 级 影 响 \TU/TimesNewRoman(0)/b/n/12 NODRIVER \TU/SimSun.ttf(0)/b/
+n/12 函 数 比 例\TU/SimSun.ttf(0)/m/n/12 。| \TU/TimesNewRoman(0)/m/n/12 NXP_UART_Ba
+reMetal \TU/SimSun.ttf(0)/m/n/12 的 \TU/TimesNewRoman(0)/m/n/12 NODRIVER
+ []
+
+
+Overfull \hbox (23.29443pt too wide) in paragraph at lines 287--288
+[]|\TU/SimSun.ttf(0)/b/n/12 （\TU/TimesNewRoman(0)/b/n/12 4\TU/SimSun.ttf(0)/b/n
+/12 ）| \TU/TimesNewRoman(0)/b/n/12 RTOS \TU/SimSun.ttf(0)/b/n/12 与 裸 机 固 件 的 \T
+U/TimesNewRoman(0)/b/n/12 IRQ \TU/SimSun.ttf(0)/b/n/12 函 数 分 布\TU/SimSun.ttf(0)
+/m/n/12 。|  搭 载 \TU/TimesNewRoman(0)/m/n/12 RTOS \TU/SimSun.ttf(0)/m/n/12 的 固 件
+  |（如 \TU/TimesNewRoman(0)/m/n/12 NXP_LwIP_FreeRTOS\TU/SimSun.ttf(0)/m/n/12 、|
+ []
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3159,14 +3187,6 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [64]
-Overfull \hbox (7.84819pt too wide) in paragraph at lines 412--413
-[]|\TU/SimSun.ttf(0)/b/n/12 （\TU/TimesNewRoman(0)/b/n/12 2\TU/SimSun.ttf(0)/b/n
-/12 ）|  驱 动 库 层 级 影 响 \TU/TimesNewRoman(0)/b/n/12 NODRIVER \TU/SimSun.ttf(0)/b/
-n/12 函 数 比 例\TU/SimSun.ttf(0)/m/n/12 。| \TU/TimesNewRoman(0)/m/n/12 NXP_UART_Ba
-reMetal \TU/SimSun.ttf(0)/m/n/12 的 \TU/TimesNewRoman(0)/m/n/12 NODRIVER
- []
-
-
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3182,15 +3202,6 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [65]
-Overfull \hbox (23.29443pt too wide) in paragraph at lines 416--417
-[]|\TU/SimSun.ttf(0)/b/n/12 （\TU/TimesNewRoman(0)/b/n/12 4\TU/SimSun.ttf(0)/b/n
-/12 ）| \TU/TimesNewRoman(0)/b/n/12 RTOS \TU/SimSun.ttf(0)/b/n/12 与 裸 机 固 件 的 \T
-U/TimesNewRoman(0)/b/n/12 IRQ \TU/SimSun.ttf(0)/b/n/12 函 数 分 布\TU/SimSun.ttf(0)
-/m/n/12 。|  搭 载 \TU/TimesNewRoman(0)/m/n/12 RTOS \TU/SimSun.ttf(0)/m/n/12 的 固 件
-  |（如 \TU/TimesNewRoman(0)/m/n/12 NXP_LwIP_FreeRTOS\TU/SimSun.ttf(0)/m/n/12 、|
- []
-
-
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3265,7 +3276,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[70]
+[70])
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3280,22 +3291,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[71])
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
- []
-
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
- []
-
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
- []
-
-[72]
+[71]
 \openout2 = `body/conclusion.aux'.
 
  (./body/conclusion.tex
@@ -3315,12 +3311,27 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[73
+[72
 
 
 
 
 ]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+ []
+
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+ []
+
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+ []
+
+[73]
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3350,7 +3361,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[75]
+[75])
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3365,7 +3376,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[76])
+[76]
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3380,22 +3391,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[77]
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
- []
-
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
- []
-
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
- []
-
-[78] (./main.bbl
+[77] (./main.bbl
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `\sihao' on input line 1.
@@ -3415,12 +3411,27 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[79
+[78
 
 
 
 
 ]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+ []
+
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+ []
+
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+ []
+
+[79]
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3465,22 +3476,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[82]
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
- []
-
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
- []
-
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
- []
-
-[83])
+[82])
 \tf@thm=\write7
 \openout7 = `main.thm'.
 
@@ -3499,27 +3495,23 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[84] (./main.aux (./body/chap01.aux) (./body/chap02.aux)
+[83] (./main.aux (./body/chap01.aux) (./body/chap02.aux)
 (./body/chap03_design.aux) (./body/chap04_implementation.aux)
 (./body/chap05_experiment.aux) (./body/conclusion.aux))
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2022/08/05>
  ***********
-
-
-LaTeX Warning: There were multiply-defined labels.
-
 Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: F95307A2E1868021E4ECE7EF0D26302B;4667.
  ) 
 Here is how much of TeX's memory you used:
- 44030 strings out of 468168
- 988767 string characters out of 5423555
- 1907219 words of memory out of 5000000
- 71883 multiletter control sequences out of 15000+600000
+ 44053 strings out of 468168
+ 990264 string characters out of 5423555
+ 1907227 words of memory out of 5000000
+ 71906 multiletter control sequences out of 15000+600000
  648374 words of font info for 201 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
  99i,15n,108p,1208b,2537s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on main.xdv (92 pages, 1586624 bytes).
+Output written on main.pdf (91 pages).
