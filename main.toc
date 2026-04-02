@@ -1,6 +1,6 @@
 \ttl@change@i {\@ne }{chapter}{0.0em}{\bfseries \hei \addvspace {6bp minus6bp}}{\thecontentslabel \hspace {1em}}{}{\normalfont \dotfill \textrm {\bfseries \contentspage }}\relax 
 \ttl@change@v {chapter}{}{}{}\relax 
-\contentsline {chapter}{\sihao 摘\nobreakspace {}\nobreakspace {}\nobreakspace {}\nobreakspace {}要}{I}{section*.1}%
+\contentsline {chapter}{\sihao 摘~~~~要}{I}{section*.1}%
 \contentsline {chapter}{\sihao Abstract}{II}{section*.3}%
 \ttl@change@i {\@ne }{chapter}{2.1em}{\vspace {0.3em}\bfseries \hei \sihao \addvspace {6bp minus6bp}}{\contentslabel {1.76em}}{}{}\relax 
 \ttl@change@v {chapter}{}{}{}\relax 
@@ -14,113 +14,111 @@
 \contentsline {subsubsection}{\numberline {1.2.1.4}固件仿真技术对比}{5}{subsubsection.1.2.1.4}%
 \contentsline {subsection}{\numberline {1.2.2}嵌入式系统模糊测试技术发展现状}{6}{subsection.1.2.2}%
 \contentsline {subsubsection}{\numberline {1.2.2.1}面向真实设备的黑盒模糊测试}{6}{subsubsection.1.2.2.1}%
-\contentsline {subsubsection}{\numberline {1.2.2.2}基于固件仿真的灰盒模糊测试}{6}{subsubsection.1.2.2.2}%
+\contentsline {subsubsection}{\numberline {1.2.2.2}基于固件仿真的灰盒模糊测试}{7}{subsubsection.1.2.2.2}%
 \contentsline {subsection}{\numberline {1.2.3}大模型程序分析与代码生成技术研究现状}{7}{subsection.1.2.3}%
-\contentsline {subsection}{\numberline {1.2.4}现有研究的局限性分析}{8}{subsection.1.2.4}%
+\contentsline {subsection}{\numberline {1.2.4}现有研究的局限性分析}{9}{subsection.1.2.4}%
 \contentsline {section}{\numberline {1.3}研究内容与主要贡献}{9}{section.1.3}%
 \contentsline {section}{\numberline {1.4}论文组织结构}{10}{section.1.4}%
-\contentsline {chapter}{\numberline {2}背景知识与相关技术}{12}{chapter.2}%
-\contentsline {section}{\numberline {2.1}物联网设备硬件基础}{12}{section.2.1}%
-\contentsline {subsection}{\numberline {2.1.1}ARM Cortex-M 架构特性}{12}{subsection.2.1.1}%
-\contentsline {subsection}{\numberline {2.1.2}内存映射 I/O}{12}{subsection.2.1.2}%
-\contentsline {section}{\numberline {2.2}物联网操作系统与驱动}{13}{section.2.2}%
-\contentsline {subsection}{\numberline {2.2.1}实时操作系统概述}{13}{subsection.2.2.1}%
-\contentsline {subsection}{\numberline {2.2.2}硬件抽象层}{14}{subsection.2.2.2}%
-\contentsline {section}{\numberline {2.3}大模型代码分析智能体框架}{14}{section.2.3}%
-\contentsline {subsection}{\numberline {2.3.1}代码分析工作流设计模式}{14}{subsection.2.3.1}%
-\contentsline {subsection}{\numberline {2.3.2}LLM 智能体开发框架}{15}{subsection.2.3.2}%
-\contentsline {subsubsection}{\numberline {2.3.2.1}LangChain 框架}{15}{subsubsection.2.3.2.1}%
-\contentsline {subsubsection}{\numberline {2.3.2.2}LangGraph 状态图}{15}{subsubsection.2.3.2.2}%
-\contentsline {section}{\numberline {2.4}静态分析技术}{16}{section.2.4}%
-\contentsline {subsection}{\numberline {2.4.1}CodeQL 代码分析平台}{16}{subsection.2.4.1}%
-\contentsline {section}{\numberline {2.5}固件仿真与模糊测试}{16}{section.2.5}%
-\contentsline {subsection}{\numberline {2.5.1}QEMU 仿真器}{17}{subsection.2.5.1}%
-\contentsline {subsection}{\numberline {2.5.2}模糊测试技术}{17}{subsection.2.5.2}%
-\contentsline {section}{\numberline {2.6}本章小结}{18}{section.2.6}%
-\contentsline {chapter}{\numberline {3}系统设计}{19}{chapter.3}%
-\contentsline {section}{\numberline {3.1}驱动函数接口静态分析与识别模块设计}{20}{section.3.1}%
-\contentsline {subsection}{\numberline {3.1.1}模块概述}{20}{subsection.3.1.1}%
-\contentsline {subsection}{\numberline {3.1.2}MMIO 访问模式识别方法}{21}{subsection.3.1.2}%
-\contentsline {subsection}{\numberline {3.1.3}驱动函数定位准则}{23}{subsection.3.1.3}%
-\contentsline {subsection}{\numberline {3.1.4}数据流追踪目标}{24}{subsection.3.1.4}%
-\contentsline {subsection}{\numberline {3.1.5}统一数据模型设计}{24}{subsection.3.1.5}%
-\contentsline {section}{\numberline {3.2}驱动函数分析、替换与编译模块设计}{25}{section.3.2}%
-\contentsline {subsection}{\numberline {3.2.1}模块概述}{25}{subsection.3.2.1}%
-\contentsline {subsection}{\numberline {3.2.2}分析替换与编译智能体工作流设计}{25}{subsection.3.2.2}%
-\contentsline {subsubsection}{\numberline {3.2.2.1}驱动函数分析与替换代码生成模块设计}{26}{subsubsection.3.2.2.1}%
-\contentsline {subsubsection}{\numberline {3.2.2.2}替换代码修正与编译集成模块设计}{26}{subsubsection.3.2.2.2}%
-\contentsline {subsection}{\numberline {3.2.3}驱动函数替换策略设计}{27}{subsection.3.2.3}%
-\contentsline {subsubsection}{\numberline {3.2.3.1}函数分类策略设计}{27}{subsubsection.3.2.3.1}%
-\contentsline {subsubsection}{\numberline {3.2.3.2}替换策略体系设计}{27}{subsubsection.3.2.3.2}%
-\contentsline {subsection}{\numberline {3.2.4}替换验证机制设计}{29}{subsection.3.2.4}%
-\contentsline {subsection}{\numberline {3.2.5}编译集成设计}{29}{subsection.3.2.5}%
-\contentsline {section}{\numberline {3.3}动态测试反馈闭环模块设计}{30}{section.3.3}%
-\contentsline {subsection}{\numberline {3.3.1}模块概述}{30}{subsection.3.3.1}%
-\contentsline {subsection}{\numberline {3.3.2}动态执行环境设计}{30}{subsection.3.3.2}%
-\contentsline {subsubsection}{\numberline {3.3.2.1}仿真平台架构设计}{31}{subsubsection.3.3.2.1}%
-\contentsline {subsection}{\numberline {3.3.3}仿真执行智能体设计}{31}{subsection.3.3.3}%
-\contentsline {subsubsection}{\numberline {3.3.3.1}职责定义与工具链设计}{31}{subsubsection.3.3.3.1}%
-\contentsline {subsubsection}{\numberline {3.3.3.2}决策逻辑设计}{32}{subsubsection.3.3.3.2}%
-\contentsline {subsubsection}{\numberline {3.3.3.3}仿真执行流程设计}{33}{subsubsection.3.3.3.3}%
-\contentsline {subsection}{\numberline {3.3.4}反馈信息结构化设计}{33}{subsection.3.3.4}%
-\contentsline {subsection}{\numberline {3.3.5}迭代优化机制设计}{34}{subsection.3.3.5}%
-\contentsline {section}{\numberline {3.4}本章小结}{34}{section.3.4}%
-\contentsline {chapter}{\numberline {4}系统实现}{35}{chapter.4}%
-\contentsline {section}{\numberline {4.1}驱动函数接口静态分析与识别模块实现}{35}{section.4.1}%
-\contentsline {subsection}{\numberline {4.1.1}CodeQL 查询实现}{35}{subsection.4.1.1}%
-\contentsline {subsubsection}{\numberline {4.1.1.1}MMIO 操作定位查询实现}{35}{subsubsection.4.1.1.1}%
-\contentsline {subsubsection}{\numberline {4.1.1.2}驱动函数定位查询实现}{37}{subsubsection.4.1.1.2}%
-\contentsline {subsection}{\numberline {4.1.2}数据模型实现}{38}{subsection.4.1.2}%
-\contentsline {subsection}{\numberline {4.1.3}分析流程实现}{39}{subsection.4.1.3}%
-\contentsline {section}{\numberline {4.2}驱动函数分析、替换与编译模块实现}{39}{section.4.2}%
-\contentsline {subsection}{\numberline {4.2.1}LangGraph 工作流实现}{39}{subsection.4.2.1}%
-\contentsline {subsubsection}{\numberline {4.2.1.1}Analyzer Agent 实现}{40}{subsubsection.4.2.1.1}%
-\contentsline {subsubsection}{\numberline {4.2.1.2}Builder Agent 实现}{40}{subsubsection.4.2.1.2}%
-\contentsline {subsubsection}{\numberline {4.2.1.3}Fixer Agent 实现}{40}{subsubsection.4.2.1.3}%
-\contentsline {subsection}{\numberline {4.2.2}替换策略实现}{41}{subsection.4.2.2}%
-\contentsline {subsubsection}{\numberline {4.2.2.1}Skip 策略实现}{41}{subsubsection.4.2.2.1}%
-\contentsline {subsubsection}{\numberline {4.2.2.2}Redirect 策略实现}{42}{subsubsection.4.2.2.2}%
-\contentsline {subsubsection}{\numberline {4.2.2.3}Event 策略实现}{42}{subsubsection.4.2.2.3}%
-\contentsline {subsubsection}{\numberline {4.2.2.4}Steering 策略实现}{43}{subsubsection.4.2.2.4}%
-\contentsline {subsubsection}{\numberline {4.2.2.5}ReturnOK 策略实现}{44}{subsubsection.4.2.2.5}%
-\contentsline {section}{\numberline {4.3}动态测试反馈闭环模块实现}{45}{section.4.3}%
-\contentsline {subsection}{\numberline {4.3.1}仿真平台实现}{45}{subsection.4.3.1}%
-\contentsline {subsection}{\numberline {4.3.2}钩子机制}{45}{subsection.4.3.2}%
-\contentsline {subsubsection}{\numberline {4.3.2.1}弱符号桩函数}{46}{subsubsection.4.3.2.1}%
-\contentsline {subsubsection}{\numberline {4.3.2.2}函数跟踪器}{47}{subsubsection.4.3.2.2}%
-\contentsline {subsection}{\numberline {4.3.3}仿真执行智能体实现}{47}{subsection.4.3.3}%
-\contentsline {subsection}{\numberline {4.3.4}反馈闭环实现}{48}{subsection.4.3.4}%
-\contentsline {subsubsection}{\numberline {4.3.4.1}多智能体架构实现}{48}{subsubsection.4.3.4.1}%
-\contentsline {subsubsection}{\numberline {4.3.4.2}闭环协同工作流实现}{48}{subsubsection.4.3.4.2}%
-\contentsline {subsubsection}{\numberline {4.3.4.3}终止条件与错误处理实现}{50}{subsubsection.4.3.4.3}%
-\contentsline {section}{\numberline {4.4}本章小结}{51}{section.4.4}%
-\contentsline {chapter}{\numberline {5}实验设计与结果分析}{52}{chapter.5}%
-\contentsline {section}{\numberline {5.1}实验设计}{52}{section.5.1}%
-\contentsline {subsection}{\numberline {5.1.1}实验环境}{52}{subsection.5.1.1}%
-\contentsline {subsection}{\numberline {5.1.2}测试用例}{52}{subsection.5.1.2}%
-\contentsline {section}{\numberline {5.2}功能测试}{55}{section.5.2}%
-\contentsline {subsection}{\numberline {5.2.1}测试方法}{55}{subsection.5.2.1}%
-\contentsline {subsection}{\numberline {5.2.2}驱动函数分类评估}{58}{subsection.5.2.2}%
-\contentsline {subsubsection}{\numberline {5.2.2.1}总体分类统计}{58}{subsubsection.5.2.2.1}%
-\contentsline {subsection}{\numberline {5.2.3}功能正确性验证}{64}{subsection.5.2.3}%
-\contentsline {subsection}{\numberline {5.2.4}测试结果}{65}{subsection.5.2.4}%
-\contentsline {subsection}{\numberline {5.2.5}本节小结}{65}{subsection.5.2.5}%
-\contentsline {section}{\numberline {5.3}性能测试}{67}{section.5.3}%
-\contentsline {subsection}{\numberline {5.3.1}人工成本对比测试}{67}{subsection.5.3.1}%
-\contentsline {subsubsection}{\numberline {5.3.1.1}对比方法}{67}{subsubsection.5.3.1.1}%
-\contentsline {subsubsection}{\numberline {5.3.1.2}测试方法}{67}{subsubsection.5.3.1.2}%
-\contentsline {subsubsection}{\numberline {5.3.1.3}测试结果}{68}{subsubsection.5.3.1.3}%
-\contentsline {subsection}{\numberline {5.3.2}模糊测试性能测试}{68}{subsection.5.3.2}%
-\contentsline {subsubsection}{\numberline {5.3.2.1}实验设计}{68}{subsubsection.5.3.2.1}%
-\contentsline {subsubsection}{\numberline {5.3.2.2}实验结果}{68}{subsubsection.5.3.2.2}%
-\contentsline {section}{\numberline {5.4}本章小结}{69}{section.5.4}%
-\contentsline {chapter}{\numberline {6}总结与展望}{71}{chapter.6}%
-\contentsline {section}{\numberline {6.1}工作总结}{71}{section.6.1}%
-\contentsline {section}{\numberline {6.2}论文创新点}{72}{section.6.2}%
-\contentsline {section}{\numberline {6.3}论文贡献}{73}{section.6.3}%
-\contentsline {section}{\numberline {6.4}局限性与不足}{73}{section.6.4}%
-\contentsline {section}{\numberline {6.5}未来工作展望}{75}{section.6.5}%
+\contentsline {chapter}{\numberline {2}背景知识与相关技术}{13}{chapter.2}%
+\contentsline {section}{\numberline {2.1}物联网设备硬件基础}{13}{section.2.1}%
+\contentsline {subsection}{\numberline {2.1.1}ARM Cortex-M 架构特性}{13}{subsection.2.1.1}%
+\contentsline {subsection}{\numberline {2.1.2}内存映射 I/O}{13}{subsection.2.1.2}%
+\contentsline {section}{\numberline {2.2}物联网操作系统与驱动}{14}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}实时操作系统概述}{14}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}硬件抽象层}{15}{subsection.2.2.2}%
+\contentsline {section}{\numberline {2.3}大模型代码分析智能体框架}{15}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}代码分析工作流设计模式}{15}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.3.2}LLM 智能体开发框架}{16}{subsection.2.3.2}%
+\contentsline {subsubsection}{\numberline {2.3.2.1}LangChain 框架}{16}{subsubsection.2.3.2.1}%
+\contentsline {subsubsection}{\numberline {2.3.2.2}LangGraph 状态图}{16}{subsubsection.2.3.2.2}%
+\contentsline {section}{\numberline {2.4}静态分析技术}{17}{section.2.4}%
+\contentsline {subsection}{\numberline {2.4.1}CodeQL 代码分析平台}{17}{subsection.2.4.1}%
+\contentsline {section}{\numberline {2.5}固件仿真与模糊测试}{17}{section.2.5}%
+\contentsline {subsection}{\numberline {2.5.1}QEMU 仿真器}{18}{subsection.2.5.1}%
+\contentsline {subsection}{\numberline {2.5.2}模糊测试技术}{18}{subsection.2.5.2}%
+\contentsline {section}{\numberline {2.6}本章小结}{19}{section.2.6}%
+\contentsline {chapter}{\numberline {3}系统设计}{20}{chapter.3}%
+\contentsline {section}{\numberline {3.1}驱动函数接口静态分析与识别模块设计}{21}{section.3.1}%
+\contentsline {subsection}{\numberline {3.1.1}模块概述}{21}{subsection.3.1.1}%
+\contentsline {subsection}{\numberline {3.1.2}MMIO 访问模式识别方法}{22}{subsection.3.1.2}%
+\contentsline {subsection}{\numberline {3.1.3}驱动函数定位准则}{24}{subsection.3.1.3}%
+\contentsline {subsection}{\numberline {3.1.4}数据流追踪目标}{25}{subsection.3.1.4}%
+\contentsline {subsection}{\numberline {3.1.5}统一数据模型设计}{25}{subsection.3.1.5}%
+\contentsline {section}{\numberline {3.2}驱动函数分析、替换与编译模块设计}{26}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}模块概述}{26}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}分析替换与编译智能体工作流设计}{26}{subsection.3.2.2}%
+\contentsline {subsubsection}{\numberline {3.2.2.1}驱动函数分析与替换代码生成模块设计}{27}{subsubsection.3.2.2.1}%
+\contentsline {subsubsection}{\numberline {3.2.2.2}替换代码修正与编译集成模块设计}{27}{subsubsection.3.2.2.2}%
+\contentsline {subsection}{\numberline {3.2.3}驱动函数替换策略设计}{28}{subsection.3.2.3}%
+\contentsline {subsubsection}{\numberline {3.2.3.1}函数分类策略设计}{28}{subsubsection.3.2.3.1}%
+\contentsline {subsubsection}{\numberline {3.2.3.2}替换策略体系设计}{29}{subsubsection.3.2.3.2}%
+\contentsline {subsection}{\numberline {3.2.4}替换验证机制设计}{31}{subsection.3.2.4}%
+\contentsline {section}{\numberline {3.3}动态测试反馈闭环模块设计}{32}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}模块概述}{32}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}动态执行环境设计}{32}{subsection.3.3.2}%
+\contentsline {subsubsection}{\numberline {3.3.2.1}仿真平台架构设计}{32}{subsubsection.3.3.2.1}%
+\contentsline {subsection}{\numberline {3.3.3}仿真执行智能体设计}{33}{subsection.3.3.3}%
+\contentsline {subsubsection}{\numberline {3.3.3.1}职责定义与工具链设计}{33}{subsubsection.3.3.3.1}%
+\contentsline {subsubsection}{\numberline {3.3.3.2}决策逻辑设计}{34}{subsubsection.3.3.3.2}%
+\contentsline {subsubsection}{\numberline {3.3.3.3}仿真执行流程设计}{35}{subsubsection.3.3.3.3}%
+\contentsline {subsection}{\numberline {3.3.4}反馈信息结构化设计}{35}{subsection.3.3.4}%
+\contentsline {subsection}{\numberline {3.3.5}迭代优化机制设计}{36}{subsection.3.3.5}%
+\contentsline {section}{\numberline {3.4}本章小结}{36}{section.3.4}%
+\contentsline {chapter}{\numberline {4}系统实现}{37}{chapter.4}%
+\contentsline {section}{\numberline {4.1}驱动函数接口静态分析与识别模块实现}{37}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}CodeQL 查询实现}{37}{subsection.4.1.1}%
+\contentsline {subsubsection}{\numberline {4.1.1.1}MMIO 操作定位查询实现}{37}{subsubsection.4.1.1.1}%
+\contentsline {subsubsection}{\numberline {4.1.1.2}驱动函数定位查询实现}{39}{subsubsection.4.1.1.2}%
+\contentsline {subsection}{\numberline {4.1.2}数据模型实现}{40}{subsection.4.1.2}%
+\contentsline {subsection}{\numberline {4.1.3}分析流程实现}{41}{subsection.4.1.3}%
+\contentsline {section}{\numberline {4.2}驱动函数分析、替换与编译模块实现}{41}{section.4.2}%
+\contentsline {subsection}{\numberline {4.2.1}智能体工作流实现}{41}{subsection.4.2.1}%
+\contentsline {subsubsection}{\numberline {4.2.1.1}驱动函数分析与替换代码生成模块实现}{42}{subsubsection.4.2.1.1}%
+\contentsline {subsubsection}{\numberline {4.2.1.2}替换代码修正与编译集成模块实现}{42}{subsubsection.4.2.1.2}%
+\contentsline {subsection}{\numberline {4.2.2}替换策略实现}{43}{subsection.4.2.2}%
+\contentsline {subsubsection}{\numberline {4.2.2.1}Skip 策略实现}{43}{subsubsection.4.2.2.1}%
+\contentsline {subsubsection}{\numberline {4.2.2.2}Redirect 策略实现}{44}{subsubsection.4.2.2.2}%
+\contentsline {subsubsection}{\numberline {4.2.2.3}Event 策略实现}{45}{subsubsection.4.2.2.3}%
+\contentsline {subsubsection}{\numberline {4.2.2.4}Steering 策略实现}{45}{subsubsection.4.2.2.4}%
+\contentsline {subsubsection}{\numberline {4.2.2.5}ReturnOK 策略实现}{47}{subsubsection.4.2.2.5}%
+\contentsline {section}{\numberline {4.3}动态测试反馈闭环模块实现}{47}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}仿真平台实现}{47}{subsection.4.3.1}%
+\contentsline {subsubsection}{\numberline {4.3.1.1}钩子机制}{48}{subsubsection.4.3.1.1}%
+\contentsline {subsubsection}{\numberline {4.3.1.2}弱符号桩函数}{49}{subsubsection.4.3.1.2}%
+\contentsline {subsubsection}{\numberline {4.3.1.3}运行日志记录模块}{49}{subsubsection.4.3.1.3}%
+\contentsline {subsection}{\numberline {4.3.2}仿真执行智能体实现}{50}{subsection.4.3.2}%
+\contentsline {subsection}{\numberline {4.3.3}反馈闭环实现}{51}{subsection.4.3.3}%
+\contentsline {subsubsection}{\numberline {4.3.3.1}多智能体架构实现}{51}{subsubsection.4.3.3.1}%
+\contentsline {subsubsection}{\numberline {4.3.3.2}闭环协同工作流实现}{51}{subsubsection.4.3.3.2}%
+\contentsline {subsubsection}{\numberline {4.3.3.3}终止条件与错误处理实现}{53}{subsubsection.4.3.3.3}%
+\contentsline {section}{\numberline {4.4}本章小结}{53}{section.4.4}%
+\contentsline {chapter}{\numberline {5}实验设计与结果分析}{55}{chapter.5}%
+\contentsline {section}{\numberline {5.1}实验设计}{55}{section.5.1}%
+\contentsline {subsection}{\numberline {5.1.1}实验环境}{55}{subsection.5.1.1}%
+\contentsline {subsection}{\numberline {5.1.2}测试用例}{55}{subsection.5.1.2}%
+\contentsline {section}{\numberline {5.2}功能测试}{56}{section.5.2}%
+\contentsline {subsection}{\numberline {5.2.1}测试方法}{58}{subsection.5.2.1}%
+\contentsline {subsection}{\numberline {5.2.2}驱动函数分类评估}{61}{subsection.5.2.2}%
+\contentsline {subsubsection}{\numberline {5.2.2.1}驱动函数识别与替换统计}{61}{subsubsection.5.2.2.1}%
+\contentsline {subsection}{\numberline {5.2.3}功能正确性验证}{66}{subsection.5.2.3}%
+\contentsline {subsection}{\numberline {5.2.4}测试结果}{67}{subsection.5.2.4}%
+\contentsline {subsection}{\numberline {5.2.5}本节小结}{69}{subsection.5.2.5}%
+\contentsline {section}{\numberline {5.3}性能测试}{69}{section.5.3}%
+\contentsline {subsection}{\numberline {5.3.1}人工成本对比测试}{69}{subsection.5.3.1}%
+\contentsline {subsubsection}{\numberline {5.3.1.1}对比方法}{69}{subsubsection.5.3.1.1}%
+\contentsline {subsubsection}{\numberline {5.3.1.2}测试方法}{70}{subsubsection.5.3.1.2}%
+\contentsline {subsubsection}{\numberline {5.3.1.3}测试结果}{70}{subsubsection.5.3.1.3}%
+\contentsline {subsection}{\numberline {5.3.2}模糊测试性能测试}{70}{subsection.5.3.2}%
+\contentsline {subsubsection}{\numberline {5.3.2.1}实验设计}{70}{subsubsection.5.3.2.1}%
+\contentsline {subsubsection}{\numberline {5.3.2.2}实验结果}{71}{subsubsection.5.3.2.2}%
+\contentsline {section}{\numberline {5.4}本章小结}{72}{section.5.4}%
+\contentsline {chapter}{\numberline {6}总结与展望}{73}{chapter.6}%
+\contentsline {section}{\numberline {6.1}工作总结}{73}{section.6.1}%
+\contentsline {section}{\numberline {6.2}论文创新点}{74}{section.6.2}%
+\contentsline {section}{\numberline {6.3}论文贡献}{75}{section.6.3}%
+\contentsline {section}{\numberline {6.4}局限性与不足}{75}{section.6.4}%
+\contentsline {section}{\numberline {6.5}未来工作展望}{76}{section.6.5}%
 \ttl@change@i {\@ne }{chapter}{0.0em}{\vspace {0.3em}\bfseries \hei \sihao \addvspace {6bp minus6bp}}{\thecontentslabel \hspace {1em}}{}{\normalfont \dotfill \textrm {\contentspage [(\thecontentspage )]}}\relax 
 \ttl@change@v {chapter}{}{}{}\relax 
-\contentsline {chapter}{\sihao 参考文献}{77}{section*.28}%
+\contentsline {chapter}{\sihao 参考文献}{79}{section*.27}%
 \contentsfinish 

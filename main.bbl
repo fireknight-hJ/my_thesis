@@ -55,6 +55,13 @@ Abraham~A Clements, Eric Gustafson, Tobias Scharnowski, Paul Grosen, David
 \newblock HALucinator: Firmware Re-hosting Through Abstraction Layer Emulation.
 \newblock In: 29th USENIX Security Symposium, 2020: 1--18
 
+\bibitem{luo_vulhawk_2023}
+Zhenhao Luo, Pengfei Wang, Baosheng Wang, Yong Tang, Wei Xie, Xu~Zhou, et~al.
+\newblock {VulHawk}: Cross-architecture Vulnerability Detection with
+  Entropy-based Binary Code Search.
+\newblock In: Proceedings 2023 Network and Distributed System Security
+  Symposium. Internet Society
+
 \bibitem{firmadyne}
 Daming~D Chen, Manuel Egele, Maverick Woo, David Brumley.
 \newblock Firmadyne: Towards Automated Dynamic Firmware Analysis.
@@ -67,9 +74,10 @@ Tobias Scharnowski, Nils Bars, Moritz Schloegel, Eric Gustafson, Marius Muench,
 \newblock In: 31st USENIX Security Symposium, 2022
 
 \bibitem{qemu}
-Fabrice Bellard, et~al.
-\newblock QEMU, the FAST! processor emulator.
-\newblock \url{https://www.qemu.org/}
+Fabrice Bellard.
+\newblock {QEMU}, a Fast and Portable Dynamic Translator.
+\newblock In: 2005 USENIX Annual Technical Conference (USENIX ATC 05), Anaheim,
+  CA: USENIX Association, 2005
 
 \bibitem{avatar}
 Musard Kamilov, et~al.
@@ -96,10 +104,10 @@ Fish Wang, Yan Shoshitaishvili.
 
 \bibitem{zhou2022semu}
 Wei Zhou, Lan Zhang, Le~Guan, Peng Liu, Yuqing Zhang.
-\newblock What your firmware tells you is not how you should emulate it: A
-  specification-guided approach for firmware emulation.
-\newblock In: Proceedings of the 2022 ACM SIGSAC Conference on Computer and
-  Communications Security, 2022: 3269--3283
+\newblock What Your Firmware Tells You Is Not How You Should Emulate It: A
+  Specification-Guided Approach for Firmware Emulation.
+\newblock In: Proceedings of the 2022 {ACM} {SIGSAC} Conference on Computer and
+  Communications Security. {ACM}, : 3269--3283
 
 \bibitem{fengp2020p2im}
 Bo~Feng, Alejandro Mera, Long Lu.
@@ -126,11 +134,31 @@ Yan Shoshitaishvili, Ruoyu Wang, Christophe Hauser, Christopher Kruegel,
   Vulnerabilities in Binary Firmware.
 \newblock In: NDSS, 2015
 
+\bibitem{johnson_jetset_2021}
+Evan Johnson, Maxwell Bland, {YiFei} Zhu, Joshua Mason, Stephen Checkoway,
+  Stefan Savage, et~al.
+\newblock Jetset: Targeted Firmware Rehosting for Embedded Systems.
+\newblock : 321--338
+
+\bibitem{mera_dice_2021}
+Alejandro Mera, Bo~Feng, Long Lu, Engin Kirda.
+\newblock {DICE}: Automatic Emulation of {DMA} Input Channels for Dynamic
+  Firmware Analysis.
+\newblock In: 2021 {IEEE} Symposium on Security and Privacy ({SP}). {IEEE}, :
+  1938--1954
+
 \bibitem{pararehosting}
 Wenqiang Li, Libo Li, Shenglin Zhang, Tao Xie, Lei Ma, et~al.
 \newblock Para-rehosting: Automatic Payload Generation for Embedded
   Inter-Process Communication.
 \newblock In: USENIX Security Symposium, 2022
+
+\bibitem{seidel_forming_2023}
+Lukas Seidel, Dominik Maier, Marius Muench.
+\newblock Forming Faster Firmware Fuzzers.
+\newblock In: 32nd \{{USENIX}\} Security Symposium, \{{USENIX}\} Security 2023,
+  Anaheim,{CA}, {USA}, August 9-11, 2023. \{{USENIX}\} Association, :
+  2903--2920
 
 \bibitem{iotfuzzer}
 Jiongyi Chen, Wenrui Diao, Qingchuan Zhao, Chaoshun Zuo, Zhiqiang Lin, XiaoFeng
@@ -147,6 +175,14 @@ Xiaotao Feng, Ruoxi Sun, Xiaogang Zhu, Minhui Xue, Sheng Wen, Dongxi Liu,
 \newblock In: Proceedings of the 2021 ACM SIGSAC conference on computer and
   communications security, 2021: 337--350
 
+\bibitem{liu_labrador_2024}
+Hangtian Liu, Shuitao Gan, Chao Zhang, Zicong Gao, Hongqi Zhang, Xiangzhi Wang,
+  et~al.
+\newblock Labrador: Response Guided Directed Fuzzing for Black-box {IoT}
+  Devices.
+\newblock In: 2024 {IEEE} Symposium on Security and Privacy ({SP}). {IEEE}, :
+  1920--1938
+
 \bibitem{scharnowski2023hoedur}
 Tobias Scharnowski, Simon W{\"o}rner, Felix Buchmann, Nils Bars, Moritz
   Schloegel, Thorsten Holz.
@@ -158,6 +194,19 @@ Wei Zheng, et~al.
 \newblock FirmAFL: High-Throughput Greybox Fuzzing of IoT Firmware via
   Augmented Process Emulation.
 \newblock In: USENIX Security, 2019
+
+\bibitem{chen_sfuzz_2022}
+Libo Chen, Quanpu Cai, Zhenbang Ma, Yanhao Wang, Hong Hu, Minghang Shen, et~al.
+\newblock {SFuzz}: Slice-based Fuzzing for Real-Time Operating Systems.
+\newblock In: Proceedings of the 2022 {ACM} {SIGSAC} Conference on Computer and
+  Communications Security. {ACM}, : 485--498
+
+\bibitem{mera_shift_2024}
+Alejandro Mera, Changming Liu, Ruimin Sun, Engin Kirda, Long Lu.
+\newblock {SHiFT}: Semi-hosted Fuzz Testing for Embedded Applications.
+\newblock In: Davide Balzarotti, Wenyuan Xu, editors, 33rd {USENIX} Security
+  Symposium, {USENIX} Security 2024, Philadelphia, {PA}, {USA}, August 14-16,
+  2024. {USENIX} Association, : 5323--5340
 
 \bibitem{driller}
 Nick Stephens, Jack Grosen, Christopher Salls, Andrew Dutcher, Ruoyu Wang,
@@ -176,15 +225,24 @@ Peng Chen, Hao Chen.
 \newblock Angora: Efficient Fuzzing by Principled Search.
 \newblock In: IEEE Symposium on Security and Privacy, 2018
 
+\bibitem{shi_facilitating_2024}
+Jiameng Shi, Wenqiang Li, Wenwen Wang, Le~Guan.
+\newblock Facilitating Non-Intrusive In-Vivo Firmware Testing with Stateless
+  Instrumentation.
+\newblock In: Proceedings 2024 Network and Distributed System Security
+  Symposium. Internet Society
+
 \bibitem{claude35sonnet}
 Anthropic.
 \newblock Claude 3.5 Sonnet.
 \newblock \url{https://www.anthropic.com/news/claude-3-5-sonnet}, 2024
 
 \bibitem{gemini3}
-Google DeepMind.
-\newblock Gemini 3.
-\newblock \url{https://deepmind.google/technologies/gemini/}, 2025
+Gheorghe Comanici, Eric Bieber, Mike Schaekermann, Ice Pasupat, Noveen
+  Sachdeva, Inderjit Dhillon, et~al.
+\newblock Gemini 2.5: Pushing the Frontier with Advanced Reasoning,
+  Multimodality, Long Context, and Next Generation Agentic Capabilities, 2025.
+\newblock  {\url{https://arxiv.org/abs/2507.06261}}
 
 \bibitem{deepseekr1}
 DeepSeek-AI, et~al.
@@ -193,14 +251,19 @@ DeepSeek-AI, et~al.
 \newblock Nature, 2025, 645: 633--638
 
 \bibitem{glm5}
-Zhipu AI.
-\newblock GLM-5.
-\newblock \url{https://www.zhipuai.cn/}, 2025
+Zhengxiao Du, Yujie Qian, Xiao Liu, Ming Ding, Jiezhong Qiu, Zhilin Yang,
+  et~al.
+\newblock {GLM}: General Language Model Pretraining with Autoregressive Blank
+  Infilling.
+\newblock In: Smaranda Muresan, Preslav Nakov, Aline Villavicencio, editors,
+  Proceedings of the 60th Annual Meeting of the Association for Computational
+  Linguistics (Volume 1: Long Papers), Dublin, Ireland: Association for
+  Computational Linguistics, 2022: 320--335
 
-\bibitem{minimaxm27}
-MiniMax.
-\newblock MiniMax M2.7.
-\newblock \url{https://www.minimaxi.com/}, 2025
+\bibitem{minmax27}
+MiniMax, Aonian Li, Bangwei Gong, Bo~Yang, Boji Shan, Chang Liu, et~al.
+\newblock MiniMax-01: Scaling Foundation Models with Lightning Attention, 2025.
+\newblock  {\url{https://arxiv.org/abs/2501.08313}}
 
 \bibitem{wei2022finetuned}
 Jason Wei, Maarten Bosma, Vincent~Y Zhao, Kelvin Guu, Adams~Wei Yu, Brian
@@ -296,9 +359,16 @@ Y.~Dong, X.~Jiang, Z.~Jin, G.~Li.
 \newblock Unicorn: The ultimate CPU emulator.
 \newblock \url{https://www.unicorn-engine.org/}
 
-\bibitem{afl}
-Michal Zalewski.
-\newblock American fuzzy lop (AFL).
-\newblock \url{https://lcamtuf.coredump.cx/afl/}
+\bibitem{manesArtScienceEngineering2021}
+Valentin~J.M. Manes, {HyungSeok} Han, Choongwoo Han, Sang~Kil Cha, Manuel
+  Egele, Edward~J. Schwartz, et~al.
+\newblock The Art, Science, and Engineering of Fuzzing: A Survey.
+\newblock 47(11): 2312--2331
+
+\bibitem{aflplusplus_paper}
+Andrea Fioraldi, Dominik Maier, Heiko Ei{\ss}feldt, Marc Heuse.
+\newblock {AFL++} : Combining Incremental Steps of Fuzzing Research.
+\newblock In: 14th USENIX Workshop on Offensive Technologies (WOOT 20). USENIX
+  Association, 2020
 
 \end{thebibliography}

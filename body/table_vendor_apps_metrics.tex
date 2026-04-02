@@ -1,0 +1,54 @@
+% 厂商示例应用评测指标表（可 \input 到实验章节）
+% 列含义：Modeled Interfaces 为建模外设/接口文字说明；\# 为接口数量；
+% BB Fwd$_1$/Fwd$_2$ 对应 BB Fwd R/W EBC 两列；BB Func 列为指示符与三个数值。
+
+\begin{table}[p]
+\centering
+\caption{厂商示例应用及相关评测指标}
+\label{tab:vendor_apps_metrics}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{@{}llp{2.3cm}p{4.1cm}ccccccccc@{}}
+\toprule
+\textbf{Mfr.} &
+\textbf{Application} &
+\textbf{Software Libraries} &
+\textbf{Modeled Interfaces} &
+\textbf{\#} &
+\textbf{BB EBC} &
+\textbf{Fwd$_1$} & \textbf{Fwd$_2$} &
+\textbf{Ind.} & \textbf{F$_1$} & \textbf{F$_2$} & \textbf{F$_3$} &
+\textbf{MMIO} \\
+\midrule
+Atmel & UART & ASF & UART & 8 & $\times$ & 184 & 467 & $\times$ & 43 & 5 & 4 & $\checkmark$ \\
+Atmel & SD FatFs & ASF, FatFS, UART, SD Card, EXTI & UART, SD Card, EXTI & 8 & $\times$ & 344 & 554 & $\times$ & 920 & 14 & 28 & $\checkmark$ \\
+Atmel & lwIP HTTP & ASF, HTTP, lwIP & UART, Ethernet & 8 & $\times$ & 265 & 935 & $\times$ & 1,584 & 8 & 24 & $\checkmark$ \\
+Atmel & 6LoWPAN Sender & ASF, Contiki, uIPv6, 6LoWPAN & UART, 802.15.4, EXTI, Clock, Timer, EDBG & 14 & $\times$ & 121 & 521 & $\times$ & 2,734 & 21 & 36 & $\checkmark$ \\
+Atmel & 6LoWPAN Receiver & ASF, Contiki, uIPv6, 6LoWPAN & UART, 802.15.4, EXTI, Clock, Timer, EDBG & 14 & $\times$ & 122 & 903 & $\times$ & 2,474 & 21 & 36 & $\checkmark$ \\
+STM & UART & STM32Cube & UART, GPIO & 8 & $\times$ & 40 & 17 & $\times$ & 66 & 10 & 7 & $\checkmark$ \\
+STM & SD FatFs & STM32Cube & FatFS, GPIO, SD Card, Clock & 8 & $\times$ & 41 & 17 & $\times$ & 625 & 18 & 25 & $\checkmark$ \\
+STM & UDP Echo Client & STM32Cube, lwIP & Ethernet, Clock, GPIO, EXTI & 8 & $\times$ & 32 & 15 & $\times$ & 732 & 16 & 10 & $\checkmark$ \\
+STM & UDP Echo Server & STM32Cube, lwIP & Ethernet, Clock & 8 & $\times$ & 40 & 17 & $\times$ & 568 & 15 & 10 & $\checkmark$ \\
+STM & TCP Echo Client & STM32Cube, lwIP & Ethernet, Clock, GPIO, EXTI & 8 & $\times$ & 31 & 15 & $\times$ & 1,110 & 16 & 10 & $\checkmark$ \\
+STM & TCP Echo Server & STM32Cube, lwIP & Ethernet, Clock & 8 & $\times$ & 33 & 15 & $\times$ & 1,002 & 15 & 10 & $\checkmark$ \\
+STM & PLC & STM32Cube, lwIP, STM-WiFi & Clock, Timer, STM-WiFI, UART, SPI & 39 & $\times$ & 54 & 17 & $\times$ & 713 & 17 & 41 & $\checkmark$ \\
+NXP & UART & MCUExpresso & UART & 4 & $\times$ & 107 & 1,766 & $\checkmark$ & 82 & 6 & 28 & $\checkmark$ \\
+NXP & UDP Echo Server & MCUExpresso, lwIP & UART, Ethernet & 4 & $\times$ & 54 & 66 & $\times$ & 805 & 13 & 43 & $\checkmark$ \\
+NXP & TCP Echo Server & MCUExpresso, lwIP & UART, Ethernet & 4 & $\times$ & 54 & 66 & $\times$ & 1,173 & 14 & 43 & $\checkmark$ \\
+NXP & HTTP Server & MCUExpresso, lwIP & UART, Ethernet & 4 & $\times$ & 56 & 68 & $\times$ & 1,756 & 14 & 45 & $\checkmark$ \\
+\midrule
+\textbf{Averages} &
+\multicolumn{1}{l}{} &
+\multicolumn{1}{l}{} &
+\multicolumn{1}{l}{} &
+\textbf{9.7} &
+--- &
+\textbf{98.7} & \textbf{341.2} &
+--- &
+\textbf{1,024.2} & \textbf{13.9} & \textbf{25.0} &
+--- \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
