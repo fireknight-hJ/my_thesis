@@ -7,34 +7,30 @@
 \newlabel{chap:design}{{3}{20}{系统设计}{chapter.3}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {3.1}{\ignorespaces 系统整体架构图}}{20}{figure.caption.8}\protected@file@percent }
 \newlabel{fig:arch}{{3.1}{20}{系统整体架构图}{figure.caption.8}{}}
-\newlabel{eq:static}{{3.1}{21}{系统设计}{equation.3.1}{}}
-\newlabel{eq:classify}{{3.2}{21}{系统设计}{equation.3.2}{}}
-\newlabel{eq:replace}{{3.3}{21}{系统设计}{equation.3.3}{}}
-\newlabel{eq:verify}{{3.4}{21}{系统设计}{equation.3.4}{}}
-\newlabel{eq:emulate}{{3.5}{21}{系统设计}{equation.3.5}{}}
 \citation{fengp2020p2im}
 \citation{fengp2020p2im}
+\newlabel{eq:pipeline}{{3}{21}{系统设计}{figure.caption.8}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3.1}驱动函数接口静态分析与识别模块设计}{21}{section.3.1}\protected@file@percent }
 \citation{clements2020halucinator}
 \citation{clements2020halucinator}
-\@writefile{toc}{\contentsline {section}{\numberline {3.1}驱动函数接口静态分析与识别模块设计}{22}{section.3.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.1.1}MMIO 访问模式识别方法}{23}{subsection.3.1.1}\protected@file@percent }
 \newlabel{lst:mmio-struct}{{3.1}{23}{MMIO 结构体示例}{lstlisting.3.1}{}}
 \@writefile{lol}{\contentsline {lstlisting}{\numberline {3.1}{\ignorespaces MMIO 结构体示例}}{23}{lstlisting.3.1}\protected@file@percent }
-\newlabel{lst:direct-cast}{{3.2}{24}{直接地址强转模式示例}{lstlisting.3.2}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {3.2}{\ignorespaces 直接地址强转模式示例}}{24}{lstlisting.3.2}\protected@file@percent }
+\newlabel{lst:direct-cast}{{3.2}{23}{直接地址强转模式示例}{lstlisting.3.2}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {3.2}{\ignorespaces 直接地址强转模式示例}}{23}{lstlisting.3.2}\protected@file@percent }
 \newlabel{lst:indirect-init}{{3.3}{24}{间接初始化模式示例（HAL句柄和配置表）}{lstlisting.3.3}{}}
 \@writefile{lol}{\contentsline {lstlisting}{\numberline {3.3}{\ignorespaces 间接初始化模式示例（HAL句柄和配置表）}}{24}{lstlisting.3.3}\protected@file@percent }
+\newlabel{lst:pointer-param}{{3.4}{24}{常量指针参数模式示例}{lstlisting.3.4}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {3.4}{\ignorespaces 常量指针参数模式示例}}{24}{lstlisting.3.4}\protected@file@percent }
 \citation{fengp2020p2im}
 \citation{fengp2020p2im}
 \citation{clements2020halucinator}
 \citation{clements2020halucinator}
-\newlabel{lst:pointer-param}{{3.4}{25}{常量指针参数模式示例}{lstlisting.3.4}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {3.4}{\ignorespaces 常量指针参数模式示例}}{25}{lstlisting.3.4}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {3.1}{\ignorespaces MMIO 结构体实例定位模式对比}}{26}{table.caption.9}\protected@file@percent }
 \newlabel{tab:mmio-patterns}{{3.1}{26}{MMIO 结构体实例定位模式对比}{table.caption.9}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.1.1}查询规则设计原则}{26}{subsubsection.3.1.1.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.1.2}驱动函数定位准则}{27}{subsection.3.1.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1.3}数据流追踪方法}{28}{subsection.3.1.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1.3}数据流追踪方法}{27}{subsection.3.1.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.3.1}追踪配置设计}{28}{subsubsection.3.1.3.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.3.2}追踪复杂度分析}{28}{subsubsection.3.1.3.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.1.4}统一数据模型设计}{29}{subsection.3.1.4}\protected@file@percent }
@@ -42,17 +38,17 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.2.1}分析替换与编译智能体工作流设计}{30}{subsection.3.2.1}\protected@file@percent }
 \@writefile{lof}{\contentsline {figure}{\numberline {3.2}{\ignorespaces 驱动函数分析替换编译模块示意图}}{30}{figure.caption.10}\protected@file@percent }
 \newlabel{fig:analyzer-workflow}{{3.2}{30}{驱动函数分析替换编译模块示意图}{figure.caption.10}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.1.1}驱动函数分析与替换代码生成模块设计}{31}{subsubsection.3.2.1.1}\protected@file@percent }
-\newlabel{sec:analyzer-workflow}{{3.2.1.1}{31}{驱动函数分析与替换代码生成模块设计}{subsubsection.3.2.1.1}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.1.1}驱动函数分析与替换代码生成模块设计}{30}{subsubsection.3.2.1.1}\protected@file@percent }
+\newlabel{sec:analyzer-workflow}{{3.2.1.1}{30}{驱动函数分析与替换代码生成模块设计}{subsubsection.3.2.1.1}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.1.2}替换代码修正与编译集成模块设计}{31}{subsubsection.3.2.1.2}\protected@file@percent }
 \newlabel{sec:builder-workflow}{{3.2.1.2}{31}{替换代码修正与编译集成模块设计}{subsubsection.3.2.1.2}{}}
+\citation{clements2020halucinator}
+\citation{clements2020halucinator}
+\citation{fengp2020p2im}
+\citation{fengp2020p2im}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.2.2}驱动函数替换策略设计}{32}{subsection.3.2.2}\protected@file@percent }
 \newlabel{sec:driver-replacement-strategy}{{3.2.2}{32}{驱动函数替换策略设计}{subsection.3.2.2}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.2.1}函数分类策略设计}{32}{subsubsection.3.2.2.1}\protected@file@percent }
-\citation{clements2020halucinator}
-\citation{clements2020halucinator}
-\citation{fengp2020p2im}
-\citation{fengp2020p2im}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.2.2}分类判定规则}{33}{subsubsection.3.2.2.2}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {3.2}{\ignorespaces 驱动函数分类体系}}{35}{table.caption.11}\protected@file@percent }
 \newlabel{tab:function-categories}{{3.2}{35}{驱动函数分类体系}{table.caption.11}{}}
@@ -73,30 +69,30 @@
 \citation{pretender}
 \citation{clements2020halucinator}
 \citation{clements2020halucinator}
+\@writefile{toc}{\contentsline {section}{\numberline {3.3}动态测试反馈闭环模块设计}{39}{section.3.3}\protected@file@percent }
 \citation{firmadyne}
 \citation{firmadyne}
 \citation{clements2020halucinator}
 \citation{clements2020halucinator}
 \citation{fengp2020p2im}
 \citation{fengp2020p2im}
-\@writefile{toc}{\contentsline {section}{\numberline {3.3}动态测试反馈闭环模块设计}{40}{section.3.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.3.1}动态执行环境设计}{40}{subsection.3.3.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.1.1}仿真平台架构设计}{40}{subsubsection.3.3.1.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.3.2}仿真执行智能体设计}{41}{subsection.3.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.2.1}职责定义与工具链设计}{41}{subsubsection.3.3.2.1}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {3.4}{\ignorespaces 固件仿真模块注入接口与使用场景}}{42}{table.caption.13}\protected@file@percent }
 \newlabel{tab:hal-be-hooks}{{3.4}{42}{固件仿真模块注入接口与使用场景}{table.caption.13}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.2.1}职责定义与工具链设计}{42}{subsubsection.3.3.2.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.2.2}决策逻辑设计}{42}{subsubsection.3.3.2.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.2.3}仿真执行流程设计}{43}{subsubsection.3.3.2.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.3.3}反馈信息结构化设计}{43}{subsection.3.3.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.3.4}迭代优化机制设计}{44}{subsection.3.3.4}\protected@file@percent }
-\newlabel{eq:iterate}{{3.6}{44}{迭代优化机制设计}{equation.3.6}{}}
+\newlabel{eq:iterate}{{3.1}{44}{迭代优化机制设计}{equation.3.1}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.4.1}错误诊断算法设计}{44}{subsubsection.3.3.4.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.4.2}迭代终止条件}{45}{subsubsection.3.3.4.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {3.4}本章小结}{46}{section.3.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3.4}本章小结}{45}{section.3.4}\protected@file@percent }
 \@setckpt{body/chap03_design}{
 \setcounter{page}{47}
-\setcounter{equation}{6}
+\setcounter{equation}{1}
 \setcounter{enumi}{0}
 \setcounter{enumii}{0}
 \setcounter{enumiii}{0}
@@ -122,7 +118,7 @@
 \setcounter{subtable}{0}
 \setcounter{subtable@save}{0}
 \setcounter{lotdepth}{1}
-\setcounter{endNonectr}{22}
+\setcounter{endNonectr}{21}
 \setcounter{currNonectr}{0}
 \setcounter{NAT@ctr}{0}
 \setcounter{lstnumber}{18}

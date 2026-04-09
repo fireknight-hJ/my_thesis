@@ -18,25 +18,19 @@
 
 动态测试反馈闭环模块首先接受驱动函数分析、替换与编译模块输出的替换代码，然后在仿真环境中运行固件，采集运行日志、崩溃信息等，并将错误信息结构化，触发闭环修复智能体对嵌入式程序进行重新分析与替换代码修正，修正完成后再次通过闭环构建智能体交叉编译生成可执行的二进制固件程序，再次在仿真环境中运行固件，如此循环，直至替换代码通过仿真测试。通过多智能体协作，该模块构建"生成-测试-反馈-修正"的闭环机制，使固件构建仿真与自修复的全过程实现自动化。
 
-为精确定义系统的输入输出关系，以下给出端到端映射的形式化描述。设固件源码工程为 $P$，固件中的函数集合为 $F$，MMIO 结构体实例集合为 $M$，驱动函数类别集合为 $C$，替换策略集合为 $S$。系统的端到端功能可形式化为以下映射：
-\begin{align}
-\textit{StaticAnalysis}: P &\to (D, R, G) \label{eq:static} \\
-\textit{Classify}: D &\to C \label{eq:classify} \\
-\textit{Replace}: D \times C &\to D' \label{eq:replace} \\
-\textit{Verify}: D' &\to \{\textit{pass}, \textit{fail}\} \label{eq:verify} \\
-\textit{Emulate}: P' &\to (O, E) \label{eq:emulate}
-\end{align}
-其中，式~\ref{eq:static}~中 $D \subseteq F$ 为识别出的驱动函数集合，$R$ 为 MMIO 访问点集合，$G = (F, E_c)$ 为函数调用图（$E_c$ 为调用边集合）；式~\ref{eq:classify}~将每个驱动函数映射到其语义类别；式~\ref{eq:replace}~对每个驱动函数 $f \in D$ 生成替换实现 $f' \in D'$；式~\ref{eq:verify}~对替换实现进行多层验证；式~\ref{eq:emulate}~中 $P'$ 为替换后的工程，$O$ 为仿真运行输出，$E$ 为运行时错误集合。系统通过迭代执行"替换$\to$验证$\to$仿真$\to$反馈"闭环，直至 $E = \emptyset$ 或达到最大迭代次数。
+为精确定义系统的输入输出关系，以下给出端到端映射的形式化描述。设固件源码工程为 $P$，固件中的函数集合为 $F$，MMIO 结构体实例集合为 $M$，驱动函数类别集合为 $C$，替换策略集合为 $S$。系统的端到端功能可形式化为以下复合映射：
+$$\textit{Pipeline} = \textit{Emulate} \circ \textit{Verify} \circ \textit{Replace} \circ \textit{Classify} \circ \textit{StaticAnalysis}: P \to (O, E) \label{eq:pipeline}$$
+其中，$\textit{StaticAnalysis}: P \to (D, R, G)$ 从源码中识别驱动函数集合 $D \subseteq F$、MMIO 访问点集合 $R$ 和函数调用图 $G = (F, E_c)$；$\textit{Classify}: D \to C$ 将每个驱动函数映射到其语义类别；$\textit{Replace}: D \times C \to D'$ 对每个驱动函数 $f \in D$ 生成替换实现 $f' \in D'$；$\textit{Verify}: D' \to \{\textit{pass}, \textit{fail}\}$ 对替换实现进行多层验证；$\textit{Emulate}: P' \to (O, E)$ 在仿真环境中运行替换后的工程 $P'$，产生运行输出 $O$ 和运行时错误集合 $E$。系统通过迭代执行"替换$\to$验证$\to$仿真$\to$反馈"闭环，直至 $E = \emptyset$ 或达到最大迭代次数。
 
 \section{驱动函数接口静态分析与识别模块设计}
 
 本模块是整个方案的基础支撑层，负责自动、精准地定位固件中与硬件交互的代码，并将其抽象为标准化的"可查询知识库"。模块的核心职责是建立从源码到硬件依赖信息的映射，识别固件中与硬件交互的函数，确定函数访问硬件的方式（如直接寄存器访问、HAL 库调用或间接句柄操作），并分析函数之间的调用依赖关系。
 
-在静态分析引擎的选型上，本模块需要对比源码级方案内部的两种技术路线：基于 LLVM/Clang 的分析和基于 CodeQL 的分析。
+在静态分析引擎的选型上，需要综合考虑分析能力与工程兼容性。源码级静态分析主要有两种技术路线：基于 LLVM/Clang 的分析和基于 CodeQL 的分析。
 
 基于 LLVM/Clang 的分析方案（如 P2IM~\cite{fengp2020p2im} 采用基于 LLVM IR 的启发式规则识别外设寄存器访问）在实际应用中面临工程兼容性问题。嵌入式固件的构建工具链通常与 ARM GCC 深度绑定：Zephyr RTOS 通过 west 构建系统默认调用 \texttt{arm-none-eabi-gcc} 进行交叉编译，STM32CubeIDE、MCUXpresso 等厂商 IDE 同样基于 ARM GCC 工具链；嵌入式工程中广泛使用的 CMSIS 头文件、芯片厂商提供的设备描述头文件以及 \texttt{\_\_attribute\_\_}、\texttt{\_\_IO}、\texttt{\_\_ASM} 等 ARM GCC 扩展语法，Clang 的兼容性尚不完整。若采用基于 Clang 的源码分析工具，需要将整个构建工具链从 ARM GCC 切换到 Clang，这一过程涉及重新配置构建系统、适配厂商头文件中的编译器扩展语法以及处理链接器脚本差异等问题，迁移成本较高。此外，部分嵌入式工程的构建脚本使用 ARM GCC 特有的编译选项（如 \texttt{-mcpu=cortex-m4}、\texttt{-mfpu=fpv4-sp-d16} 等），Clang 对这些选项的语义解释存在差异，可能导致分析结果与实际编译行为不一致。
 
-CodeQL 采用与编译器无关的数据库构建方式：通过在构建过程中拦截编译器调用来捕获源码信息，而非替代原始编译器执行编译。因此，CodeQL 可以直接在 ARM GCC 工具链的构建流程上工作，无需修改固件工程的编译配置。CodeQL 将源码构建为包含 AST、控制流图和数据流图的综合数据库，支持声明式查询语言和全局污点追踪，能够在不运行固件的情况下跨文件追踪 MMIO 基址常量的传播路径，为后续的智能替换提供基础数据。与运行时方法相比（如 HALucinator~\cite{clements2020halucinator} 通过 QEMU 的内存追踪识别外设访问），CodeQL 无需先实现完整的外设模型即可工作。
+CodeQL 采用与编译器无关的数据库构建方式：通过在构建过程中拦截编译器调用来捕获源码信息，而非替代原始编译器执行编译。因此，CodeQL 可以直接在 ARM GCC 工具链的构建流程上工作，无需修改固件工程的编译配置。CodeQL 将源码构建为包含 AST、控制流图和数据流图的综合数据库，支持声明式查询语言和全局污点追踪，能够在不运行固件的情况下跨文件追踪 MMIO 基址常量的传播路径，为后续的智能替换提供基础数据。
 
 模块采用静态分析技术构建包含语法树、控制流图和数据流图的综合数据库，通过设计的查询规则识别 MMIO 结构体实例和字段访问，进而识别涉及硬件访问的驱动函数，为替换模块提供精确的语句定位信息。模块输出的分析结果包含驱动函数列表、MMIO 访问操作、函数调用关系图和数据结构信息，这些结构化的分析结果被存储在统一的数据模型中，为下游模块提供可查询的知识库。
 
