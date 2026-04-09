@@ -408,27 +408,90 @@ HAL_StatusTypeDef HAL_GPIO_DeInit(GPIO_TypeDef *GPIOx) {
 
 \subsubsection{分类提示词模板设计}
 
-分析智能体的提示词模板采用分阶段结构设计，包含角色定义、工具说明、分类策略和输出格式四个部分。
+分析智能体的提示词模板采用分阶段结构设计，包含角色定义、工具说明、分类策略和输出格式四个部分。其整体骨架如代码~\ref{lst:classifier-prompt-overview}所示。
 
-\textbf{角色定义}。提示词以角色设定开场，明确 LLM 扮演嵌入式软件工程师角色，任务是将驱动库函数中的硬件依赖消除，同时保持固件正常运行和 MCU 相关操作（包括操作系统调度和中断触发）。角色定义约束了 LLM 的推理方向，避免其生成与任务无关的输出。
+\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt,caption={分类提示词模板骨架},label=lst:classifier-prompt-overview]
+**Role**: You are an embedded software engineer tasked with
+replacing driver library functions to eliminate dependencies
+on peripheral hardware while preserving normal functionality
+and MCU-related operations (including OS scheduling and
+interrupt triggering).
+**Overall Process**:
+1. Information Gathering: Obtain the function implementation
+   and context using available tools.
+2. Analysis Phase: Analyze MMIO accesses, call relationships,
+   data structures, and core logic.
+3. Classification Phase: Categorize the function into one of
+   the defined types.
+4. Processing Phase:
+   - RECV, IRQ, INIT, LOOP: Generate replacement code.
+   - RETURNOK, SKIP, NEEDCHECK, NODRIVER: Classification only.
+**Tools**: GetFunctionInfo, GetMMIOFunctionInfo,
+  GetStructOrEnumInfo, GetFunctionCallStack, GetDriverInfo
+  (详见代码~\ref{lst:prompt-tools})
+**Categories**: RECV / IRQ / INIT / LOOP / RETURNOK / SKIP /
+  NEEDCHECK / NODRIVER (详见代码~\ref{lst:prompt-recv}等)
+**Rules**: (详见代码~\ref{lst:prompt-rules})
+**Output Format** (JSON):
+{
+  "function_name": "<name>",
+  "function_type": "<RECV|IRQ|INIT|LOOP|...>",
+  "functionality": "<brief description>",
+  "classification_reason": "<detailed explanation>",
+  "has_replacement": <true|false>,
+  "function_replacement": "<code or empty string>"
+}
+\end{lstlisting}
 
-\textbf{工具说明}。提示词中声明了分析智能体可用的五类信息获取工具及其调用时机：GetFunctionInfo（获取函数实现代码，首先调用）、GetMMIOFunctionInfo（检查 MMIO 操作，紧随其后调用）、GetStructOrEnumInfo（查询数据结构定义，按需调用）、GetFunctionCallStack（获取调用关系，按需调用）、GetDriverInfo（获取驱动模块上下文，按需调用）。提示词明确规定了工具调用顺序：GetFunctionInfo $\to$ GetMMIOFunctionInfo $\to$ [GetStructOrEnumInfo | GetFunctionCallStack | GetDriverInfo]（按需选择），确保 LLM 按照固定的信息获取流程执行，避免遗漏关键信息。
+\textbf{角色定义与工具说明}。提示词以角色设定开场，将 LLM 定位为嵌入式软件工程师，明确任务是消除驱动函数的硬件依赖。随后声明五个可调用的工具函数及其调用顺序，如代码~\ref{lst:prompt-tools}所示。
 
-\textbf{分类策略}。提示词中嵌入了前述八类函数（RECV、IRQ、INIT、LOOP、RETURNOK、SKIP、CORE、NODRIVER）的识别标准和替换策略。每类函数的定义包含：识别特征（函数名关键词、MMIO 访问模式、控制流结构）、替换策略（Skip、Redirect、Event、Steering、ReturnOK 等）、典型替换示例。分类策略按照优先级排列，提示词中明确要求 LLM 先判断是否属于 RECV 或 IRQ 类（这两类函数的替换策略最复杂，分类错误的影响也最大），再判断其他类别，从而减少高影响函数的误分类率。
+\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt,caption={提示词中的工具声明与调用顺序},label=lst:prompt-tools]
+1. GetFunctionInfo(func_name): Get function implementation.
+   -> Always call this first.
+2. GetMMIOFunctionInfo(func_name): Identify hardware accesses.
+   -> Call immediately after GetFunctionInfo.
+3. GetStructOrEnumInfo(struct_name): Query data structures.
+4. GetFunctionCallStack(func_name): Get call relationships.
+5. GetDriverInfo(driver_name): Get driver module context.
+   Tool Sequence: GetFunctionInfo -> GetMMIOFunctionInfo
+                 -> [3|4|5] (as needed)
+\end{lstlisting}
 
-\textbf{代码生成约束}。对于需要生成替换代码的函数类别（RECV、IRQ、INIT、LOOP），提示词设置了以下约束：（1）替换代码只能使用原函数中出现的类型和变量名，禁止引入新的头文件依赖；（2）注入函数调用（HAL\_BE\_* 系列）必须符合函数签名规范；（3）必须保留所有非硬件相关的业务逻辑（如状态字段更新、计数器维护、缓冲区指针操作）；（4）函数签名必须与原函数完全一致，包括返回类型、参数类型和参数名。
+提示词要求 LLM 先调用 GetFunctionInfo 获取函数源码，再调用 GetMMIOFunctionInfo 确认硬件访问方式，最后按需调用其余工具补充上下文。固定的工具调用顺序减少了信息遗漏。
 
-\textbf{输出格式}。提示词要求 LLM 以结构化的 JSON 格式输出分类结果，包含函数名、分类类别、分类理由、替换策略和替换代码（仅替换类函数需要）。结构化输出便于后续模块自动解析和处理，避免了自由格式文本解析的不确定性。
+\textbf{分类策略}。提示词将八类函数的识别特征和替换策略以结构化形式嵌入。代码~\ref{lst:prompt-recv}展示了 RECV 类函数的分类描述片段。
 
-\subsubsection{修复提示词模板设计}
+\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt,caption={提示词中 RECV 类函数的分类描述},label=lst:prompt-recv]
+RECV (Data Transmission/Reception Functions)
+  Identification: Functions performing critical data I/O,
+    DMA buffer management, or peripheral data transfer.
+  Examples: HAL_UART_Receive, ETH_ReadFrame, SPI_Receive
+  Strategy:
+    Data reception -> HAL_BE_In(buf, len) or
+                     HAL_BE_ENET_ReadFrame(buf, length)
+    Data transmission -> HAL_BE_Out(len) or skip
+  Critical: Preserve all non-I/O logic (buffer pointer
+    updates, state flags, data processing).
+\end{lstlisting}
 
-闭环修复智能体的提示词模板针对运行时错误修复场景设计，其结构与分类提示词有所不同。修复提示词的核心特点是将错误诊断和修复方案生成整合在一个推理流程中。
+每类函数的定义包含识别特征（函数行为描述和典型函数名）、替换策略（使用哪些注入函数）和关键约束（必须保留的逻辑）。提示词按照 RECV $>$ IRQ $>$ INIT $>$ LOOP 的优先级排列，要求 LLM 先判断高影响类别，减少误分类。
 
-\textbf{错误信息结构化}。修复提示词的输入包含结构化的错误信息，包括错误类型（崩溃、超时、内存异常）、错误地址（程序计数器值）、相关函数调用栈、MMIO 函数调用日志和仿真运行的标准输出/标准错误。提示词指导 LLM 首先根据错误类型选择诊断策略：崩溃错误通过 PC 地址匹配定位到具体函数；超时错误通过 PC 分布直方图识别循环结构；内存异常通过访问地址判断是否为未替换的 MMIO 操作。
+\textbf{代码生成约束}。对于需要生成替换代码的函数类别，提示词设置了以下约束，如代码~\ref{lst:prompt-rules}所示。
 
-\textbf{修复约束}。修复提示词设置了严格的修复约束：（1）每轮修复仅针对诊断出的首个问题函数进行修改，避免同时修改多个函数导致冲突；（2）修复仅修改替换代码，不修改原始固件代码；（3）修复必须说明修改原因和预期效果，便于故障追溯；（4）修复后需要保留原替换代码的版本记录，支持回退操作。
+\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt,caption={提示词中的通用替换规则},label=lst:prompt-rules]
+General Replacement Rules:
+1. Do not change the function's return type.
+2. Do not add extern declarations or #include directives.
+3. Preserve all OS-related calls (scheduling, semaphores).
+4. Only use provided helper functions (HAL_BE_*).
+5. Do not fabricate undefined constants or variables.
+\end{lstlisting}
 
-\textbf{工具调用策略}。修复提示词引导 LLM 在修复前先通过工具调用获取充分的上下文信息：调用 GetFunctionInfo 获取当前替换代码、调用 GetMMIOFunctionEmulateInfo 获取 MMIO 函数的仿真调用日志、调用 GetFunctionCallsEmulateInfo 获取函数调用栈。这种"先查询再修复"的策略避免了 LLM 在信息不充分的情况下做出错误决策。
+规则（1）和（2）与第~\ref{chap:design}~章的四层验证机制中的签名匹配检查（$V_2$）和替换规则检查（$V_4$）对应，在生成阶段即约束 LLM 遵守接口规范。规则（3）确保操作系统调用不被误删。规则（4）和（5）限制了 LLM 的生成范围，要求仅使用原函数中出现的类型、变量和系统提供的注入函数，从源头减少幻觉问题。
+
+\textbf{输出格式}。提示词要求 LLM 以 JSON 格式输出分类结果，包含函数名、分类类别、分类理由和替换代码字段。结构化输出使后续模块能够自动解析，避免自由格式文本的不确定性。
+
+编译修复智能体的提示词设计较为精炼，主要任务是接收编译器输出的错误信息和对应的函数名，要求 LLM 定位错误原因并生成修复后的替换代码，修复后重新触发编译验证。提示词约束修复时不得修改函数签名、不得引入新的头文件或外部声明，与分析智能体的通用替换规则一致。
 
 \section{动态测试反馈闭环模块实现}
 
@@ -518,6 +581,83 @@ class EmulatorState(TypedDict):
 闭环的终止判断通过 LangGraph 的条件边（conditional edge）实现。在仿真节点之后，条件函数检查仿真结果：若 \texttt{emulate\_result.success == true}，转移到终止节点；否则检查迭代计数是否达到上限、诊断是否能定位问题函数，决定继续迭代或终止。
 
 系统实现了三层错误处理机制：（1）编译错误处理，由构建智能体在编译失败时触发，错误信息通过正则表达式解析后传递给修复智能体；（2）运行时错误处理，包括内存访问错误（UC\_ERR\_FETCH\_UNMAPPED、UC\_ERR\_WRITE\_UNMAPPED）、非法指令执行（UC\_ERR\_INSTRUCTION\_INVALID）和超时，错误信息从 Unicorn 异常中提取后传递给故障诊断模块；（3）框架级错误处理，当 LangGraph 达到递归深度限制（GraphRecursionError）时，系统捕获异常并分析对话历史，生成故障报告后退出。系统记录每次迭代的完整信息（失败现象、诊断结果、修复方案、验证结果），便于问题追溯和系统优化。
+
+\subsubsection{修复智能体提示词模板设计}
+
+闭环修复智能体的提示词模板针对运行时错误修复场景设计，与分析智能体的分类提示词不同，修复提示词将错误诊断和修复方案生成整合在一个推理流程中。其骨架如代码~\ref{lst:fixer-prompt-overview}所示。
+
+\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt,caption={修复提示词模板骨架},label=lst:fixer-prompt-overview]
+**Role**: Embedded software engineer specializing in HAL
+development and debugging. Your task is to actively and
+independently analyze emulator error logs to identify
+problematic functions and fix them.
+**CRITICAL**: You must NOT ask for parameters. You MUST
+first actively retrieve error logs using available tools.
+**Workflow**:
+Step 0: Retrieve emulator logs (function_calls_emulate_info,
+        mmio_function_emulate_info)
+Step 1: Analyze logs to identify problematic functions
+Step 2: Get function context (GetReplaceFuncDetailsByFile)
+Step 3: Generate fix and apply (UpdateFunctionReplacement)
+**Constraints**: Preserve function signature; no new types
+  or headers; preserve OS core functions (scheduler, context
+  switch); do not stub VTOR/NVIC/SysTick writes.
+\end{lstlisting}
+
+修复提示词的设计要点包括以下四个方面。
+
+\textbf{主动日志获取}。与分析智能体被动接收函数名不同，修复智能体需要主动从仿真运行结果中定位问题。提示词要求 LLM 首先调用 \texttt{function\_calls\_emulate\_info()} 获取完整的执行流和错误信息，再调用 \texttt{mmio\_function\_emulate\_info()} 获取 MMIO 函数调用日志，从日志中自行判断哪些函数导致了崩溃或超时，而非等待外部指定。
+
+\textbf{上下文完整获取}。修复提示词要求 LLM 在生成修复方案前必须获取完整的上下文，如代码~\ref{lst:fixer-context}所示。
+
+\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt,caption={修复提示词中的上下文获取要求},label=lst:fixer-context]
+Before any code changes, call these tools in order:
+1. GetReplaceFuncDetailsByFile(file_path) to get:
+   - Original function code and signature
+   - All previous replacement attempts with exact code
+   - All replacement history with timestamps
+2. function_calls_emulate_info() to get execution flow
+3. mmio_function_emulate_info() to identify MMIO involvement
+DO NOT make code changes until you have complete context.
+\end{lstlisting}
+
+这一要求确保 LLM 了解该函数的历次替换历史，避免重复此前已尝试过且失败的修复方案。
+
+\textbf{OS 核心函数保护}。修复提示词中设置了严格的保护规则，禁止 LLM 修改操作系统核心函数（如 FreeRTOS 的 \texttt{vTaskStartScheduler}、\texttt{PendSV\_Handler}，RT-Thread 的 \texttt{rt\_schedule} 等）。提示词要求：若崩溃发生在 OS 核心函数中，LLM 应查找附近的驱动初始化代码中的问题，而非改写 OS 核心函数本身。
+
+\textbf{步数预算控制}。提示词明确告知 LLM 总步数限制，要求其对最多 3--5 个可疑函数进行分析后立即生成修复方案，避免无限调用分析工具耗尽步数。
+
+\subsubsection{仿真执行智能体与闭环构建智能体提示词设计}
+
+仿真执行智能体作为动态测试反馈闭环的主控调度单元，其提示词定义了闭环的验证标准和状态驱动的调试工作流。代码~\ref{lst:emulator-prompt}展示了其骨架。
+
+\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt,caption={仿真执行智能体提示词骨架},label=lst:emulator-prompt]
+**Task**: Iteratively debug and validate the firmware after
+replacing hardware-coupled functions with mock stubs.
+**Validation Criteria** (all must be true):
+1. Program does NOT enter an infinite loop.
+2. No exceptions (illegal memory access, bus faults).
+3. Execution successfully reaches the main() function.
+**Debugging Workflow** (strict state-driven cycle):
+1. Emulate -> Check success field.
+   If success: true -> STOP (task complete).
+   If success: false -> Proceed to step 2.
+2. Diagnose (exactly once per failure cycle)
+   -> Call Fixer to analyze logs and produce code fixes.
+   -> After receiving Fixer response -> Proceed to step 3.
+3. Build -> Recompile with proposed changes.
+   If build fails -> Go back to step 2.
+   If build succeeds -> Go to step 1 (re-emulate).
+**Critical Rules**:
+- One Fixer call per failure iteration.
+- Always call Builder after Fixer.
+- Validation is empirical: only Emulator's success field
+  confirms a fix, not further analysis.
+\end{lstlisting}
+
+仿真执行智能体的提示词设计有以下特点：（1）验证标准明确量化——以"无死循环、无异常、到达 main 函数"三项条件作为成功判定依据，避免 LLM 自行定义模糊的成功标准；（2）状态驱动的固定工作流——提示词严格规定了 Emulate $\to$ Diagnose $\to$ Build 的三步循环，每步之间的转移条件清晰，不允许 LLM 跳步或重复调用同一工具；（3）经验主义验证原则——明确告知 LLM 修复是否成功只能通过仿真运行结果判断，而非通过静态分析推断。
+
+闭环构建智能体的提示词与分析智能体中的编译修复智能体类似，主要负责应用修复代码并执行编译构建。其提示词包含与分析智能体一致的函数签名约束（不得修改返回类型、不得引入新的头文件或外部声明），并额外要求 LLM 在遇到大量编译错误时逐函数修复，避免一次性粘贴全部编译输出导致上下文溢出。
 
 \section{实现挑战与解决方案}
 
