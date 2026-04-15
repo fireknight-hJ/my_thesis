@@ -118,7 +118,7 @@ uint16_t USART_ReceiveData(USART_TypeDef *USARTx) {
 
 \subsection{分析替换与编译智能体工作流设计}
 
-工作流以\textbf{单个驱动函数}为粒度调度：每轮从静态分析模块输出的驱动函数列表中取一条函数记录（含签名、源码片段、MMIO 访问上下文等），依次由分析智能体完成上下文获取、语义分类和替换代码生成，再由编译修复智能体完成代码集成、构建验证和错误修复，直至该函数被判定为无需替换并结束，或替换实现通过校验与编译并被采纳。为便于叙述与实现解耦，整条流水线在逻辑上划分为\textbf{驱动函数分析与替换代码生成}、\textbf{替换代码修正与编译集成}两个子模块；前者由\textbf{分析智能体}主导完成上下文拉取、分类与候选替换生成，后者由\textbf{编译修复智能体}在工程侧完成定义校验、构建与失败修复。
+工作流以\textbf{单个驱动函数}为粒度调度：每轮从静态分析模块输出的驱动函数列表中取一条函数记录（含签名、源码片段、MMIO 访问上下文等），依次由分析智能体完成上下文获取、语义分类和替换代码生成，再由编译修复智能体完成代码集成、构建验证和错误修复，直至该函数被判定为无需替换并结束，或替换实现通过校验与编译并被采纳。为便于叙述与实现解耦，整条流水线在逻辑上划分为\textbf{驱动函数分析与替换代码生成}、\textbf{替换代码修正与编译集成}两个子模块；前者由\textbf{分析智能体}主导完成上下文拉取、分类与候选替换生成，后者先由大语言模型完成语法、签名等四层质量验证，通过后再由\textbf{编译修复智能体}在工程侧完成代码集成、构建与失败修复。
 
 \begin{figure}[htbp]
     \centering
@@ -132,7 +132,7 @@ uint16_t USART_ReceiveData(USART_TypeDef *USARTx) {
 
 该子模块由\textbf{分析智能体}驱动，在 LangGraph 状态机中通过"工具调用—推理—写回"的循环完成单函数处理。执行顺序固定为：\textbf{信息获取} $\to$ \textbf{代码分类} $\to$（仅在分类结果认定该函数需要替换时）\textbf{替换代码生成}。
 
-\textbf{信息获取}阶段通过工具调用获取该驱动函数在工程中的完整上下文，包括完整实现或相关片段、函数签名与参数类型、调用关系与 MMIO 仿真侧提示等（如 GetFunctionInfo、GetFunctionCallStack、GetMMIOFunctionEmulateInfo）。\textbf{代码分类}阶段综合源码与静态分析结果，由大语言模型判定函数语义类别及是否属于必须替换的硬件相关行为；分类所依据的类别体系及提示构造方式见第~\ref{sec:driver-replacement-strategy}~节。\textbf{替换代码生成}仅在"需要替换"分支上触发：模型在既定类别上选择替换策略并产出与签名一致的候选实现，具体策略（如 Skip、Redirect、Steering、Event、ReturnOK 等）的选择规则与生成约束同样在第~\ref{sec:driver-replacement-strategy}~节展开，本节只给出子模块内的先后次序与数据交接关系。
+\textbf{信息获取}阶段通过工具调用获取该驱动函数在工程中的完整上下文，包括完整实现或相关片段、函数签名与参数类型、调用关系与 MMIO 仿真侧提示等（如 GetFunctionInfo、GetFunctionCallStack、GetMMIOFunctionEmulateInfo）。\textbf{代码分类}阶段综合源码与静态分析结果，由大语言模型判定函数语义类别及是否属于必须替换的硬件相关行为；分类所依据的类别体系及提示构造方式见第~\ref{sec:driver-replacement-strategy}~节。\textbf{替换代码生成}仅在"需要替换"分支上触发：模型在既定类别上选择替换策略并产出与签名一致的候选实现，具体策略（如 Skip、Redirect、Steering、Event、ReturnOK 等）的选择规则与生成约束同样在第~\ref{sec:driver-replacement-strategy}~节展开，本节只给出子模块内的工作流程与数据交接关系。
 
 \subsubsection{替换代码修正与编译集成模块设计}
 \label{sec:builder-workflow}
