@@ -68,20 +68,8 @@ HAL_UART_Init(&UartHandle);              // 传入句柄初始化
 \textbf{模式三：基址直传}。底层驱动函数以 \texttt{USART\_TypeDef *} 作为形参，调用者将模式一定义的基地址宏直接作为实参传入，如 \texttt{USART\_Cmd(USART1, ENABLE)}，函数体内部通过该参数直接访问寄存器字段，如代码~\ref{lst:pointer-param}所示（摘自 CH32 标准外设库驱动源码）。
 
 \begin{lstlisting}[style=CStyle,language=C,caption={基址直传模式（ch32v10x\_usart.c）},label=lst:pointer-param]
-void USART_Cmd(USART_TypeDef *USARTx, FunctionalState NewState) {
-    if (NewState != DISABLE) {
-        USARTx->CTLR1 |= CTLR1_UE_Set;
-    } else {
-        USARTx->CTLR1 &= CTLR1_UE_Reset;
-    }
-}
-
 void USART_SendData(USART_TypeDef *USARTx, uint16_t Data) {
     USARTx->DATAR = (Data & (uint16_t)0x01FF);
-}
-
-uint16_t USART_ReceiveData(USART_TypeDef *USARTx) {
-    return (uint16_t)(USARTx->DATAR & (uint16_t)0x01FF);
 }
 \end{lstlisting}
 
