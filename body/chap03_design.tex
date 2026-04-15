@@ -65,9 +65,9 @@ UartHandle.Init.StopBits   = UART_STOPBITS_1;
 HAL_UART_Init(&UartHandle);              // 传入句柄初始化
 \end{lstlisting}
 
-\textbf{模式三：常量指针参数}。底层驱动函数直接以 \texttt{USART\_TypeDef *} 作为形参，函数体内部通过该参数直接访问寄存器字段，如代码~\ref{lst:pointer-param}所示（摘自 CH32 标准外设库驱动源码）。调用者将模式一定义的宏作为实参传入，如 \texttt{USART\_Cmd(USART1, ENABLE)}。
+\textbf{模式三：基址直传}。底层驱动函数以 \texttt{USART\_TypeDef *} 作为形参，调用者将模式一定义的基地址宏直接作为实参传入，如 \texttt{USART\_Cmd(USART1, ENABLE)}，函数体内部通过该参数直接访问寄存器字段，如代码~\ref{lst:pointer-param}所示（摘自 CH32 标准外设库驱动源码）。
 
-\begin{lstlisting}[style=CStyle,language=C,caption={常量指针参数模式（ch32v10x\_usart.c）},label=lst:pointer-param]
+\begin{lstlisting}[style=CStyle,language=C,caption={基址直传模式（ch32v10x\_usart.c）},label=lst:pointer-param]
 void USART_Cmd(USART_TypeDef *USARTx, FunctionalState NewState) {
     if (NewState != DISABLE) {
         USARTx->CTLR1 |= CTLR1_UE_Set;
@@ -98,7 +98,7 @@ uint16_t USART_ReceiveData(USART_TypeDef *USARTx) {
 \midrule
 直接地址强转 & 将固定地址强制转换为外设结构体指针 & 整数常量$\to$结构体指针类型转换 \\
 间接初始化 & 通过句柄将外设基地址赋值给 Instance 成员 & 结构体成员赋值为外设宏 \\
-常量指针参数 & 函数以常量指针形式接收外设基址 & 参数类型为 MMIO 结构体指针 \\
+基址直传 & 调用者将基地址宏直接作为函数实参传入 & 参数类型为 MMIO 结构体指针 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -335,7 +335,7 @@ S_i & \text{otherwise} \quad \textit{(失败终止)}
 
 本章围绕"基于驱动程序替换的固件仿真"给出了系统级设计方案。系统采用"静态识别 $\to$ 智能替换 $\to$ 构建验证 $\to$ 动态反馈"的分层模块化架构，各模块职责分工和数据流关系如第~\ref{chap:design}~节所述。在此基础上，本章分别完成了三个核心模块的设计：
 
-\textbf{（1）静态分析模块设计}：提出了基于 CodeQL 查询的 MMIO 访问模式识别方法，形式化定义了直接地址强转、间接初始化和常量指针参数三种定位模式，设计了驱动函数定位准则，构建了统一的数据模型。
+\textbf{（1）静态分析模块设计}：提出了基于 CodeQL 查询的 MMIO 访问模式识别方法，形式化定义了直接地址强转、间接初始化和基址直传三种定位模式，设计了驱动函数定位准则，构建了统一的数据模型。
 
 \textbf{（2）替换模块设计}：提出了基于语义分类的驱动函数替换方法，构建了涵盖七类函数的分类体系和四种对应的替换策略，设计了四层验证机制和语义保持性定义，通过大语言模型驱动的智能体架构实现了分类和替换的自动化。
 
