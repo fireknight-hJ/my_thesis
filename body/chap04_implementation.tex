@@ -456,45 +456,45 @@ __attribute__((weak)) void HAL_BE_ENET_ReadFrame(uint8_t *buffer, uint16_t size)
 \caption{闭环协同工作流核心逻辑}
 \label{alg:closed-loop-workflow}
 \small
-\KwIn{固件工程、构建配置、待替换函数列表}
-\KwOut{\texttt{EmulateResult}（成功/失败及原因）}
+\KwIn{固件工程 $E$，构建配置 $C$，待替换函数集 $\mathcal{F}$，最大迭代次数 $K$}
+\KwOut{仿真结果 $R \in \{\textsc{Success}, \textsc{Fail}(\cdot)\}$}
 
-state $\leftarrow$ \{messages, iteration\_count = 0\}\;
-\While{iteration\_count $<$ MAX\_ITERATIONS}{
-  \tcp{仿真运行阶段}
-  emulate\_result $\leftarrow$ EmulateProject(state)\;
-  \If{emulate\_result.success == true}{
-    \Return EmulateResult(success=true)\;
+初始化工作流状态 $\sigma \leftarrow (E, C, \mathcal{F}, \mathcal{P} \leftarrow \emptyset)$\;
+\tcp{$\mathcal{P}$ 为已处理函数集合}
+\For{$k \leftarrow 1$ \KwTo $K$}{
+  \tcp{\textbf{阶段1：仿真运行}}
+  $(s, \mathcal{L}_{\text{out}}, \mathcal{L}_{\text{mmio}}, \mathcal{L}_{\text{call}}) \leftarrow \textsc{Emulate}(\sigma)$\;
+  \eIf{$s = \textsc{Normal}$}{
+    \Return $R \leftarrow \textsc{Success}$\;
+  }{
+    \tcp{\textbf{阶段2：故障诊断}}
+    $f^{*} \leftarrow \textsc{Diagnose}(\mathcal{L}_{\text{out}}, \mathcal{L}_{\text{mmio}}, \mathcal{L}_{\text{call}})$\;
+    \eIf{$f^{*} = \bot$ \textbf{or} $f^{*} \in \mathcal{P}$}{
+      \Return $R \leftarrow \textsc{Fail}(\text{``不可修复故障''})$\;
+    }{
+      $\mathcal{P} \leftarrow \mathcal{P} \cup \{f^{*}\}$\;
+      \tcp{\textbf{阶段3：LLM驱动修复}}
+      $\Delta_{f^{*}} \leftarrow \textsc{LLM-Fix}(f^{*}, \mathcal{L}_{\text{out}}, \mathcal{L}_{\text{mmio}})$\;
+      $\sigma \leftarrow \textsc{ApplyPatch}(\sigma, f^{*}, \Delta_{f^{*}})$\;
+      \tcp{\textbf{阶段4：增量构建与回归验证}}
+      $\sigma \leftarrow \textsc{Rebuild}(\sigma)$\;
+    }
   }
-
-  \tcp{故障诊断阶段}
-  mmio\_info $\leftarrow$ GetMMIOFunctionEmulateInfo()\;
-  call\_stack $\leftarrow$ GetFunctionCallsEmulateInfo()\;
-  fault\_func $\leftarrow$ ParseFaultFunction(emulate\_result, mmio\_info, call\_stack)\;
-  \If{fault\_func == null \textbf{or} fault\_func $\in$ processed\_list}{
-    \Return EmulateResult(success=false)\;
-  }
-
-  \tcp{修复阶段}
-  replacement $\leftarrow$ Fixer(emulate\_result, fault\_func)\;
-  update\_function\_replacement(replacement)\;
-
-  \tcp{构建与回归阶段}
-  build\_result $\leftarrow$ Builder()\;
-  generate\_emulator\_configs()\;
-  iteration\_count $\leftarrow$ iteration\_count + 1\;
 }
-
-\Return EmulateResult(success=false, reason="达到最大迭代次数")\;
+\Return $R \leftarrow \mathrm{Fail}(\texttt{max\_iter\_reached})$\;
 \end{algorithm}
 
-故障诊断阶段调用 GetMMIOFunctionEmulateInfo 和 GetFunctionCallsEmulateInfo 工具获取 MMIO 函数调用日志和函数调用栈信息，通过 ParseFaultFunction 函数从崩溃地址或异常循环位置解析问题函数。如果无法解析或该函数已在处理列表中，则终止闭环；否则进入修复阶段。
+算法~\ref{alg:closed-loop-workflow}以形式化方式描述了闭环协同工作流的核心逻辑。工作流维护状态 $\sigma = (E, C, \mathcal{F}, \mathcal{P})$，其中 $E$ 为固件工程，$C$ 为构建配置，$\mathcal{F}$ 为待替换函数集，$\mathcal{P}$ 为已处理函数集合。每轮迭代依次执行四个阶段：
 
-修复阶段调用 Fixer 工具，修复智能体分析仿真日志，生成 ReplacementUpdate 对象并调用 update\_function\_replacement 接口将更新写入数据管理器。修复策略包括：调整等待条件实现（添加超时机制、修改轮询条件）、修正状态管理逻辑（补充遗漏的状态更新）、调整替换策略（从 Strip 改为 Redirect 等）。
+\textbf{阶段1（仿真运行）}：调用 EmulateProject 工具执行固件仿真，采集三类运行日志——标准输出 $\mathcal{L}_{\text{out}}$、MMIO 函数调用日志 $\mathcal{L}_{\text{mmio}}$ 和函数调用栈 $\mathcal{L}_{\text{call}}$。若仿真状态 $s = \textsc{Normal}$（退出码为零且未检测到异常循环），则返回成功结果。
 
-构建阶段调用 Builder 工具，构建智能体从数据管理器读取更新后的替换代码，执行 replace\_funcs 和 build\_project 操作。如果编译失败，将编译错误反馈给修复智能体进行进一步修复；如果编译成功，进入回归验证阶段。
+\textbf{阶段2（故障诊断）}：基于 $\mathcal{L}_{\text{mmio}}$ 和 $\mathcal{L}_{\text{call}}$ 从崩溃地址或异常循环位置定位故障函数 $f^{*}$。若无法定位（$f^{*} = \bot$）或 $f^{*}$ 已在 $\mathcal{P}$ 中（表明先前修复未生效），则终止闭环并返回失败。
 
-回归验证阶段重新生成仿真配置，再次调用 EmulateProject 工具执行回归测试。如果回归测试成功，任务进入完成状态；如果仍然失败，增加迭代计数并进入下一轮迭代。系统设置了最大迭代次数限制（MAX\_ITERATIONS=3），当达到限制后终止闭环并返回失败结果。
+\textbf{阶段3（LLM驱动修复）}：将故障函数 $f^{*}$ 的源码、上下文和运行日志输入大语言模型，由 LLM 分析故障原因并生成修复补丁 $\Delta_{f^{*}}$。修复策略包括调整等待条件（添加超时机制）、修正状态管理逻辑（补充遗漏的状态更新）和切换替换策略（如从 Strip 改为 Redirect）。补丁通过 ApplyPatch 写入数据管理器，更新 $f^{*}$ 的替换实现。
+
+\textbf{阶段4（增量构建与回归验证）}：构建智能体从数据管理器读取更新后的替换代码，执行增量编译。若编译失败，编译错误反馈至修复智能体进行进一步修复；若编译成功，更新工作流状态 $\sigma$，进入下一轮迭代进行回归验证。
+
+系统设置最大迭代次数 $K=3$，兼顾修复覆盖率与执行效率。通过多智能体协同和 LLM 驱动的语义修复机制，工作流能够自动处理驱动替换代码与仿真环境之间的适配问题，显著减少人工干预。
 
 \subsubsection{终止条件与错误处理实现}
 

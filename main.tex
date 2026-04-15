@@ -9,6 +9,9 @@
 \raggedbottom
 
 \usepackage{HUSTtils}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{groupplots}
 \renewcommand{\lstlistingname}{代码清单}
 \lstdefinestyle{Python}{
   language=Python,
@@ -89,8 +92,10 @@
 \bibliography{ref/refs}
 
 %%% 附录
-% \begin{appendix}
-% \input{body/publications}
-% \end{appendix}
+\clearpage
+\begin{appendix}
+\setcounter{chapter}{1}
+\input{body/ap_feedback_loop_stats}
+\end{appendix}
 
 \end{document}

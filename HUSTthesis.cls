@@ -374,8 +374,8 @@
 \setlength\belowcaptionskip{12bp}
 
 % 下面两条命令可以使标题编号随着每开始新的一章而重新开始，即按章的顺序编号
-\renewcommand{\thetable}{\arabic{chapter}.\arabic{table}}
-\renewcommand{\thefigure}{\arabic{chapter}.\arabic{figure}}
+\renewcommand{\thetable}{\thechapter.\arabic{table}}
+\renewcommand{\thefigure}{\thechapter.\arabic{figure}}
 %\renewcommand{\thesubfigure}{\thefigure--(\arabic{subfigure})}
 % 定制引用子图的标记形式
 %\renewcommand{\p@subfigure}{:}
@@ -1168,7 +1168,7 @@
     \nobreak
     \vskip 20bp
   }
-  \gdef\thechapter{\@arabic\c@chapter}
+  \gdef\thechapter{\@Alph\c@chapter}
   \renewcommand\theequation{\ifnum \c@chapter>\z@ \thechapter-\fi \@arabic\c@equation}
   \titlecontents{chapter}
               [0.0em]

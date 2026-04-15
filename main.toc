@@ -1,6 +1,6 @@
 \ttl@change@i {\@ne }{chapter}{0.0em}{\bfseries \hei \addvspace {6bp minus6bp}}{\thecontentslabel \hspace {1em}}{}{\normalfont \dotfill \textrm {\bfseries \contentspage }}\relax 
 \ttl@change@v {chapter}{}{}{}\relax 
-\contentsline {chapter}{\sihao 摘~~~~要}{I}{section*.1}%
+\contentsline {chapter}{\sihao 摘\nobreakspace {}\nobreakspace {}\nobreakspace {}\nobreakspace {}要}{I}{section*.1}%
 \contentsline {chapter}{\sihao Abstract}{II}{section*.3}%
 \ttl@change@i {\@ne }{chapter}{2.1em}{\vspace {0.3em}\bfseries \hei \sihao \addvspace {6bp minus6bp}}{\contentslabel {1.76em}}{}{}\relax 
 \ttl@change@v {chapter}{}{}{}\relax 
@@ -95,29 +95,35 @@
 \contentsline {subsection}{\numberline {5.1.2}测试用例}{55}{subsection.5.1.2}%
 \contentsline {section}{\numberline {5.2}功能测试}{57}{section.5.2}%
 \contentsline {subsection}{\numberline {5.2.1}驱动函数识别与分类能力评估}{57}{subsection.5.2.1}%
-\contentsline {subsubsection}{\numberline {5.2.1.1}驱动函数识别与替换统计}{57}{subsubsection.5.2.1.1}%
+\contentsline {subsubsection}{\numberline {5.2.1.1}驱动函数识别与替换统计}{58}{subsubsection.5.2.1.1}%
 \contentsline {subsubsection}{\numberline {5.2.1.2}驱动函数分类统计}{59}{subsubsection.5.2.1.2}%
 \contentsline {subsection}{\numberline {5.2.2}功能正确性验证}{61}{subsection.5.2.2}%
-\contentsline {subsubsection}{\numberline {5.2.2.1}执行轨迹验证方法}{62}{subsubsection.5.2.2.1}%
-\contentsline {subsubsection}{\numberline {5.2.2.2}功能正确性验证方法}{63}{subsubsection.5.2.2.2}%
-\contentsline {subsubsection}{\numberline {5.2.2.3}测试结果}{65}{subsubsection.5.2.2.3}%
-\contentsline {subsection}{\numberline {5.2.3}本节小结}{66}{subsection.5.2.3}%
-\contentsline {section}{\numberline {5.3}性能测试}{67}{section.5.3}%
-\contentsline {subsection}{\numberline {5.3.1}人工成本对比测试}{67}{subsection.5.3.1}%
-\contentsline {subsubsection}{\numberline {5.3.1.1}对比方法}{67}{subsubsection.5.3.1.1}%
-\contentsline {subsubsection}{\numberline {5.3.1.2}测试方法}{67}{subsubsection.5.3.1.2}%
-\contentsline {subsubsection}{\numberline {5.3.1.3}测试结果}{68}{subsubsection.5.3.1.3}%
-\contentsline {subsection}{\numberline {5.3.2}模糊测试性能测试}{69}{subsection.5.3.2}%
-\contentsline {subsubsection}{\numberline {5.3.2.1}测试方法}{69}{subsubsection.5.3.2.1}%
-\contentsline {subsubsection}{\numberline {5.3.2.2}测试结果}{70}{subsubsection.5.3.2.2}%
-\contentsline {section}{\numberline {5.4}本章小结}{71}{section.5.4}%
-\contentsline {chapter}{\numberline {6}总结与展望}{72}{chapter.6}%
-\contentsline {section}{\numberline {6.1}工作总结}{72}{section.6.1}%
-\contentsline {section}{\numberline {6.2}论文创新点}{73}{section.6.2}%
-\contentsline {section}{\numberline {6.3}论文贡献}{74}{section.6.3}%
-\contentsline {section}{\numberline {6.4}局限性与不足}{74}{section.6.4}%
-\contentsline {section}{\numberline {6.5}未来工作展望}{75}{section.6.5}%
+\contentsline {subsubsection}{\numberline {5.2.2.1}执行轨迹验证方法}{61}{subsubsection.5.2.2.1}%
+\contentsline {subsection}{\numberline {5.2.3}反馈闭环有效性验证}{65}{subsection.5.2.3}%
+\contentsline {subsubsection}{\numberline {5.2.3.1}替换更新统计}{65}{subsubsection.5.2.3.1}%
+\contentsline {subsubsection}{\numberline {5.2.3.2}典型案例分析}{66}{subsubsection.5.2.3.2}%
+\contentsline {subsubsection}{\numberline {5.2.3.3}有效性分析}{68}{subsubsection.5.2.3.3}%
+\contentsline {subsection}{\numberline {5.2.4}本节小结}{69}{subsection.5.2.4}%
+\contentsline {section}{\numberline {5.3}性能测试}{69}{section.5.3}%
+\contentsline {subsection}{\numberline {5.3.1}人工成本对比测试}{70}{subsection.5.3.1}%
+\contentsline {subsubsection}{\numberline {5.3.1.1}对比方法}{70}{subsubsection.5.3.1.1}%
+\contentsline {subsubsection}{\numberline {5.3.1.2}测试方法}{70}{subsubsection.5.3.1.2}%
+\contentsline {subsubsection}{\numberline {5.3.1.3}测试结果}{70}{subsubsection.5.3.1.3}%
+\contentsline {subsection}{\numberline {5.3.2}模糊测试性能测试}{72}{subsection.5.3.2}%
+\contentsline {subsubsection}{\numberline {5.3.2.1}测试方法}{72}{subsubsection.5.3.2.1}%
+\contentsline {subsubsection}{\numberline {5.3.2.2}测试结果}{72}{subsubsection.5.3.2.2}%
+\contentsline {section}{\numberline {5.4}本章小结}{74}{section.5.4}%
+\contentsline {chapter}{\numberline {6}总结与展望}{75}{chapter.6}%
+\contentsline {section}{\numberline {6.1}工作总结}{75}{section.6.1}%
+\contentsline {section}{\numberline {6.2}论文创新点}{76}{section.6.2}%
+\contentsline {section}{\numberline {6.3}论文贡献}{77}{section.6.3}%
+\contentsline {section}{\numberline {6.4}局限性与不足}{77}{section.6.4}%
+\contentsline {section}{\numberline {6.5}未来工作展望}{79}{section.6.5}%
 \ttl@change@i {\@ne }{chapter}{0.0em}{\vspace {0.3em}\bfseries \hei \sihao \addvspace {6bp minus6bp}}{\thecontentslabel \hspace {1em}}{}{\normalfont \dotfill \textrm {\contentspage [(\thecontentspage )]}}\relax 
 \ttl@change@v {chapter}{}{}{}\relax 
-\contentsline {chapter}{\sihao 参考文献}{78}{section*.28}%
+\contentsline {chapter}{\sihao 参考文献}{81}{section*.26}%
+\ttl@change@i {\@ne }{chapter}{0.0em}{\vspace {0.45em}\bfseries \hei \sihao \addvspace {6bp minus6bp}}{\appendixname ~\thecontentslabel \hspace {1em}}{}{\normalfont \dotfill \textrm {\contentspage [(\thecontentspage )]}}\relax 
+\ttl@change@v {chapter}{}{}{}\relax 
+\contentsline {section}{\numberline {A.1}动态反馈闭环替换更新详细统计}{87}{section.A.1}%
+\contentsline {section}{\numberline {A.2}驱动函数分类详细统计}{87}{section.A.2}%
 \contentsfinish 
