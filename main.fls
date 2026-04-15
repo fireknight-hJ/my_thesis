@@ -616,18 +616,18 @@ INPUT /opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/fonts/tfm/public/am
 INPUT /opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/fonts/tfm/public/yhmath/yhcmex10.tfm
 INPUT /opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/fonts/tfm/public/yhmath/yhcmex10.tfm
 INPUT /opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/fonts/tfm/public/yhmath/yhcmex10.tfm
-INPUT ./figures/文章架构图.png
-INPUT ./figures/文章架构图.png
-INPUT ./figures/文章架构图.png
+INPUT ./figures/文章结构图.jpg
+INPUT ./figures/文章结构图.jpg
+INPUT ./figures/文章结构图.jpg
 INPUT ./body/chap02.tex
 INPUT ./body/chap02.tex
 OUTPUT body/chap02.aux
 INPUT ./body/chap02.tex
 INPUT ./body/chap02.tex
 INPUT body/chap02.tex
-INPUT ./figures/Arm Cortex M内存地址空间布局图.pdf
-INPUT ./figures/Arm Cortex M内存地址空间布局图.pdf
-INPUT ./figures/Arm Cortex M内存地址空间布局图.pdf
+INPUT ./figures/Arm架构图.png
+INPUT ./figures/Arm架构图.png
+INPUT ./figures/Arm架构图.png
 INPUT ./figures/搭载RTOS的嵌入式固件的系统架构图.png
 INPUT ./figures/搭载RTOS的嵌入式固件的系统架构图.png
 INPUT ./figures/搭载RTOS的嵌入式固件的系统架构图.png
@@ -637,9 +637,9 @@ OUTPUT body/chap03_design.aux
 INPUT ./body/chap03_design.tex
 INPUT ./body/chap03_design.tex
 INPUT body/chap03_design.tex
-INPUT ./figures/system_architecture.png
-INPUT ./figures/system_architecture.png
-INPUT ./figures/system_architecture.png
+INPUT ./figures/系统架构图.pdf
+INPUT ./figures/系统架构图.pdf
+INPUT ./figures/系统架构图.pdf
 INPUT /opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/latex/listings/lstlang1.sty
 INPUT /opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/latex/listings/lstlang1.sty
 INPUT /opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/latex/listings/lstlang1.sty

@@ -24,7 +24,7 @@ select expr.toString(),
        expr.getLocation().getStartLine()
 \end{lstlisting}
 
-对于"间接初始化"和"基址直传"模式，查询采用 CodeQL 的数据流追踪能力，将外设基址常量（如 \texttt{USART1\_BASE}）作为源点，沿赋值语句和函数参数传播追踪到最终的字段解引用操作（如 \texttt{huart->Instance->DR}），如代码~\ref{lst:taint-tracking}所示。
+对于"间接初始化"和"基址直传"模式，查询采用 CodeQL 的数据流追踪能力，将外设基址常量（如 \texttt{USART1\_BASE}）作为源点，沿赋值语句和函数参数传播追踪到最终的字段解引用操作（如 \texttt{huart->Instance->DR}），如代码~\ref{lst:taint-tracking}所示。该查询用于补齐仅靠语法匹配难以覆盖的间接访问路径。
 
 \begin{lstlisting}[style=CodeQL,language=CodeQL, caption={常量基址数据流追踪查询示例},label=lst:taint-tracking]
 predicate isMMIOTracedExpr(Expr e) {
@@ -68,7 +68,7 @@ select call.toString2(),
        call.isDirectCall()
 \end{lstlisting}
 
-该查询从 \texttt{DriverToCall} 关系中提取驱动函数之间的调用关系，输出调用边的字符串表示、目标函数名、封装函数名以及调用是否为直接调用等信息，如代码~\ref{lst:driver-call-query}所示。
+该查询从 \texttt{DriverToCall} 关系中提取驱动函数之间的调用关系，输出调用边的字符串表示、目标函数名、封装函数名以及调用是否为直接调用等信息，如代码~\ref{lst:driver-call-query}所示。这些结果为后续函数级替换调度提供调用上下文依据。
 
 \subsection{数据模型实现}
 
@@ -108,7 +108,7 @@ GetDriverInfo & 获取驱动模块的上下文信息 \\
 \subsection{替换代码修正与编译集成模块实现}
 \label{sec:builder-fixer-impl}
 
-\textbf{代码集成机制}：根据第~\ref{sec:builder-workflow}~节的设计，系统采用"原位替换"策略将替换代码写入工程。对于每个需要替换的驱动函数，系统在目标源文件中保留原始函数定义的快照（用于回滚），然后将替换实现写入函数体。同时，系统在工程中添加弱符号桩函数文件，为仿真注入接口提供链接占位（详见第~\ref{sec:hook-mechanism}~节）。
+\textbf{代码集成机制}：根据第~\ref{sec:builder-workflow}~节的设计，系统采用"原位替换"策略将替换代码写入工程。对于每个需要替换的驱动函数，系统在目标源文件中保留原始函数定义的快照（用于回滚），然后将替换实现写入函数体。同时，系统在工程中添加注入接口占位实现文件，为仿真注入接口提供链接阶段的默认定义（详见第~\ref{sec:hook-mechanism}~节）。
 
 \textbf{替换代码验证机制}：语法正确性检查通过 Python 的正则表达式和括号匹配算法实现，检查括号匹配、语句完整性、字符串闭合和函数体非空。签名匹配检查通过正则表达式从替换代码首行解析函数名、返回类型和参数列表，与 FunctionInfo 中的签名逐字段比对。返回值检查通过简化的控制流分析识别分支和循环出口，验证所有执行路径的返回值类型与声明兼容（如 \texttt{HAL\_StatusTypeDef} 的返回值须为该枚举的有效成员）。替换规则检查基于正则表达式模式匹配和关键字检索，执行策略特定的约束检查（如 Skip 策略不得包含 MMIO 寄存器访问，Redirect 策略须包含至少一个 \texttt{HAL\_BE\_*} 调用，Event 策略须保留回调函数调用，ReturnOK 策略的所有返回语句须返回成功状态值）。各层检查未通过时返回具体的违规描述，附加到分析智能体上下文中触发重新生成。
 
@@ -243,9 +243,7 @@ do {
     }
 } while (!isLastBuff);
 \end{lstlisting}
-
-替换后的代码如代码~\ref{lst:steering-replaced}所示。
-
+替换后的代码见代码~\ref{lst:steering-replaced}，其核心差异在于跳过硬件标志扫描并保留 Ring 更新逻辑。
 \begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt,caption=Steering 策略替换代码示例（NXP ENET\_GetRxFrame）,label=lst:steering-replaced]
 // 替换代码：跳过硬件标志扫描，直接注入数据
 curBuffDescrip = rxBdRing->rxBdBase + rxBdRing->rxGenIdx;
@@ -304,7 +302,7 @@ HAL_StatusTypeDef HAL_GPIO_DeInit(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin) {
 
 \subsubsection{分类提示词模板设计}
 
-分析智能体的提示词模板采用分阶段结构设计，包含角色定义、工具说明、分类策略和输出格式四个部分。其整体骨架如代码~\ref{lst:classifier-prompt-overview}所示。
+分析智能体的提示词模板采用分阶段结构设计，包含角色定义、工具说明、分类策略和输出格式四个部分。其整体骨架如代码~\ref{lst:classifier-prompt-overview}所示。阅读时可重点关注四个模块在模板中的组织顺序：先通过角色定义限定任务边界，再通过工具说明约束可调用能力，随后通过分类策略提供判定依据，最后以固定输出格式保证结果可解析。该骨架用于约束模型在分类与生成阶段的输出一致性。
 
 \begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt,caption={分类提示词模板骨架},label=lst:classifier-prompt-overview]
 **Role**: You are an embedded software engineer tasked with
@@ -339,7 +337,9 @@ interrupt triggering).
 }
 \end{lstlisting}
 
-\textbf{角色定义与工具说明}。提示词以角色设定开场，将 LLM 定位为嵌入式软件工程师，明确任务是消除驱动函数的硬件依赖。随后声明五个可调用的工具函数及其调用顺序，如代码~\ref{lst:prompt-tools}所示。
+上述骨架采用“角色—工具—策略—输出”的分层组织方式，使提示词既能提供稳定的语义约束，又便于后续流程自动消费模型输出结果。
+
+\textbf{角色定义与工具说明}。提示词以角色设定开场，将 LLM 定位为嵌入式软件工程师，明确任务是消除驱动函数的硬件依赖。随后声明五个可调用的工具函数及其调用顺序，如代码~\ref{lst:prompt-tools}所示。这一顺序用于减少无关工具调用并提高诊断效率。
 
 \begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt,caption={提示词中的工具声明与调用顺序},label=lst:prompt-tools]
 1. GetFunctionInfo(func_name): Get function implementation.
@@ -372,11 +372,11 @@ interrupt triggering).
 
 在与驱动替换策略配合时，钩子机制承担了关键的拦截角色。系统在仿真初始化阶段通过 ELF 符号表解析所有 \texttt{HAL\_BE\_*} 注入函数的虚拟地址，然后在这些地址处注册代码钩子。当固件执行到注入函数入口时，钩子回调函数执行以下流程：（1）从 Unicorn 寄存器中读取函数参数（ARM 调用约定下参数通过 r0-r3 寄存器传递）；（2）调用宿主机侧的 Python handler 接口完成数据注入或输出操作；（3）将返回值写入 r0 寄存器；（4）从栈中读取返回地址并设置 PC 指针，跳过原函数体继续执行。通过这一机制，固件中调用 \texttt{HAL\_BE\_*} 系列接口时，执行流被拦截并转移到宿主机侧的处理例程。
 
-\subsubsection{弱符号桩函数实现}
+\subsubsection{注入接口占位与宿主机接管机制}
 
-弱符号桩函数是连接固件代码和仿真环境的桥梁，其设计原理见第~\ref{chap:design}~章。代码~\ref{lst:weak-stubs}展示了桩函数的实现，所有函数均使用 \texttt{\_\_attribute\_\_((weak))} 修饰。在构建阶段作为链接占位符，在仿真运行阶段通过 Unicorn 钩子拦截并由宿主机侧 Python 处理器执行实际功能（详见第~\ref{sec:hook-mechanism}~节），实现同一份源码在硬件环境和仿真环境之间的零修改切换。
+注入接口占位函数用于衔接固件代码与仿真环境，其设计原理见第~\ref{chap:design}~章。代码~\ref{lst:weak-stubs}给出了占位函数实现：所有接口均以 \texttt{\_\_attribute\_\_((weak))} 声明为弱符号，在构建阶段提供可链接的默认定义；进入仿真运行阶段后，Unicorn 在函数入口处拦截执行流，并将调用转交宿主机侧 Python 处理器完成实际读写与返回值设置（详见第~\ref{sec:hook-mechanism}~节）。该机制使同一份源码在硬件环境与仿真环境之间可直接切换，无需额外修改。
 
-\begin{lstlisting}[style=CStyle,language=C,caption=弱符号桩函数实现示例,label=lst:weak-stubs]
+\begin{lstlisting}[style=CStyle,language=C,caption=注入接口占位函数示例,label=lst:weak-stubs]
 __attribute__((weak)) void HAL_BE_In(uint8_t *buffer, uint16_t size) {}
 __attribute__((weak)) void HAL_BE_Out(const uint8_t *data, uint16_t size) {}
 __attribute__((weak)) void HAL_BE_ENET_ReadFrame(uint8_t *buffer,
@@ -397,7 +397,7 @@ __attribute__((weak)) void HAL_BE_Block_Write(const uint8_t *buffer,
 
 \subsection{反馈闭环实现}
 
-为统一说明仿真执行智能体与反馈闭环的具体实现，本节采用时序视角描述主控调度、故障修复与构建回归的完整交互过程。图~\ref{fig:feedback-loop-sequence}给出了仿真运行主控智能体（\texttt{emulator\_runner\_agent}）、模拟器（\texttt{Emulator}）、修复智能体（\texttt{Fixer}）与构建智能体（\texttt{Builder}）之间的核心调用顺序。
+为统一说明仿真执行智能体与反馈闭环的具体实现，本节采用时序视角描述主控调度、故障修复与构建回归的完整交互过程。图~\ref{fig:feedback-loop-sequence}给出了主程序、仿真运行主控智能体、模拟器、修复智能体与构建智能体之间的核心调用顺序。
 
 \begin{figure}[htbp]
 \centering
@@ -432,9 +432,9 @@ __attribute__((weak)) void HAL_BE_Block_Write(const uint8_t *buffer,
 \label{fig:feedback-loop-sequence}
 \end{figure}
 
-该时序对应实现中的一个标准闭环轮次，可分为四个阶段：（1）\textbf{首次仿真}：主控智能体执行 \texttt{EmulateProject()} 发起固件仿真，当返回 \texttt{success:false} 时转入修复流程；（2）\textbf{修复生成}：主控智能体向修复智能体提交故障上下文并触发 \texttt{Fixer()} 分析，修复智能体基于运行日志与调用链返回 \texttt{ReplacementUpdate}；（3）\textbf{代码构建}：主控智能体将修复更新方案交由构建智能体处理，构建智能体应用替换代码并返回 \texttt{BuildOutput}（含编译状态与错误信息）；（4）\textbf{回归仿真}：主控智能体再次执行 \texttt{EmulateProject()} 验证修复效果，若返回 \texttt{success:true} 则输出 \texttt{emulate\_output} 并终止。
+该时序对应实现中的一个标准闭环轮次，可分为四个阶段：（1）\textbf{首次仿真}：主控智能体发起固件仿真，当结果状态为失败时转入修复流程；（2）\textbf{修复生成}：主控智能体向修复智能体提交故障上下文，修复智能体基于运行日志与调用链返回修复更新方案；（3）\textbf{代码构建}：主控智能体将修复更新方案交由构建智能体处理，构建智能体应用替换代码并返回构建结果（含编译状态与错误信息）；（4）\textbf{回归仿真}：主控智能体再次执行仿真验证修复效果，若结果状态为成功则输出执行结果并终止。
 
-从接口设计看，\texttt{ReplacementUpdate} 与 \texttt{BuildOutput} 是闭环稳定运行的关键数据契约：前者约束修复智能体输出的最小必要信息（函数标识、替换实现、修复理由），后者统一表达构建结果（退出码、编译日志、错误摘要）。主控智能体仅通过这两个结构化对象完成跨智能体调度，避免自由文本通信引入的歧义，确保闭环在多轮迭代下仍具备可追踪性与可复现性。
+从接口设计看，修复更新结果与构建结果是闭环稳定运行的关键数据契约：前者约束修复智能体输出的最小必要信息（函数标识、替换实现、修复理由），后者统一表达构建结果（退出码、编译日志、错误摘要）。主控智能体仅通过这两类结构化对象完成跨智能体调度，避免自由文本通信引入的歧义，确保闭环在多轮迭代下仍具备可追踪性与可复现性。
 
 \subsubsection{终止条件与错误处理的实现}
 
@@ -444,7 +444,7 @@ __attribute__((weak)) void HAL_BE_Block_Write(const uint8_t *buffer,
 
 \subsubsection{修复智能体提示词模板设计}
 
-闭环修复智能体的提示词与分析智能体的分类提示词不同，将错误诊断和修复方案生成整合在一个推理流程中，其骨架如代码~\ref{lst:fixer-prompt-overview}所示。
+闭环修复智能体的提示词与分析智能体的分类提示词不同，将错误诊断和修复方案生成整合在一个推理流程中，其骨架如代码~\ref{lst:fixer-prompt-overview}所示。该设计强调先取证再修复，以降低无效迭代。
 
 \begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt,caption={修复提示词模板骨架},label=lst:fixer-prompt-overview]
 **Role**: Embedded software engineer specializing in HAL
@@ -498,4 +498,4 @@ replacing hardware-coupled functions with mock stubs.
 
 \section{本章小结}
 
-本章围绕第三章的设计方案，采用 CodeQL、LangGraph、Unicorn 等技术栈完成了系统的具体实现：基于 CodeQL 实现了三种 MMIO 定位模式的查询规则和数据流追踪；基于 LangGraph 实现了分析、编译修复、仿真执行和闭环修复四个智能体的工作流；基于 Unicorn 构建了仿真平台，通过弱符号桩函数和 Python 处理器实现固件与仿真环境的数据交互。实现结果表明，系统可在大部分环节自动完成从静态分析到动态反馈的流程，必要时由人工进行监督与兜底修正。
+本章围绕第三章的设计方案，采用 CodeQL、LangGraph、Unicorn 等技术栈完成了系统的具体实现：基于 CodeQL 实现了三种 MMIO 定位模式的查询规则和数据流追踪；基于 LangGraph 实现了分析、编译修复、仿真执行和闭环修复四个智能体的工作流；基于 Unicorn 构建了仿真平台，通过注入接口占位函数和 Python 处理器实现固件与仿真环境的数据交互。实现结果表明，系统可在大部分环节自动完成从静态分析到动态反馈的流程，必要时由人工进行监督与兜底修正。
