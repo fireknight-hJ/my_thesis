@@ -74,7 +74,7 @@ nxp-zephyr/fs\_littlefs & 2 & 0 & NXP \\
 \section{驱动函数分类详细统计}
 \label{ap:function-categories-stats}
 
-表~\ref{tab:function_categories_stats}展示了各测试用例的驱动函数按照不同类别（INIT、LOOP、RETURNOK、RECV、NODRIVER、IRQ、SKIP、CORE）的分布情况。
+表~\ref{tab:function_categories_stats}展示了各测试用例的驱动函数按照不同类别（INIT、LOOP、PUREDRV、RECV、NODRIVER、IRQ、CORE）的分布情况。其中 PUREDRV 由原 RETURNOK 与 SKIP 两类合并得到。
 
 \begin{table}[H]
 \centering
@@ -82,49 +82,49 @@ nxp-zephyr/fs\_littlefs & 2 & 0 & NXP \\
 \label{tab:function_categories_stats}
 \footnotesize
 \begin{adjustbox}{max width=\textwidth}
-\begin{tabular}{lcccccccc}
+\begin{tabular}{lccccccc}
 \toprule
-\textbf{Demo 名称} & \textbf{INIT} & \textbf{LOOP} & \textbf{RETURNOK} & \textbf{RECV} & \textbf{NODRIVER} & \textbf{IRQ} & \textbf{SKIP} & \textbf{CORE} \\
+\textbf{Demo 名称} & \textbf{INIT} & \textbf{LOOP} & \textbf{PUREDRV} & \textbf{RECV} & \textbf{NODRIVER} & \textbf{IRQ} & \textbf{CORE} \\
 \midrule
-NXP\_FATFS\_BareMetal & 36 & 2 & 12 & 1 & 4 & 3 & 8 & 1 \\
-NXP\_FATFS\_FreeRTOS & 36 & 1 & 16 & 2 & 2 & 2 & 5 & 1 \\
-NXP\_I2C\_BareMetal & 51 & 5 & 15 & 7 & 9 & 11 & 5 & 1 \\
-NXP\_LwIP\_BareMetal & 45 & 3 & 29 & 10 & 3 & 6 & 7 & 2 \\
-NXP\_LwIP\_FreeRTOS & 54 & 4 & 28 & 5 & 4 & 8 & 2 & 2 \\
-NXP\_UART\_BareMetal & 34 & 4 & 30 & 6 & 5 & 5 & 4 & 2 \\
-NXP\_UART\_FreeRTOS & 44 & 5 & 24 & 8 & 1 & 5 & 3 & 1 \\
-imxrt1052-nxp-evk/base & 37 & 0 & 12 & 0 & 1 & 0 & 2 & 1 \\
-imxrt1052-nxp-evk/fatfs & 32 & 2 & 12 & 0 & 1 & 0 & 5 & 1 \\
-imxrt1052-nxp-evk/i2c & 53 & 3 & 29 & 7 & 5 & 4 & 7 & 2 \\
-imxrt1052-nxp-evk/uart & 43 & 0 & 22 & 0 & 1 & 1 & 4 & 2 \\
-imxrt1060-nxp-evk/base & 15 & 0 & 26 & 0 & 18 & 0 & 6 & 0 \\
-imxrt1060-nxp-evk/eth & 20 & 1 & 22 & 2 & 15 & 3 & 8 & 2 \\
-stm32f401-nucleo/base & 28 & 3 & 15 & 0 & 1 & 3 & 4 & 1 \\
-stm32f401-nucleo/eth & 31 & 2 & 11 & 0 & 1 & 3 & 6 & 1 \\
-stm32f401-nucleo/fatfs & 39 & 1 & 11 & 0 & 0 & 3 & 2 & 0 \\
-stm32f401-nucleo/fatfs\_sdcard & 137 & 24 & 82 & 12 & 8 & 9 & 3 & 6 \\
-stm32f401-nucleo/i2c & 33 & 2 & 13 & 0 & 1 & 3 & 0 & 3 \\
-stm32f401-nucleo/uart & 35 & 2 & 10 & 0 & 4 & 3 & 0 & 1 \\
-LwIP\_HTTP\_Srv\_SockRT & 137 & 24 & 82 & 12 & 8 & 9 & 3 & 6 \\
-LwIP\_HTTP\_Srv\_Sock\_RT & 151 & 20 & 64 & 20 & 3 & 30 & 13 & 3 \\
-LwIP\_StreamingSrv & 137 & 24 & 82 & 12 & 8 & 9 & 3 & 6 \\
-UART\_Hyperterminal\_IT & 45 & 12 & 24 & 20 & 4 & 10 & 3 & 2 \\
-atmel/eth\_dhcpv4\_e70 & 10 & 0 & 1 & 2 & 160 & 0 & 0 & 15 \\
-atmel/fs\_littlefs\_same54 & 12 & 5 & 2 & 1 & 40 & 1 & 0 & 15 \\
-atmel/i2c\_shell\_same54 & 13 & 2 & 0 & 0 & 44 & 1 & 0 & 19 \\
-atmel/uart\_echo\_same54 & 11 & 1 & 3 & 0 & 32 & 1 & 0 & 15 \\
-nxp-zephyr/eth\_dhcpv4 & 56 & 2 & 24 & 7 & 160 & 6 & 2 & 19 \\
-nxp-zephyr/fs\_littlefs & 30 & 1 & 19 & 1 & 44 & 0 & 3 & 15 \\
-nxp-zephyr/i2c\_fxos8700 & 46 & 2 & 35 & 1 & 33 & 12 & 2 & 19 \\
-nxp-zephyr/uart\_echo & 29 & 0 & 23 & 1 & 34 & 0 & 0 & 16 \\
-stm32-zephyr/eth\_dhcpv4 & 31 & 1 & 44 & 2 & 153 & 3 & 2 & 24 \\
-stm32-zephyr/fs\_littlefs & 24 & 3 & 13 & 0 & 2 & 5 & 2 & 1 \\
-stm32-zephyr/i2c\_hts221 & 18 & 1 & 15 & 0 & 1 & 2 & 0 & 0 \\
-stm32-zephyr/uart\_echo & 17 & 0 & 10 & 0 & 2 & 2 & 4 & 0 \\
+NXP\_FATFS\_BareMetal & 36 & 2 & 20 & 1 & 4 & 3 & 1 \\
+NXP\_FATFS\_FreeRTOS & 36 & 1 & 21 & 2 & 2 & 2 & 1 \\
+NXP\_I2C\_BareMetal & 51 & 5 & 20 & 7 & 9 & 11 & 1 \\
+NXP\_LwIP\_BareMetal & 45 & 3 & 36 & 10 & 3 & 6 & 2 \\
+NXP\_LwIP\_FreeRTOS & 54 & 4 & 30 & 5 & 4 & 8 & 2 \\
+NXP\_UART\_BareMetal & 34 & 4 & 34 & 6 & 5 & 5 & 2 \\
+NXP\_UART\_FreeRTOS & 44 & 5 & 27 & 8 & 1 & 5 & 1 \\
+imxrt1052-nxp-evk/base & 37 & 0 & 14 & 0 & 1 & 0 & 1 \\
+imxrt1052-nxp-evk/fatfs & 32 & 2 & 17 & 0 & 1 & 0 & 1 \\
+imxrt1052-nxp-evk/i2c & 53 & 3 & 36 & 7 & 5 & 4 & 2 \\
+imxrt1052-nxp-evk/uart & 43 & 0 & 26 & 0 & 1 & 1 & 2 \\
+imxrt1060-nxp-evk/base & 15 & 0 & 32 & 0 & 18 & 0 & 0 \\
+imxrt1060-nxp-evk/eth & 20 & 1 & 30 & 2 & 15 & 3 & 2 \\
+stm32f401-nucleo/base & 28 & 3 & 19 & 0 & 1 & 3 & 1 \\
+stm32f401-nucleo/eth & 31 & 2 & 17 & 0 & 1 & 3 & 1 \\
+stm32f401-nucleo/fatfs & 39 & 1 & 13 & 0 & 0 & 3 & 0 \\
+stm32f401-nucleo/fatfs\_sdcard & 137 & 24 & 85 & 12 & 8 & 9 & 6 \\
+stm32f401-nucleo/i2c & 33 & 2 & 13 & 0 & 1 & 3 & 3 \\
+stm32f401-nucleo/uart & 35 & 2 & 10 & 0 & 4 & 3 & 1 \\
+LwIP\_HTTP\_Srv\_SockRT & 137 & 24 & 85 & 12 & 8 & 9 & 6 \\
+LwIP\_HTTP\_Srv\_Sock\_RT & 151 & 20 & 77 & 20 & 3 & 30 & 3 \\
+LwIP\_StreamingSrv & 137 & 24 & 85 & 12 & 8 & 9 & 6 \\
+UART\_Hyperterminal\_IT & 45 & 12 & 27 & 20 & 4 & 10 & 2 \\
+atmel/eth\_dhcpv4\_e70 & 10 & 0 & 1 & 2 & 160 & 0 & 15 \\
+atmel/fs\_littlefs\_same54 & 12 & 5 & 2 & 1 & 40 & 1 & 15 \\
+atmel/i2c\_shell\_same54 & 13 & 2 & 0 & 0 & 44 & 1 & 19 \\
+atmel/uart\_echo\_same54 & 11 & 1 & 3 & 0 & 32 & 1 & 15 \\
+nxp-zephyr/eth\_dhcpv4 & 56 & 2 & 26 & 7 & 160 & 6 & 19 \\
+nxp-zephyr/fs\_littlefs & 30 & 1 & 22 & 1 & 44 & 0 & 15 \\
+nxp-zephyr/i2c\_fxos8700 & 46 & 2 & 37 & 1 & 33 & 12 & 19 \\
+nxp-zephyr/uart\_echo & 29 & 0 & 23 & 1 & 34 & 0 & 16 \\
+stm32-zephyr/eth\_dhcpv4 & 31 & 1 & 46 & 2 & 153 & 3 & 24 \\
+stm32-zephyr/fs\_littlefs & 24 & 3 & 15 & 0 & 2 & 5 & 1 \\
+stm32-zephyr/i2c\_hts221 & 18 & 1 & 15 & 0 & 1 & 2 & 0 \\
+stm32-zephyr/uart\_echo & 17 & 0 & 14 & 0 & 2 & 2 & 0 \\
 \midrule
-\textbf{总计} & \textbf{1570} & \textbf{162} & \textbf{860} & \textbf{139} & \textbf{812} & \textbf{163} & \textbf{118} & \textbf{205} \\
+\textbf{总计} & \textbf{1570} & \textbf{162} & \textbf{978} & \textbf{139} & \textbf{812} & \textbf{163} & \textbf{205} \\
 \midrule
-\textbf{占比} & \textbf{39.0\%} & \textbf{4.0\%} & \textbf{21.3\%} & \textbf{3.4\%} & \textbf{20.2\%} & \textbf{4.0\%} & \textbf{2.9\%} & \textbf{5.1\%} \\
+\textbf{占比} & \textbf{39.0\%} & \textbf{4.0\%} & \textbf{24.3\%} & \textbf{3.4\%} & \textbf{20.2\%} & \textbf{4.0\%} & \textbf{5.1\%} \\
 \bottomrule
 \end{tabular}
 \end{adjustbox}

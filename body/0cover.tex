@@ -10,7 +10,7 @@
 
 本文的主要工作包括三个方面。首先，设计并实现了面向嵌入式固件的硬件依赖代码自动识别模块，该模块通过静态分析技术，从驱动程序源码中自动提取硬件相关的函数调用点、外设寄存器访问模式和驱动函数边界，构建可查询的驱动知识库。其次，构建了基于大语言模型的驱动函数分析与替换模块，该模块利用大语言模型理解驱动函数的语义，通过结构化提示词模板和函数分类策略，自动生成可在仿真环境中运行的替代代码，并通过编译修复循环保障代码的可编译性。最后，引入了动态测试反馈闭环机制，当固件在仿真环境中运行出现异常时，系统能够自动分析异常原因并反馈给驱动替换模块，通过"生成—测试—反馈—修正"的闭环流程持续优化仿真质量。
 
-实验结果表明，本文方法能够有效支持多种嵌入式平台（STM32、NXP）和操作系统（FreeRTOS、RT-Thread、裸机）的固件仿真，显著降低了固件仿真的技术门槛和人工成本，为漏洞挖掘奠定了基础。
+实验结果表明，本文方法可支持多种嵌入式平台（STM32、NXP、Atmel）和操作系统（FreeRTOS、RT-Thread、Zephyr、裸机）的固件仿真，在给定实验设置下降低了固件仿真的技术门槛和人工成本，为漏洞挖掘奠定了基础。
 }
 
 % 中文关键词
@@ -24,7 +24,7 @@ To address these issues, this paper proposes an automated firmware emulation met
 
 The main contributions of this paper include three aspects. First, a hardware dependency code automatic identification module for embedded firmware is designed and implemented, which automatically extracts hardware-related function call points, peripheral register access patterns, and driver function boundaries from firmware through MMIO pattern recognition, data flow tracking, and recursive induction techniques, constructing a queryable driver knowledge base. Second, a driver function analysis and replacement module based on LLMs is built, which utilizes LLMs to understand driver function semantics, automatically generates alternative code that can run in emulation environments through structured prompt templates and function classification strategies, and ensures code compilability through a compilation repair loop. Finally, a dynamic testing feedback loop mechanism is introduced. When firmware runs abnormally in the emulation environment, the system can automatically analyze the cause of the abnormality and feed it back to the driver replacement module, continuously optimizing emulation quality through a "generate-test-feedback-revise" closed-loop process.
 
-Experimental results show that the proposed method can effectively support firmware emulation for multiple embedded platforms (STM32, NXP) and operating systems (FreeRTOS, RT-Thread, bare metal), significantly reducing the technical barrier and manual cost of firmware emulation, laying the foundation for vulnerability discovery.
+Experimental results show that the proposed method supports firmware emulation across multiple embedded platforms (STM32, NXP, Atmel) and operating systems (FreeRTOS, RT-Thread, Zephyr, bare metal), and under the given experimental setup reduces the technical barrier and manual cost of firmware emulation, laying the foundation for vulnerability discovery.
 }
 
 % 英文关键词

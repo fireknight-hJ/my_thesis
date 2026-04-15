@@ -105,30 +105,18 @@ GetDriverInfo & 获取驱动模块的上下文信息 \\
 
 \section{驱动函数分析、替换与编译模块实现}
 
-\subsection{智能体工作流实现}
-
-\subsubsection{驱动函数分析与替换代码生成模块实现}
-
-分析智能体的设计见第~\ref{sec:analyzer-workflow}~节。在实现上，智能体基于 LangGraph 的 \texttt{StateGraph} 类构建，通过 \texttt{@tool} 装饰器将 GetFunctionInfo、GetFunctionCallStack、GetMMIOFunctionEmulateInfo 等工具函数注册到框架中，通过 \texttt{compile()} 方法编译为可执行的 \texttt{CompiledGraph} 对象，由执行器调度节点执行顺序并管理状态传递。
-
-\subsubsection{替换代码修正与编译集成模块实现}
+\subsection{替换代码修正与编译集成模块实现}
 \label{sec:builder-fixer-impl}
 
-编译修复智能体的设计见第~\ref{sec:builder-workflow}~节。
+\textbf{代码集成机制}：根据第~\ref{sec:builder-workflow}~节的设计，系统采用"原位替换"策略将替换代码写入工程。对于每个需要替换的驱动函数，系统在目标源文件中保留原始函数定义的快照（用于回滚），然后将替换实现写入函数体。同时，系统在工程中添加弱符号桩函数文件，为仿真注入接口提供链接占位（详见第~\ref{sec:hook-mechanism}~节）。
 
-\textbf{代码集成机制}：系统采用"原位替换"策略将替换代码写入工程。对于每个需要替换的驱动函数，系统在目标源文件中保留原始函数定义的快照（用于回滚），然后将替换实现写入函数体。同时，系统在工程中添加弱符号桩函数文件，为仿真注入接口提供链接占位（详见第~\ref{sec:hook-mechanism}~节）。
+\textbf{替换代码验证机制}：语法正确性检查通过 Python 的正则表达式和括号匹配算法实现，检查括号匹配、语句完整性、字符串闭合和函数体非空。签名匹配检查通过正则表达式从替换代码首行解析函数名、返回类型和参数列表，与 FunctionInfo 中的签名逐字段比对。返回值检查通过简化的控制流分析识别分支和循环出口，验证所有执行路径的返回值类型与声明兼容（如 \texttt{HAL\_StatusTypeDef} 的返回值须为该枚举的有效成员）。替换规则检查基于正则表达式模式匹配和关键字检索，执行策略特定的约束检查（如 Skip 策略不得包含 MMIO 寄存器访问，Redirect 策略须包含至少一个 \texttt{HAL\_BE\_*} 调用，Event 策略须保留回调函数调用，ReturnOK 策略的所有返回语句须返回成功状态值）。各层检查未通过时返回具体的违规描述，附加到分析智能体上下文中触发重新生成。
 
 \textbf{编译构建与错误修复流程}：编译修复智能体将替换代码应用到工程后执行编译构建，若编译失败则自动进入错误解析与修复循环。替换代码应用通过 ReplaceFuncs 工具实现，工程构建通过 BuildProject 工具执行 CMake 构建。内置的编译错误解析器支持 GCC、Clang、ARMCC 等多种编译器，能够将诊断信息转换为结构化错误对象。编译修复智能体按照设计采用"锁定首个错误"策略，优先修复第一个错误涉及的函数，修复策略由 LLM 根据错误信息和函数上下文智能选择。每次修复后重新触发编译，直至编译成功或达到最大修复轮次。
 
-\subsubsection{替换代码验证机制实现}
-
-第~\ref{chap:design}~章定义了替换代码的四层验证机制（语法正确性 $V_1$、签名匹配 $V_2$、返回值检查 $V_3$、替换规则检查 $V_4$），本节阐述各层验证的具体实现技术。
-
-语法正确性检查通过 Python 的正则表达式和括号匹配算法实现，检查括号匹配、语句完整性、字符串闭合和函数体非空。签名匹配检查通过正则表达式从替换代码首行解析函数名、返回类型和参数列表，与 FunctionInfo 中的签名逐字段比对。返回值检查通过简化的控制流分析识别分支和循环出口，验证所有执行路径的返回值类型与声明兼容（如 \texttt{HAL\_StatusTypeDef} 的返回值须为该枚举的有效成员）。替换规则检查基于正则表达式模式匹配和关键字检索，执行策略特定的约束检查（如 Skip 策略不得包含 MMIO 寄存器访问，Redirect 策略须包含至少一个 \texttt{HAL\_BE\_*} 调用，Event 策略须保留回调函数调用，ReturnOK 策略的所有返回语句须返回成功状态值）。各层检查未通过时返回具体的违规描述，附加到分析智能体上下文中触发重新生成。
-
 \subsection{替换策略实现}
 
-各替换策略的设计意图与语义定义见第~\ref{sec:driver-replacement-strategy}~节，本节通过代码示例展示各策略的具体替换效果。代码示例均取自实际测试固件的替换结果，左侧为原始代码，右侧为替换后的代码。
+各替换策略的设计意图与语义定义见第~\ref{sec:driver-replacement-strategy}~节，本节结合实例介绍各策略的具体实现。代码示例均取自实际测试固件的替换结果，左侧为原始代码，右侧为替换后的代码。
 
 \subsubsection{Skip 策略实现}
 
@@ -371,8 +359,6 @@ interrupt triggering).
 
 \section{动态测试反馈闭环模块实现}
 
-本节阐述动态测试反馈闭环模块的具体实现，其设计方案见第~\ref{chap:design}~章。
-
 \subsection{仿真平台实现}
 
 \subsubsection{Unicorn 引擎初始化与内存映射}
@@ -382,9 +368,7 @@ interrupt triggering).
 \subsubsection{钩子机制的实现}
 \label{sec:hook-mechanism}
 
-第~\ref{chap:design}~章阐述了本系统使用的四类钩子（代码钩子、基本块钩子、内存钩子、中断钩子）的设计原理，本节阐述其具体实现。
-
-在钩子注册阶段，系统通过 \texttt{uc\_hook\_add()} 函数批量注册四类钩子，每类钩子绑定独立的 Python 回调函数。各回调函数接收 Unicorn 实例、触发地址和访问参数，将事件信息写入结构化的日志队列。具体实现中，代码钩子通过 \texttt{UC\_HOOK\_CODE} 类型注册，回调函数接收当前指令地址和指令大小，用于指令计数和执行轨迹记录；基本块钩子通过 \texttt{UC\_HOOK\_BLOCK} 类型注册，回调函数记录基本块入口地址，用于覆盖率统计；内存钩子通过 \texttt{UC\_HOOK\_MEM\_READ} 和 \texttt{UC\_HOOK\_MEM\_WRITE} 类型注册，回调函数接收访问地址、访问大小和数据内容，用于检测对未映射地址空间的非法访问；中断钩子通过 \texttt{UC\_HOOK\_INTR} 类型注册，回调函数接收中断号，用于处理 SVC 指令等软件中断。
+本系统在第~\ref{chap:design}~章给出了四类钩子（代码钩子、基本块钩子、内存钩子、中断钩子）的设计原理，落地实现时在注册阶段通过 \texttt{uc\_hook\_add()} 函数批量注册上述钩子，并为每类钩子绑定独立的 Python 回调函数。各回调函数接收 Unicorn 实例、触发地址和访问参数，将事件信息写入结构化日志队列。具体实现中，代码钩子通过 \texttt{UC\_HOOK\_CODE} 类型注册，回调函数接收当前指令地址和指令大小，用于指令计数和执行轨迹记录；基本块钩子通过 \texttt{UC\_HOOK\_BLOCK} 类型注册，回调函数记录基本块入口地址，用于覆盖率统计；内存钩子通过 \texttt{UC\_HOOK\_MEM\_READ} 和 \texttt{UC\_HOOK\_MEM\_WRITE} 类型注册，回调函数接收访问地址、访问大小和数据内容，用于检测对未映射地址空间的非法访问；中断钩子通过 \texttt{UC\_HOOK\_INTR} 类型注册，回调函数接收中断号，用于处理 SVC 指令等软件中断。
 
 在与驱动替换策略配合时，钩子机制承担了关键的拦截角色。系统在仿真初始化阶段通过 ELF 符号表解析所有 \texttt{HAL\_BE\_*} 注入函数的虚拟地址，然后在这些地址处注册代码钩子。当固件执行到注入函数入口时，钩子回调函数执行以下流程：（1）从 Unicorn 寄存器中读取函数参数（ARM 调用约定下参数通过 r0-r3 寄存器传递）；（2）调用宿主机侧的 Python handler 接口完成数据注入或输出操作；（3）将返回值写入 r0 寄存器；（4）从栈中读取返回地址并设置 PC 指针，跳过原函数体继续执行。通过这一机制，固件中调用 \texttt{HAL\_BE\_*} 系列接口时，执行流被拦截并转移到宿主机侧的处理例程。
 
@@ -411,126 +395,46 @@ __attribute__((weak)) void HAL_BE_Block_Write(const uint8_t *buffer,
 
 运行日志记录模块通过前述的 Unicorn 钩子机制，将程序执行过程中的关键事件转化为结构化的日志记录。模块在每类钩子回调中将事件信息写入线程安全的日志队列，仿真结束后统一导出为 JSON 格式供故障诊断使用。日志记录包含以下四类信息：（1）指令级信息，利用代码钩子记录指令地址、指令大小和关键寄存器快照；（2）基本块级信息，利用基本块钩子记录每个基本块的入口地址和执行次数，据此构建代码覆盖率统计；（3）函数调用信息，在驱动函数入口和出口地址处设置代码钩子，记录调用地址、被调用函数名、参数值和返回值；（4）中断触发信息，利用中断钩子记录中断号、触发地址和处理器状态。这些日志信息在仿真运行过程中实时采集，为故障诊断和反馈闭环提供运行时数据基础。
 
-\subsection{仿真执行智能体实现}
-
-仿真执行智能体基于 LangGraph 框架实现，其设计见第~\ref{chap:design}~章。在实现层面，该智能体通过 \texttt{StateGraph} 类构建图式状态机，核心状态定义如下：
-
-\begin{lstlisting}[style=Python,language=Python,caption=仿真执行智能体状态定义,label=lst:emulator-state]
-@dataclass
-class EmulatorState(TypedDict):
-    messages: Annotated[list, add_messages]
-    project_path: str
-    build_config: dict
-    replacement_functions: list
-    iteration_count: int
-    max_iterations: int
-    processed_functions: list
-    emulate_result: Optional[dict]
-\end{lstlisting}
-
-智能体的图结构包含以下节点：\texttt{emulate}（仿真运行节点，调用 EmulateProject 工具）、\texttt{diagnose}（故障诊断节点，调用 GetMMIOFunctionEmulateInfo 和 GetFunctionCallsEmulateInfo 工具）、\texttt{fix}（修复节点，调用 Fixer 子图）、\texttt{build}（构建节点，调用 Builder 子图）。节点间的条件转移逻辑根据仿真结果决定：仿真成功时直接终止；失败时进入诊断节点；诊断完成后进入修复节点；修复完成后进入构建节点；构建完成后返回仿真节点进行回归验证。每个节点的执行由 LLM 驱动决策，LLM 根据当前状态和工具返回的结果决定下一步操作。
-
 \subsection{反馈闭环实现}
 
-\subsubsection{多智能体协同的 LangGraph 实现}
-
-第~\ref{chap:design}~章设计了由仿真执行智能体、修复智能体和构建智能体组成的多智能体架构，本节阐述其基于 LangGraph 的具体实现。
-
-三个智能体通过 LangGraph 的子图（Subgraph）机制集成。仿真执行智能体作为主图，修复智能体和构建智能体分别编译为独立的 \texttt{CompiledGraph} 对象，通过工具调用接口被主图节点调用。这种设计使得各智能体拥有独立的状态空间和工具链，同时通过标准化的输入输出接口实现数据交换。图~\ref{fig:multi-agent-langgraph}展示了多智能体协同的 LangGraph 图结构。
+为统一说明仿真执行智能体与反馈闭环的具体实现，本节采用时序视角描述主控调度、故障修复与构建回归的完整交互过程。图~\ref{fig:feedback-loop-sequence}给出了仿真运行主控智能体（\texttt{emulator\_runner\_agent}）、模拟器（\texttt{Emulator}）、修复智能体（\texttt{Fixer}）与构建智能体（\texttt{Builder}）之间的核心调用顺序。
 
 \begin{figure}[htbp]
 \centering
-\begin{tikzpicture}[
-    node distance=1.2cm and 1.8cm,
-    mainbox/.style={draw, rounded corners=4pt, minimum width=2.8cm, minimum height=0.9cm, align=center, fill=blue!8, font=\small},
-    subbox/.style={draw, rounded corners=4pt, minimum width=2.6cm, minimum height=0.9cm, align=center, fill=orange!10, font=\small},
-    tool/.style={draw, rounded corners=2pt, minimum width=2.2cm, minimum height=0.6cm, align=center, fill=gray!12, font=\scriptsize},
-    arr/.style={->, thick},
-    darr/.style={->, thick, dashed},
-]
-\node[mainbox] (emulate) {Emulate\\仿真运行};
-\node[mainbox, right=of emulate] (diagnose) {Diagnose\\故障诊断};
-\node[mainbox, right=of diagnose] (fix) {Fix\\闭环修复};
-\node[mainbox, right=of fix] (build) {Build\\闭环构建};
+\begin{tikzpicture}[x=2.5cm,y=0.8cm,font=\scriptsize]
+  \node[align=center] (m) at (0,0) {主程序\\\texttt{main}};
+  \node[align=center] (r) at (1,0) {仿真运行主控智能体\\\texttt{emulator\_runner\_agent}};
+  \node[align=center] (e) at (2,0) {模拟器\\\texttt{Emulator}};
+  \node[align=center] (f) at (3,0) {修复智能体\\\texttt{Fixer}};
+  \node[align=center] (b) at (4,0) {构建智能体\\\texttt{Builder}};
 
-\node[tool, below=0.7cm of emulate] (t1) {EmulateProject};
-\node[tool, below=0.7cm of diagnose] (t2) {\begin{tabular}{@{}c@{}}GetMMIOInfo\\GetCallStack\end{tabular}};
-\node[tool, below=0.7cm of fix] (t3) {Fixer 子图};
-\node[tool, below=0.7cm of build] (t4) {Builder 子图};
+  \draw[dashed] (m.south) -- ++(0,-10.6);
+  \draw[dashed] (r.south) -- ++(0,-10.6);
+  \draw[dashed] (e.south) -- ++(0,-10.6);
+  \draw[dashed] (f.south) -- ++(0,-10.6);
+  \draw[dashed] (b.south) -- ++(0,-10.6);
 
-\draw[arr] (emulate) -- (diagnose);
-\draw[arr] (diagnose) -- (fix);
-\draw[arr] (fix) -- (build);
-\draw[arr] (build.north) -- ++(0,0.6) -| node[above, pos=0.25, font=\scriptsize] {回归验证} (emulate.north);
+  \draw[->,thick] (0,-1.0) -- (1,-1.0) node[midway,above] {启动闭环 \texttt{run\_workflow()}};
+  \draw[->,thick] (1,-2.0) -- (2,-2.0) node[midway,above] {执行仿真 \texttt{EmulateProject()}};
+  \draw[->,thick,dashed] (2,-2.8) -- (1,-2.8) node[midway,above] {仿真失败 \texttt{\{success:false\}}};
 
-\draw[darr] (emulate) -- (t1);
-\draw[darr] (diagnose) -- (t2);
-\draw[darr] (fix) -- (t3);
-\draw[darr] (build) -- (t4);
+  \draw[->,thick] (1,-4.0) -- (3,-4.0) node[midway,above] {发起故障修复分析 \texttt{Fixer()}};
+  \draw[->,thick,dashed] (3,-4.8) -- (1,-4.8) node[midway,above] {返回修复更新方案 \texttt{ReplacementUpdate}};
 
-\node[draw, dashed, rounded corners=6pt, fit=(emulate)(diagnose)(t1)(t2), inner sep=8pt, label={[font=\small]above:仿真执行智能体（主图）}] {};
+  \draw[->,thick] (1,-6.0) -- (4,-6.0) node[midway,above] {提交替换代码并构建 \texttt{Builder()}};
+  \draw[->,thick,dashed] (4,-6.8) -- (1,-6.8) node[midway,above] {返回构建与编译结果 \texttt{BuildOutput}};
 
-\node[subbox, below=0.7cm of t3] (fixer) {闭环修复智能体};
-\draw[darr] (t3) -- (fixer);
-
-\node[subbox, below=0.7cm of t4] (builder) {闭环构建智能体};
-\draw[darr] (t4) -- (builder);
-
-\draw[arr, orange!70!black] (fixer) -- node[right, font=\scriptsize] {ReplacementUpdate} (builder);
-\draw[arr, orange!70!black] (builder.west) -| node[below, pos=0.25, font=\scriptsize] {BuildOutput} (t4.south);
-
-\node[left=0.3cm of emulate, font=\scriptsize, align=right] {success=false};
-\node[above=1.2cm of fix, font=\small\bfseries] {};
-
-\node[left=0.8cm of emulate, font=\small, align=center, text=green!50!black] {success=true\\$\to$ 终止};
+  \draw[->,thick] (1,-8.0) -- (2,-8.0) node[midway,above] {回归验证 \texttt{EmulateProject()}};
+  \draw[->,thick,dashed] (2,-8.8) -- (1,-8.8) node[midway,above] {仿真成功 \texttt{\{success:true\}}};
+  \draw[->,thick] (1,-9.8) -- (0,-9.8) node[midway,above] {返回执行结果 \texttt{emulate\_output}};
 \end{tikzpicture}
-\caption{多智能体协同的 LangGraph 图结构}
-\label{fig:multi-agent-langgraph}
+\caption{动态反馈闭环实现时序图}
+\label{fig:feedback-loop-sequence}
 \end{figure}
 
-修复智能体接收仿真执行智能体传递的结构化输入，包括标准输出、标准错误、MMIO 函数调用日志和函数调用栈信息，输出为 \texttt{ReplacementUpdate} 对象（包含函数名、替换代码和修复原因）。构建智能体接收修复智能体的输出，执行代码应用和编译构建，输出为 \texttt{BuildOutput} 对象（包含退出码、编译输出和错误信息）。所有智能体间通信均通过预定义的数据结构进行，避免自由格式文本传递导致的理解偏差。
+该时序对应实现中的一个标准闭环轮次，可分为四个阶段：（1）\textbf{首次仿真}：主控智能体执行 \texttt{EmulateProject()} 发起固件仿真，当返回 \texttt{success:false} 时转入修复流程；（2）\textbf{修复生成}：主控智能体向修复智能体提交故障上下文并触发 \texttt{Fixer()} 分析，修复智能体基于运行日志与调用链返回 \texttt{ReplacementUpdate}；（3）\textbf{代码构建}：主控智能体将修复更新方案交由构建智能体处理，构建智能体应用替换代码并返回 \texttt{BuildOutput}（含编译状态与错误信息）；（4）\textbf{回归仿真}：主控智能体再次执行 \texttt{EmulateProject()} 验证修复效果，若返回 \texttt{success:true} 则输出 \texttt{emulate\_output} 并终止。
 
-\subsubsection{闭环工作流的具体实现}
-
-第~\ref{chap:design}~章给出了闭环协同工作流的核心逻辑，本节阐述其实现中的关键技术细节。图~\ref{fig:emulator-state-machine}展示了仿真执行智能体的状态机转移过程。
-
-\begin{figure}[htbp]
-\centering
-\begin{tikzpicture}[
-    node distance=1.4cm and 2.2cm,
-    state/.style={draw, rounded corners=4pt, minimum width=2.4cm, minimum height=0.8cm, align=center, fill=blue!8, font=\small},
-    decision/.style={draw, diamond, aspect=2.2, inner sep=1pt, align=center, fill=yellow!12, font=\small},
-    terminal/.style={draw, rounded corners=8pt, minimum width=2cm, minimum height=0.7cm, align=center, font=\small},
-    arr/.style={->, thick},
-]
-\node[state] (init) {环境准备\\加载固件};
-\node[state, right=of init] (run) {仿真运行};
-\node[decision, right=of run] (check) {成功?};
-\node[terminal, right=1.5cm of check, fill=green!12] (done) {终止\\输出结果};
-\node[state, below=of check] (diag) {故障诊断\\PC分析+日志};
-\node[state, left=of diag] (repair) {修复执行\\锁定单函数};
-\node[state, left=of repair] (rebuild) {重新构建\\交叉编译};
-\node[terminal, below=0.8cm of diag, fill=red!10] (fail) {终止\\失败报告};
-
-\draw[arr] (init) -- (run);
-\draw[arr] (run) -- (check);
-\draw[arr] (check) -- node[above, font=\scriptsize] {是} (done);
-\draw[arr] (check) -- node[right, font=\scriptsize] {否} (diag);
-\draw[arr] (diag) -- (repair);
-\draw[arr] (repair) -- (rebuild);
-\draw[arr] (rebuild.north) -- ++(0,0.5) -| node[above, pos=0.25, font=\scriptsize] {回归验证} (run.south);
-
-\draw[arr] (diag) -- node[right, font=\scriptsize] {达到上限/停滞} (fail);
-\end{tikzpicture}
-\caption{仿真执行智能体状态机转移图}
-\label{fig:emulator-state-machine}
-\end{figure}
-
-在故障诊断环节，系统采用第~\ref{chap:design}~章设计的 PC 分析方法，将崩溃地址与静态分析输出的函数地址范围匹配以定位问题函数。对于超时故障，系统分析 PC 分布直方图识别循环结构。
-
-在修复执行环节，修复智能体按照设计采用"锁定单函数"策略，每轮仅修改一个函数。修复策略包括：为 LOOP 类函数添加超时退出条件、补充遗漏的状态字段更新、将不适配的 Skip 策略调整为 Redirect 策略等。
-
-在回归验证环节，系统在每次构建成功后自动重新生成仿真配置并执行完整的仿真运行。最大迭代次数 $K$ 见第~\ref{chap:design}~章设计，达到限制后终止闭环并生成详细故障报告。
+从接口设计看，\texttt{ReplacementUpdate} 与 \texttt{BuildOutput} 是闭环稳定运行的关键数据契约：前者约束修复智能体输出的最小必要信息（函数标识、替换实现、修复理由），后者统一表达构建结果（退出码、编译日志、错误摘要）。主控智能体仅通过这两个结构化对象完成跨智能体调度，避免自由文本通信引入的歧义，确保闭环在多轮迭代下仍具备可追踪性与可复现性。
 
 \subsubsection{终止条件与错误处理的实现}
 
@@ -594,4 +498,4 @@ replacing hardware-coupled functions with mock stubs.
 
 \section{本章小结}
 
-本章围绕第三章的设计方案，采用 CodeQL、LangGraph、Unicorn 等技术栈完成了系统的具体实现：基于 CodeQL 实现了三种 MMIO 定位模式的查询规则和数据流追踪；基于 LangGraph 实现了分析、编译修复、仿真执行和闭环修复四个智能体的工作流；基于 Unicorn 构建了仿真平台，通过弱符号桩函数和 Python 处理器实现固件与仿真环境的数据交互。实现结果表明，系统能够在无人干预的情况下完成从静态分析到动态反馈的完整流程。
+本章围绕第三章的设计方案，采用 CodeQL、LangGraph、Unicorn 等技术栈完成了系统的具体实现：基于 CodeQL 实现了三种 MMIO 定位模式的查询规则和数据流追踪；基于 LangGraph 实现了分析、编译修复、仿真执行和闭环修复四个智能体的工作流；基于 Unicorn 构建了仿真平台，通过弱符号桩函数和 Python 处理器实现固件与仿真环境的数据交互。实现结果表明，系统可在大部分环节自动完成从静态分析到动态反馈的流程，必要时由人工进行监督与兜底修正。

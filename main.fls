@@ -655,13 +655,6 @@ OUTPUT body/chap04_implementation.aux
 INPUT ./body/chap04_implementation.tex
 INPUT ./body/chap04_implementation.tex
 INPUT body/chap04_implementation.tex
-INPUT /opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/latex/listings/lstlang1.sty
-INPUT /opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/latex/listings/lstlang1.sty
-INPUT /opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/latex/listings/lstlang1.sty
-INPUT /opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/fonts/tfm/public/cm/cmex10.tfm
-INPUT /opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam10.tfm
-INPUT /opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
-INPUT /opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/fonts/tfm/public/yhmath/yhcmex10.tfm
 INPUT ./body/chap05_experiment.tex
 INPUT ./body/chap05_experiment.tex
 OUTPUT body/chap05_experiment.aux
