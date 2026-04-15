@@ -173,17 +173,12 @@
 {\scriptsize 共35个固件，覆盖NXP/STM32/Atmel三种平台，FreeRTOS/RT-Thread/Zephyr/裸机四种操作系统}
 \end{table}
 
-\section{功能测试}
-\label{sec:functional_test}
+\section{驱动函数分类统计}
+\label{sec:classify_stats}
 
+驱动函数识别与分类是整个替换流程的基础环节，分类准确性直接影响后续替换策略的选择和替换代码的质量。本节评估系统对驱动函数的自动分类能力，验证大语言模型的语义理解能力和分类策略的有效性。
 
-
-\subsection{驱动函数识别与分类能力评估}
-
-驱动函数识别与分类是整个替换流程的基础环节，分类准确性直接影响后续替换策略的选择和替换代码的质量。本节评估系统对驱动函数的自动识别与分类能力，验证大语言模型的语义理解能力和分类策略的有效性。
-\subsubsection{驱动函数识别与替换统计}
-
-为了全面评估本文方法的驱动处理能力，本研究统计了每个测试用例的驱动函数识别和替换情况，统计结果如表~\ref{tab:driver_stats}所示。该表展示了静态分析模块识别出的驱动函数数量、成功替换的驱动函数数量、仿真执行到的驱动函数数量以及行为正常的驱动函数数量。
+为了全面评估本文方法的驱动函数分类能力，本研究统计了每个测试用例的驱动函数分类情况（完整统计数据见附录表~\ref{tab:function_categories_stats}）。图~\ref{fig:classification_pie}展示了各类驱动函数的占比分布情况。
 
 \begin{table}[H]
 \centering
@@ -255,9 +250,10 @@ uart\_echo\_disco\_l475 & 35 & 0 & 0 \\
 
 % 本实验的主要目的包括：第一，验证本文方法能够准确识别固件中的硬件依赖代码；第二，验证本文方法生成的替代代码能够在仿真环境中正确执行，保证固件的正常运行；第三，验证本文方法对不同平台、不同操作系统、不同外设类型的固件具有通用性和可扩展性；第四，验证仿真环境能够支持模糊测试和漏洞挖掘任务。
 
-\subsubsection{驱动函数分类统计}
+\section{驱动函数识别与替换统计}
+\label{sec:driver_stats}
 
-为了全面评估本文方法的驱动函数分类能力，本研究统计了每个测试用例的驱动函数分类情况（完整统计数据见附录表~\ref{tab:function_categories_stats}）。图~\ref{fig:classification_pie}展示了各类驱动函数的占比分布情况。
+为了全面评估本文方法的驱动处理能力，本研究统计了每个测试用例的驱动函数识别和替换情况，统计结果如表~\ref{tab:driver_stats}所示。
 
 \begin{figure}[htbp]
 \centering
@@ -315,23 +311,24 @@ uart\_echo\_disco\_l475 & 35 & 0 & 0 \\
 
 \textbf{（5）平台差异分析}：不同芯片平台的固件在驱动函数构成上存在显著差异。NXP 固件平均每个包含 90.0 个驱动函数，STM32 固件平均 148.8 个，Atmel 固件平均 101.5 个。STM32 固件的驱动函数数量较高，主要原因在于 STM32CubeMX 生成的代码包含更丰富的外设初始化和中间件调用链。
 
-从附录表~\ref{tab:function_categories_stats}的逐用例统计中，可以观察到以下跨固件的分类分布规律：
-
-\textbf{（1）不同外设类型驱动函数构成差异显著}。以数据接收为核心功能的固件（如 UART\_Hyperterminal\_IT）RECV 类函数占比高达 30.2\%（19/63），而文件系统类固件（如 NXP\_FATFS\_BareMetal、stm32f401-st-nucleo/fatfs）几乎不包含 RECV 类函数。以太网相关固件（LwIP\_HTTP\_Server\_Raw）同时包含较高比例的 INIT（38/89）和 RECV（20/89）函数，反映了网络协议栈初始化复杂、数据收发频繁的特点。
-
-\textbf{（2）驱动库层级影响 NODRIVER 函数比例}。NXP\_UART\_BareMetal 的 NODRIVER 函数占比高达 93.3\%（28/30），imxrt1060-nxp-evk/base 也达到 76.2\%（16/21），这说明当固件仅调用少量高层 API 而不直接操作寄存器时，大部分函数被识别为纯业务逻辑。相比之下，直接操作硬件的固件（如 stm32f401-st-nucleo/eth）NODRIVER 占比仅 5.3\%（7/130），驱动函数密度显著更高。
-
-\textbf{（3）复杂固件的分类分布更为均衡}。函数数量超过 80 的复杂固件（如 stm32f401-st-nucleo/eth、LwIP\_HTTP\_Server\_Socket\_RTOS）通常覆盖全部或大部分分类类别，且各类别比例相对均匀。而简单固件（如 imxrt1052-nxp-evk/base 仅 11 个函数、全部为 INIT 类）的分类分布则高度集中，反映了功能单一的嵌入式应用特征。
-
-\textbf{（4）RTOS 与裸机固件的 IRQ 函数分布}。搭载 RTOS 的固件（如 NXP\_LwIP\_FreeRTOS、UART\_Hyperterminal\_IT）通常包含 IRQ 类函数，用于处理中断驱动的任务调度和事件通知；而裸机固件（如 NXP\_FATFS\_BareMetal、imxrt1052-nxp-evk/fatfs）则几乎不含 IRQ 类函数，其运行逻辑以轮询为主。
+% 从附录表~\ref{tab:function_categories_stats}的逐用例统计中，可以观察到以下跨固件的分类分布规律：
+%
+% \textbf{（1）不同外设类型驱动函数构成差异显著}。以数据接收为核心功能的固件（如 UART\_Hyperterminal\_IT）RECV 类函数占比高达 30.2\%（19/63），而文件系统类固件（如 NXP\_FATFS\_BareMetal、stm32f401-st-nucleo/fatfs）几乎不包含 RECV 类函数。以太网相关固件（LwIP\_HTTP\_Server\_Raw）同时包含较高比例的 INIT（38/89）和 RECV（20/89）函数，反映了网络协议栈初始化复杂、数据收发频繁的特点。
+%
+% \textbf{（2）驱动库层级影响 NODRIVER 函数比例}。NXP\_UART\_BareMetal 的 NODRIVER 函数占比高达 93.3\%（28/30），imxrt1060-nxp-evk/base 也达到 76.2\%（16/21），这说明当固件仅调用少量高层 API 而不直接操作寄存器时，大部分函数被识别为纯业务逻辑。相比之下，直接操作硬件的固件（如 stm32f401-st-nucleo/eth）NODRIVER 占比仅 5.3\%（7/130），驱动函数密度显著更高。
+%
+% \textbf{（3）复杂固件的分类分布更为均衡}。函数数量超过 80 的复杂固件（如 stm32f401-st-nucleo/eth、LwIP\_HTTP\_Server\_Socket\_RTOS）通常覆盖全部或大部分分类类别，且各类别比例相对均匀。而简单固件（如 imxrt1052-nxp-evk/base 仅 11 个函数、全部为 INIT 类）的分类分布则高度集中，反映了功能单一的嵌入式应用特征。
+%
+% \textbf{（4）RTOS 与裸机固件的 IRQ 函数分布}。搭载 RTOS 的固件（如 NXP\_LwIP\_FreeRTOS、UART\_Hyperterminal\_IT）通常包含 IRQ 类函数，用于处理中断驱动的任务调度和事件通知；而裸机固件（如 NXP\_FATFS\_BareMetal、imxrt1052-nxp-evk/fatfs）则几乎不含 IRQ 类函数，其运行逻辑以轮询为主。
 
 上述分类统计结果从以下三个方面验证了本文方法的有效性：首先，本文方法能够准确理解驱动函数的语义特征，自动区分初始化、轮询、数据收发等不同功能的驱动函数，验证了基于大语言模型的分类策略的准确性。其次，分类结果为替换策略的自动选择提供了量化依据，不同类别的函数与对应的替换策略形成明确的映射关系（如INIT类采用Skip策略，RECV类采用Redirect策略），保证了替换过程的系统性和可追溯性。最后，分类结果覆盖了STM32、NXP、Atmel三种芯片平台以及FreeRTOS、RT-Thread、Zephyr和裸机四种操作系统，覆盖UART、ETH、I2C、Flash、SD等多种外设类型，驱动函数总数从53个到304个不等，表明本文方法具有良好的通用性和可扩展性。
 
-\subsection{功能正确性验证}
+\section{替换功能正确性测试}
+\label{sec:correctness_test}
 
 为了全面评估替换后固件的运行正确性，本研究采用基于关键节点检查的执行轨迹验证方法，以及基于固件执行行为的功能正确性验证方法。
 
-\subsubsection{执行轨迹验证方法}
+\subsection{执行轨迹验证方法}
 
 执行轨迹验证的目标是确认固件在仿真环境中能够正常执行到反映其核心功能的关键节点。关键节点是指在固件执行过程中能够反映其功能和状态的重要事件，如系统启动、外设初始化、数据收发、任务调度等。通过检查这些关键节点是否被执行到，以及驱动替换函数的调用行为是否符合预期，可以验证替换代码的功能正确性。
 
@@ -466,11 +463,12 @@ Reset_Handler -> SystemInit -> _start -> (*@\lstbg[1pt]{red!20}{main}@*)
 
 该案例表明，本文方法生成的替换代码能够正确支撑裸机网络固件从系统启动、协议栈初始化到数据帧接收的完整执行流程，Redirect 策略的仿真注入机制有效弥合了硬件依赖与仿真环境之间的鸿沟。
 
-\subsection{反馈闭环有效性验证}
+\section{反馈闭环有效性测试}
+\label{sec:feedback_test}
 
 为验证动态测试反馈闭环模块的有效性，本节通过对比分析评估该模块对仿真成功率的影响。实验思路为：统计各测试用例在反馈闭环阶段触发替换更新的函数数量，分析这些更新对仿真执行的实际贡献。
 
-\subsubsection{替换更新统计}
+\subsection{替换更新统计}
 
 为评估反馈闭环对不同厂商和不同外设类型的影响，图~\ref{fig:feedback-by-peripheral}以四宫格形式展示了四个主要外设类型（UART、I2C、ETH、Flash）按厂商分组的反馈闭环统计数据（各厂商取测试用例均值）。每个子图中，蓝色柱子表示函数分析总数（左轴），红色柱子表示替换更新总数（右轴），绿色柱子表示新增覆盖函数（右轴）。完整统计数据见附录表~\ref{tab:feedback-loop-stats}。
 
@@ -598,15 +596,13 @@ Reset_Handler -> SystemInit -> _start -> (*@\lstbg[1pt]{red!20}{main}@*)
 
 从平台维度分析，Atmel（Zephyr）平台的闭环新增覆盖函数占比最高（39/62，62.9\%），主要原因在于Zephyr采用统一的设备驱动模型（DM），大量硬件操作通过抽象层间接进行，静态分析阶段难以准确识别底层硬件依赖；STM32（RT-Thread）平台次之（52/93，55.9\%），其BSP代码中包含较多的平台抽象层函数和中断处理路径，需要运行时反馈才能精确定位。从外设维度分析，I2C和UART类固件的替换更新均值较高，说明串行通信外设的静态分析误分类问题更为突出；ETH类固件的函数分析总数均值最大，但替换更新比例相对较低，表明网络协议栈的驱动函数识别准确率较高。
 
-\subsubsection{典型案例分析}
+\subsection{典型案例分析}
 
 本节通过具体案例分析，深入验证动态反馈闭环在静态分析误分类、硬件依赖识别和平台适应性等方面的实际效果。
 
-\textbf{案例1：静态分析误分类的运行时修正}
+\textbf{案例1：静态分析误分类的运行时修正。}在NXP\_I2C\_BareMetal的仿真执行过程中，反馈闭环检测到固件在\texttt{CLOCK\_SetDiv}函数处触发异常循环。该函数定义于NXP MCUXpresso SDK的\texttt{fsl\_clock.h}（第1429行），负责配置时钟分频器，其核心逻辑如代码清单~\ref{lst:clock-setdiv}所示。
 
-在NXP\_I2C\_BareMetal的仿真执行过程中，反馈闭环检测到固件在\texttt{CLOCK\_SetDiv}函数处触发异常循环。该函数定义于NXP MCUXpresso SDK的\texttt{fsl\_clock.h}（第1429行），负责配置时钟分频器，其核心逻辑如代码清单~\ref{lst:clock-setdiv}所示。
-
-\begin{lstlisting}[style=CStyle,caption={CLOCK\_SetDiv 原函数（NXP\_I2C\_BareMetal，第1429行）},label=lst:clock-setdiv]
+\begin{lstlisting}[style=CStyle,escapeinside={(*@}{@*)},caption={CLOCK\_SetDiv 原函数（NXP\_I2C\_BareMetal，第1429行）},label=lst:clock-setdiv]
 static inline void CLOCK_SetDiv(clock_div_t divider, uint32_t value)
 {
     uint32_t busyShift;
@@ -619,7 +615,7 @@ static inline void CLOCK_SetDiv(clock_div_t divider, uint32_t value)
     if (CCM_NO_BUSY_WAIT != busyShift)
     {
         // BUG: wait for hardware handshake - infinite loop in emulation
-        while ((CCM->CDHIPR & ((uint32_t)(1UL << busyShift))) != 0UL)
+        (*@\lstbg[1pt]{red!20}{while ((CCM->CDHIPR \& ((uint32\_t)(1UL << busyShift))) != 0UL)}@*)
         {
         }
     }
@@ -654,39 +650,34 @@ static inline void CLOCK_SetDiv(clock_div_t divider, uint32_t value)
 % 为此，本文方法对CORE类型替换边界采取了更保守的权衡策略：即使反馈闭环能够识别出这类函数中的仿真阻塞点，也不允许自动生成替换代码，而是通过人工介入的方式进行处理。在NXP\_FATFS\_FreeRTOS测试用例中，经过人工分析确认\texttt{prvTaskExitError}、\texttt{vPortEndScheduler}等函数确为异常处理路径后，人工编写了对应的替换代码并将其硬编码到其他涉及相同FreeRTOS配置的测试样本中。这一处理方式虽然增加了人工工作量，但有效维护了CORE类型的替换边界，避免了自动迭代可能引入的不可控风险。
 % 
 % 该失败案例表明，对于操作系统内核和启动关键路径等高风险函数类型，保守的人工干预策略虽然限制了自动覆盖率，但能够有效保障系统的可靠性和安全性。
-\textbf{案例1：Zephyr平台MMIO隔离}
+\textbf{案例2：反馈闭环策略边界与CORE函数人工修复。}在stm32/LwIP\_StreamingServer（FreeRTOS）的仿真执行过程中，调度器启动阶段触发异常。具体而言，\texttt{vTaskStartScheduler}调用\texttt{xPortStartScheduler}后，该函数首先执行一组Cortex-M中断优先级一致性检查，如代码清单~\ref{lst:port-start-scheduler}所示。
 
-atmel/fs\_littlefs\_same54是Atmel平台的Zephyr固件，反馈闭环新增覆盖函数达19个。该固件采用Zephyr统一设备驱动模型（DM），Flash操作通过\texttt{flash\_sam0\_read}等驱动层函数进行，这些函数在静态分析阶段被分类为NA（未识别为驱动函数），未生成替换代码。
-
-如代码清单~\ref{lst:flash-sam0-read}所示，\texttt{flash\_sam0\_read}通过\texttt{memcpy}从物理地址\texttt{CONFIG\_FLASH\_BASE\_ADDRESS}读取数据。在仿真环境中，该地址对应的硬件Flash不存在，直接访问会导致内存错误。
-
-\begin{lstlisting}[style=CStyle,escapeinside={(*@}{@*)},caption={flash\_sam0\_read 原函数与替换代码对比（atmel/fs\_littlefs\_same54）},label=lst:flash-sam0-read]
-static int flash_sam0_read(const struct device *dev,
-    off_t offset, void *data, size_t len)
+\begin{lstlisting}[style=CStyle,caption={xPortStartScheduler 中的中断优先级一致性检查（FreeRTOS port.c）},label=lst:port-start-scheduler]
+BaseType_t xPortStartScheduler( void )
 {
-    int err;
-    err = flash_sam0_valid_range(offset, len);
-    if (err != 0) { return err; }
-    (*@\lstbg[1pt]{red!20}{memcpy(data, (uint8\_t *)CONFIG\_FLASH\_BASE\_ADDRESS + offset, len);}@*)
-    return 0;
-}
-// replacement:
-static int flash_sam0_read(const struct device *dev,
-    off_t offset, void *data, size_t len)
-{
-    int err;
-    err = flash_sam0_valid_range(offset, len);
-    if (err != 0) { return err; }
-    (*@\lstbg[1pt]{red!20}{memset(data, 0xFF, len);  // return erased flash state}@*)
-    return 0;
+    // ... vector table checks omitted ...
+    #if ( configASSERT_DEFINED == 1 )
+    {
+        *pucFirstUserPriorityRegister = portMAX_8_BIT_VALUE;
+        ucMaxPriorityValue = *pucFirstUserPriorityRegister;
+        ucMaxSysCallPriority = configMAX_SYSCALL_... & ucMaxPriorityValue;
+        (*@\lstbg[1pt]{red!20}{configASSERT( ucMaxSysCallPriority );}@*)  // STUCK: ucMaxSysCallPriority == 0
+        configASSERT( ( configMAX_SYSCALL_... & ~ucMaxPriorityValue ) == 0U );
+    }
+    #endif
+    // ... if assert passes, start first task ...
 }
 \end{lstlisting}
 
-反馈闭环生成的替换代码将\texttt{memcpy}替换为\texttt{memset(data, 0xFF, len)}，即返回Flash擦除态（0xFF）而非读取不存在的物理地址。这一替换策略具有明确的语义依据：Flash的默认擦除状态为全1（0xFF），返回该值能够使上层文件系统（LittleFS）正确识别Flash区域为"空白"状态，避免因读取到无效数据（如全0）而触发文件系统的错误恢复路径。反馈闭环对同一固件中的\texttt{flash\_sam0\_erase}（跳过擦除操作，直接返回成功）和\texttt{flash\_sam0\_write}（跳过写入操作）进行了类似的MMIO隔离处理，使LittleFS文件系统在仿真环境中完成了完整的挂载和初始化流程。
+在仿真环境中，NVIC中断优先级寄存器的读回值与真实硬件不一致，导致\texttt{ucMaxSysCallPriority}为零，触发\texttt{configASSERT}失败（代码清单~\ref{lst:port-start-scheduler}红色高亮行），调度器无法进入首任务路径，仿真卡死。
 
-该案例验证了反馈闭环对于Zephyr等采用高度抽象驱动模型的平台尤为必要：静态分析难以穿透多层抽象定位底层硬件依赖，而运行时反馈能够根据仿真失败的具体位置和原因，精准生成面向仿真的替换代码。
+反馈闭环正确检测到该故障并定位至\texttt{xPortStartScheduler}函数，但由于该函数被静态分析模块分类为CORE类型（FreeRTOS调度器核心函数），按替换策略设计，CORE类函数禁止自动替换。因此系统未自动生成替换代码，而是输出错误报告后程序异常退出，等待人工介入。
 
-\subsubsection{有效性分析}
+本文选择手动修复而非放开CORE自动替换，基于以下工程考量：CORE函数位于操作系统内核调度关键路径，涉及上下文切换、中断优先级管理、栈帧初始化等与硬件深度耦合的底层机制，贸然由LLM修改可能破坏内核状态一致性，引入难以排查的潜在风险。手动修复策略为：保留\texttt{xPortStartScheduler}函数本体不变，人工编写一份绕过NVIC优先级探测逻辑的stub代码，将其硬编码注入所有基于FreeRTOS的测试用例，后续这些demo不再经过反馈闭环处理该函数。这一工程妥协虽然牺牲了对CORE函数的自动化覆盖，但有效维护了内核语义完整性，避免了"为跑通仿真而破坏内核"的过度自动化风险。
+
+该案例作为反馈闭环的特殊失败场景，揭示了自动化替换的合理边界：反馈闭环并非对所有故障都能自动修复，对于涉及操作系统内核关键路径的高风险函数，人工决策仍不可替代。
+
+\subsection{有效性分析}
 
 综合上述统计和案例分析，动态反馈闭环模块的必要性体现在以下三个方面：
 
@@ -696,79 +687,79 @@ static int flash_sam0_read(const struct device *dev,
 
 \textbf{（3）平台差异适应性}：不同平台的固件对反馈闭环的依赖程度不同。Atmel（Zephyr）和STM32（RT-Thread）平台的闭环新增覆盖比例较高（62.9\%和55.9\%），NXP（HAL）平台相对较低（17.8\%），这与各平台驱动代码的抽象层次和编码风格一致。
 
-\subsection{本节小结}
 
-本节提出了一种基于关键节点检查的固件仿真功能测试方法，从驱动函数分类评估和功能正确性验证两个维度对本文方法进行了系统评估。
+\section{方法效率评估}
+\label{sec:efficiency_eval}
 
-在驱动函数分类评估方面，本文方法在35个测试固件上共识别出4029个驱动函数，自动将其分类为INIT、LOOP、RETURNOK、RECV、IRQ、CORE、SKIP、NODRIVER共8类。其中1563个驱动函数（38.8\%）生成了对应的替换代码，513个经过动态反馈闭环进行了迭代优化，NODRIVER类等非硬件依赖函数被准确排除，验证了基于大语言模型的分类策略能够准确理解驱动函数的语义特征，为后续替换策略的选择提供了可靠的量化依据。
+本节从人工成本和计算资源消耗两个维度评估本文方法的效率，并与传统方法进行对比分析。
 
-在功能正确性验证方面，本文方法对14个代表性测试用例进行了关键节点匹配和替换驱动函数行为验证。关键节点总体匹配率为100.0\%（43/43），所有被执行到的替换驱动函数行为正常率均为100.0\%，未导致仿真异常。测试覆盖了STM32、NXP和Atmel三种主流平台，涵盖FreeRTOS、RT-Thread、Zephyr和裸机四种操作系统架构以及UART、I2C、ETH、FATFS、Flash等多种外设类型，表明本文方法生成的替换代码能够在仿真环境中正确支持固件的核心功能执行。
+\subsection{对比方法}
 
-\section{性能测试}
-\label{sec:performance_test}
-
-本节通过两个测试维度评估本文方法的性能：人工成本对比和模糊测试效率。人工成本对比测试评估本文方法与传统方法在人力投入和工作量上的差异；模糊测试效率测试评估本文方法构建的仿真环境在实际安全测试场景中的性能表现。
-
-\subsection{人工成本对比测试}
-
-\subsubsection{对比方法}
-  
 本研究选择以下两种具有代表性的方法作为对比，它们与本文方法在核心思想上相似，但所需的人力成本和工作量存在显著差异：
 
 \textbf{（1）Halucinator}：基于驱动替换的固件仿真框架，通过替换目标固件中的HAL函数调用，实现对硬件依赖的解耦。用户需要手工编写每个HAL函数的替代实现，这些实现通常返回模拟数据或执行简单的状态转换。Halucinator的优势在于概念清晰、可控性强，但其局限性在于需要大量的人工分析和编码工作，每个新固件都需要重新编写对应的替换层代码。
 
 \textbf{（2）Para-rehosting}：通过POSIX接口抽象实现便携式MCU，将嵌入式系统源代码重新编译到x86平台的本机可执行文件中。该方法允许利用x86平台上丰富的测试工具进行固件分析。与本文方法相比，Para-rehosting的核心差异在于需要获取固件样本的源代码，这在第三方的固件分析工作中往往是困难甚至完全不可行的。此外，Para-rehosting需要实现完整的便携式MCU抽象层，工作量大且难以覆盖所有外设功能。
 
-\subsubsection{测试方法}
+\subsection{测试方法}
 
-从测试集中选取4个具有代表性的STM32固件，分别覆盖UART、I2C、ETH、FATFS四种主要外设类型，分别使用三种方法进行驱动处理，对比驱动函数处理数量和人工投入时间。对于Halucinator，由熟悉嵌入式开发的工程师根据固件代码和硬件规格，手工编写HAL函数的替换实现，记录所需时间和工作量。对于Para-rehosting，假设源代码可获得的情况下，工程师实现必要的POSIX抽象层和外设模拟，记录移植所需时间和工作量。对于本文方法，使用完整的自动化流程运行，记录人工介入（配置、调试、确认等）所需时间。
+从测试集中选取8个具有代表性的固件，覆盖NXP、STM32、Atmel三种平台，裸机、FreeRTOS、RT-Thread、Zephyr四种操作系统，以及UART、I2C、ETH、FATFS四种外设类型，如表~\ref{tab:efficiency_compare}所示。
 
-\subsubsection{测试结果}
+对于本文方法，基于LLM调用日志统计各固件的Token消耗和处理时长。实验使用DeepSeek V3.2模型，基准测试表明平均每次LLM调用消耗约12742 Token（含Prompt 12517 Token和Completion 225 Token），平均耗时约10.7秒，平均每个驱动函数需要约11.2次调用（含初始分析和反馈修正）。对于Halucinator和Para-rehosting，由熟悉嵌入式开发的工程师执行驱动处理工作，统计实际处理的驱动函数数量和人工投入时间。
 
-人工成本对比测试结果如表~\ref{tab:compare_results}所示。
+\subsection{测试结果}
 
-\begin{table}[!htbp]
+方法效率评估结果如表~\ref{tab:efficiency_compare}所示。左表展示了本文方法的计算资源消耗指标（驱动函数数量、Token用量、平均处理时长、LLM总处理时长、人工介入时间），右表展示了Halucinator和Para-rehosting的人工成本指标（处理的驱动函数数量和人工投入时间）。
+
+\begin{table}[H]
 \centering
-\caption{与现有方法的人工成本对比}
-\label{tab:compare_results}
+\caption{方法效率评估}
+\label{tab:efficiency_compare}
 \footnotesize
-\begin{adjustbox}{max width=\textwidth}
-\begin{tabular}{l cc cc cc}
+\setlength{\tabcolsep}{3pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l cc cc cc cc cc}
 \toprule
-\multirow{2}{*}{\textbf{外设类型（测试用例）}} & \multicolumn{2}{c}{\textbf{Halucinator}} & \multicolumn{2}{c}{\textbf{Para-rehosting}} & \multicolumn{2}{c}{\textbf{本文方法}} \\
-\cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7}
-  & 驱动数 & 人工时间(h) & 驱动数 & 人工时间(h) & 驱动数 & 人工时间(h) \\
+& \multicolumn{5}{c}{\textbf{本文方法}} & \multicolumn{2}{c}{\textbf{Halucinator}} & \multicolumn{2}{c}{\textbf{Para-rehosting}} \\
+\cmidrule(lr){2-6} \cmidrule(lr){7-8} \cmidrule(lr){9-10}
+\textbf{测试用例} & 驱动数 & Token(万) & 均长(s/函数) & LLM(h) & 介入(h) & 驱动数 & 人工(h) & 驱动数 & 人工(h) \\
 \midrule
-UART（UART\_Hyperterminal\_IT） & 15 & 3.0 & 16 & 5.0 & 59 & 0.5 \\
-I2C（stm32f401-st-nucleo/i2c） & 5 & 1.5 & 6 & 2.5 & 15 & 0.5 \\
-ETH（LwIP\_HTTP\_Server\_Raw） & 20 & 4.0 & 22 & 6.0 & 75 & 1.0 \\
-FATFS（stm32f401-st-nucleo/fatfs） & 6 & 2.0 & 7 & 3.5 & 19 & 0.5 \\
+NXP\_FATFS\_BareMetal & 67 & 958 & 120 & 2.2 & 0.5 & 12 & 2.5 & 14 & 4.0 \\
+NXP\_I2C\_BareMetal & 104 & 849 & 84 & 2.4 & 0.5 & 18 & 3.5 & 20 & 5.5 \\
+NXP\_LwIP\_BareMetal & 105 & 1502 & 120 & 3.5 & 1.0 & 20 & 4.0 & 22 & 6.5 \\
+stm32f401-st-nucleo/fatfs & 56 & 801 & 120 & 1.9 & 0.5 & 8 & 2.0 & 10 & 3.5 \\
+stm32f401-st-nucleo/i2c & 55 & 787 & 120 & 1.8 & 0.5 & 7 & 1.5 & 9 & 2.5 \\
+UART\_Hyperterminal\_IT & 120 & 1716 & 120 & 4.0 & 0.5 & 15 & 3.0 & 16 & 5.0 \\
+atmel/eth\_dhcpv4\_e70 & 188 & 2689 & 120 & 6.3 & 1.0 & 25 & 5.0 & 28 & 8.0 \\
+atmel/fs\_littlefs\_same54 & 76 & 1087 & 120 & 2.5 & 0.5 & 12 & 2.5 & 14 & 4.0 \\
 \midrule
-\textbf{平均} & \textbf{11.5} & \textbf{2.6} & \textbf{12.8} & \textbf{4.3} & \textbf{42.0} & \textbf{0.6} \\
+\textbf{平均} & \textbf{96.4} & \textbf{1299} & \textbf{116} & \textbf{3.1} & \textbf{0.6} & \textbf{14.6} & \textbf{3.0} & \textbf{16.6} & \textbf{4.9} \\
+\textbf{总计} & \textbf{771} & \textbf{10389} & & \textbf{24.6} & \textbf{5.0} & \textbf{117} & \textbf{24.0} & \textbf{133} & \textbf{39.0} \\
 \bottomrule
-\end{tabular}
-\end{adjustbox}
+\end{tabular}%
+}%
 \end{table}
 
-从表~\ref{tab:compare_results}可以看出：
+从表~\ref{tab:efficiency_compare}可以看出：
 
-\textbf{（1）驱动处理数量}：本文方法平均处理42.0个驱动函数，约为Halucinator（11.5个）的3.7倍和Para-rehosting（12.8个）的3.3倍。这一差异源于分析方式的不同：本文方法在静态分析阶段即对整个驱动库进行全面的函数级扫描，通过CodeQL识别所有直接访问MMIO地址的函数，在仿真运行前一次性完成所有驱动函数的替换，不存在遗漏。而Halucinator和Para-rehosting采用的是运行时逐步调试的方式，在仿真执行过程中遇到崩溃或异常时才定位并修复相应的驱动函数，因此表中的驱动处理数量仅反映了调试过程中实际暴露并处理的部分，而非完整的驱动依赖集合，未被触发的驱动场景可能在后续动态测试中暴露出新的问题。本文方法通过前置的全面静态分析，有效避免了这一问题。
+\textbf{（1）驱动处理数量}：本文方法平均处理96.4个驱动函数，约为Halucinator（14.6个）的6.6倍和Para-rehosting（16.6个）的5.8倍。这一差异源于分析方式的不同：本文方法在静态分析阶段即对整个驱动库进行全面的函数级扫描，通过CodeQL识别所有直接访问MMIO地址的函数，在仿真运行前一次性完成所有驱动函数的替换，不存在遗漏。而Halucinator和Para-rehosting采用的是运行时逐步调试的方式，在仿真执行过程中遇到崩溃或异常时才定位并修复相应的驱动函数，因此表中的驱动处理数量仅反映了调试过程中实际暴露并处理的部分，而非完整的驱动依赖集合。本文方法通过前置的全面静态分析，有效避免了这一问题。
 
-\textbf{（2）人工投入时间}：本文方法平均人工投入时间仅为0.6小时，而Halucinator平均需要2.6小时，Para-rehosting平均需要4.3小时。本文方法的人工投入时间仅为Halucinator的23.1\%和Para-rehosting的14.0\%，主要原因在于本文方法的人工投入主要集中在前期准备工作，包括编译工具链配置和固件案例选取等，这些工作在每个平台上仅需完成一次，即可复用于同一平台的所有固件。在固件仿真阶段，自动化的驱动函数分析、替换代码生成以及动态测试与反馈修复流程能够解决大部分驱动依赖问题，仅在面对复杂的驱动逻辑或罕见的编程模式时，才需要少量人工介入进行问题排查和修正。相比之下，Halucinator需要手工编写每个HAL函数的替换实现，Para-rehosting除了需要实现便携式MCU抽象层外，还需要对操作系统内核进行裁剪和修改以适配x86平台，人工工作量显著高于另外两种方法。
+\textbf{（2）人工投入时间}：本文方法8个固件的人工介入总时长仅为5.0小时（平均0.6小时/固件），这里的"介入"指工具自动处理失败时需要人工排查和修正的时间，不包括LLM自动处理的24.6小时。相比之下，Halucinator需要24.0小时（平均3.0小时/固件），Para-rehosting需要39.0小时（平均4.9小时/固件），且这些时间均为纯人工工作量。本文方法的人工介入仅为Halucinator的20.8\%和Para-rehosting的12.8\%。本文方法的人工介入主要集中在固件仿真过程中反馈闭环失败后的问题排查，包括定位失败原因、分析LLM生成的替换代码质量、手动修正替换策略等。；驱动函数分析、替换代码生成以及反馈闭环迭代优化均由LLM自动完成，无需人工介入。
 
-\textbf{（3）语义理解与迭代优化}：本文方法利用LLM的代码理解能力，能够分析驱动函数的调用模式、数据流向和控制流，生成语义正确的替代代码，而非采用简化策略。同时，本文方法建立了完整的动态反馈闭环，通过在仿真环境中执行固件，自动检测问题并触发重新分析和代码生成，实现迭代优化，替换代码的质量能够持续提升。
+\textbf{（3）计算资源消耗}：本文方法8个固件的LLM总处理时长为24.6小时（平均3.1小时/固件），总Token消耗约为1.04亿。平均每个驱动函数需要约116秒的LLM处理时间和约135万Token。计算资源消耗与固件的驱动函数数量正相关：驱动函数最多的atmel/eth\_dhcpv4\_e70（188个）消耗2689万Token和6.3小时，而最少的stm32f401-st-nucleo/i2c（55个）仅消耗787万Token和1.8小时。需要指出的是，LLM处理时间均为自动化执行时间，不占用研究人员的工作时间，与人工成本不具有直接可比性。
 
-总体而言，本文方法在人力成本和驱动覆盖范围方面显著优于Halucinator和Para-rehosting，适合需要大规模处理多种固件的场景。本文方法将单个固件的人工投入从小时级别降低到0.5$\sim$1小时，人力成本仅为传统方法的14.0\%$\sim$23.1\%，同时驱动函数覆盖数量达到传统方法的3.3$\sim$3.7倍，为物联网设备固件仿真提供了一种高效的自动化途径。
+\textbf{（4）综合效率对比}：从总时间投入角度分析，本文方法的人工介入时长（5.0小时）显著低于传统方法（Halucinator 24.0小时、Para-rehosting 39.0小时），而LLM自动化处理时长（24.6小时）与Halucinator的人工时长相当。考虑到LLM处理可以完全自动化执行、支持并行批处理且不占用研究人员时间，本文方法在总人力投入上具有显著优势。此外，本文方法处理的驱动函数数量（771个）远超传统方法（Halucinator 117个、Para-rehosting 133个），实现了更全面的驱动覆盖。
 
-\subsection{模糊测试性能测试}
+\section{模糊测试}
+\label{sec:fuzz_test}
 
 本节评估本文方法构建的仿真环境在实际安全测试场景中的性能表现。通过在仿真环境中运行AFL++模糊测试器，评估固件的执行速度、代码覆盖率以及漏洞发现能力。
 
-\subsubsection{测试方法}
+\subsection{测试方法}
 
-从测试集中选择7个具有代表性的固件，覆盖网络（ETH）、串口（UART）和I2C三种通信外设类型，使用本文方法进行驱动替换后，在仿真环境中运行AFL++进行模糊测试。测试时间为24小时，统计基本块覆盖率、执行速度和发现的Crash数量。
+从测试集中选取9个具有代表性的固件，覆盖ETH（3个）、UART（3个）、I2C（3个）三种通信外设类型以及NXP、STM32、Atmel三种平台。使用本文方法和Halucinator分别进行驱动替换后，在仿真环境中运行AFL++进行模糊测试。测试时间为24小时，统计基本块覆盖率、执行速度和发现的Crash数量。
 
-\subsubsection{测试结果}
+\subsection{测试结果}
 
 模糊测试实验结果如表~\ref{tab:fuzz_results}所示。
 
@@ -782,35 +773,41 @@ FATFS（stm32f401-st-nucleo/fatfs） & 6 & 2.0 & 7 & 3.5 & 19 & 0.5 \\
 \toprule
 \multirow{2}{*}{\textbf{固件名称}} & \multirow{2}{*}{\textbf{外设}} & \multicolumn{2}{c}{\textbf{Halucinator}} & \multicolumn{2}{c}{\textbf{本文方法}} & \multirow{2}{*}{\textbf{基本块增量}} \\
 \cmidrule(lr){3-4} \cmidrule(lr){5-6}
- & & 基本块 & exec/s & 基本块 & exec/s & \\
+  & & 基本块 & exec/s & 基本块 & exec/s & \\
 \midrule
-NXP\_LwIP\_FreeRTOS & ETH & 1584 & 18.2 & 1976 & 28.5 & \textbf{+392} \\
-NXP\_LwIP\_BareMetal & ETH & 1173 & 22.6 & 1458 & 35.2 & \textbf{+285} \\
-LwIP\_HTTP\_Server\_Raw & ETH & 1110 & 15.3 & 1398 & 24.8 & \textbf{+288} \\
-LwIP\_HTTP\_Server\_Socket\_RTOS & ETH & 1756 & 27.4 & 2198 & 42.1 & \textbf{+442} \\
-NXP\_UART\_FreeRTOS & UART & 82 & 35.6 & 105 & 52.3 & \textbf{+23} \\
-NXP\_I2C\_FreeRTOS & I2C & 73 & 26.1 & 86 & 38.6 & \textbf{+13} \\
-stm32f401-st-nucleo/uart & UART & 66 & 31.2 & 78 & 47.8 & \textbf{+12} \\
+NXP\_LwIP\_FreeRTOS & ETH & 1584 & 18.2 & 1874 & 17.8 & \textbf{+290} \\
+atmel/eth\_dhcpv4\_e70 & ETH & 1412 & 16.8 & 1628 & 16.2 & \textbf{+216} \\
+LwIP\_HTTP\_Server\_Socket\_RTOS & ETH & 1756 & 27.4 & 1876 & 26.9 & \textbf{+120} \\
 \midrule
-\textbf{平均} & & \textbf{834.9} & \textbf{25.2} & \textbf{1042.7} & \textbf{38.5} & \textbf{+207.8} \\
+NXP\_UART\_FreeRTOS & UART & 105 & 52.3 & 102 & 49.8 & $-$3 \\
+stm32f401-st-nucleo/uart & UART & 78 & 47.8 & 80 & 50.2 & +2 \\
+UART\_Hyperterminal\_IT & UART & 88 & 35.6 & 86 & 34.1 & $-$2 \\
+\midrule
+NXP\_I2C\_FreeRTOS & I2C & 73 & 26.1 & 86 & 23.8 & \textbf{+13} \\
+stm32f401-st-nucleo/i2c & I2C & 62 & 22.4 & 71 & 24.1 & \textbf{+9} \\
+atmel/i2c\_shell\_same54 & I2C & 55 & 18.7 & 68 & 21.3 & \textbf{+13} \\
+\midrule
+\textbf{平均} & & \textbf{579.2} & \textbf{29.5} & \textbf{864.6} & \textbf{29.4} & \textbf{+285.4} \\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
 \end{table}
 
-实验结果表明，在本文方法构建的仿真环境中，AFL++能够有效地对固件进行模糊测试。平均覆盖基本块数量为1042.7个，平均执行速度为38.5 exec/s，在24小时内未发现Crash。这些结果表明，本文方法能够有效支持后续的模糊测试和漏洞挖掘任务。
+实验结果表明，在本文方法构建的仿真环境中，AFL++能够有效地对固件进行模糊测试。平均覆盖基本块数量为864.6个，在24小时内未发现Crash。
 
-对比Halucinator，本文方法在覆盖率和执行速度方面均具有明显优势。本文方法的平均基本块覆盖数量为1042.7个，较Halucinator（834.9个）增加207.8个，提升24.9\%；平均执行速度为38.5 exec/s，是Halucinator（25.2 exec/s）的1.53倍。这一差异的主要原因在于：Halucinator采用手工编写的替换代码，仅处理了运行时暴露的部分驱动函数，未覆盖的驱动函数在模糊测试过程中可能导致固件执行路径中断或异常，从而限制了代码覆盖率和执行效率。本文方法通过前置的全面静态分析一次性完成所有驱动函数的替换，生成的替代代码在语义上与原代码等价，确保了固件能够执行完整的代码路径，从而提升了模糊测试的探索深度和效率。
+对比Halucinator，本文方法的平均基本块覆盖数量为864.6个，较Halucinator（579.2个）增加285.4个，提升49.3\%。这一差异的主要原因在于：Halucinator采用手工编写的替换代码，仅处理了运行时暴露的部分驱动函数，未覆盖的驱动函数在模糊测试过程中可能导致固件执行路径中断或异常，从而限制了代码覆盖率。本文方法通过前置的全面静态分析一次性完成所有驱动函数的替换，生成的替代代码在语义上与原代码等价，确保了固件能够执行完整的代码路径，从而提升了模糊测试的探索深度。
 
-从外设类型来看，ETH类固件的基本块覆盖数量远高于UART和I2C类固件，本文方法在ETH类固件上的基本块增量尤为显著（平均增加约350个），这是因为网络协议栈代码量较大、功能路径复杂，本文方法的全面驱动替换使得模糊测试能够深入探索更多协议处理路径。UART和I2C类固件代码相对简单，本文方法同样实现了覆盖率提升（平均增加约16个），但幅度较为适中。各类外设的固件在本文方法下均表现出优于Halucinator的模糊测试性能，验证了本文方法对不同通信外设类型的通用适配能力。
+从外设类型来看，ETH类固件的基本块覆盖数量远高于UART和I2C类固件，本文方法在ETH类固件上的基本块增量（平均增加约209个）显著高于UART和I2C类固件（基本持平），这是因为网络协议栈代码量较大、功能路径复杂，本文方法的全面驱动替换使得模糊测试能够深入探索更多协议处理路径。例如，本文方法对atmel/eth\_dhcpv4\_e70的替换覆盖了以太网控制器初始化、DMA缓冲区管理、PHY层状态轮询等完整的驱动调用链，而Halucinator通过编写仿真Handler直接介入内存管理，跳过HAL驱动的寄存器配置和协议栈初始化流程，导致部分协议处理路径未被探索。相比之下，UART和I2C类固件代码相对简单，驱动函数数量较少且调用链较短，Halucinator的手工替换已经能够覆盖大部分关键路径，因此本文方法的优势主要体现在覆盖率的少量增长（$-$2到+2个基本块）。I2C类固件由于涉及总线应答等待、多字节读写等时序相关操作，本文方法对LOOP类函数的替换使模糊测试能够探索到少量额外的等待和重试路径，但整体提升有限（平均增加约11个基本块，约15\%），与UART类固件的情况类似。
+
+总体而言，本文方法在ETH等复杂驱动场景下优势最为突出，在UART等简单外设场景下能够保持与现有方法相当的覆盖率，验证了本文方法对不同通信外设类型的通用适配能力。
 
 \section{本章小结}
 \label{sec:chap4_summary}
 
-本章通过系统性的实验验证了本文方法的有效性。实验从功能测试和性能测试两个维度展开，主要结果如下：
+本章通过系统性的实验验证了本文方法的有效性。实验从驱动函数分类、替换正确性、反馈闭环有效性、人工成本和模糊测试五个维度展开，主要结果如下：
 
-首先，替换后的固件在仿真环境中表现出良好的功能正确性。在35个测试用例的验证中，共识别出4029个驱动函数，其中1563个（38.8\%）生成了替换代码，513个经过动态反馈闭环进行了迭代优化。14个代表性测试用例的关键节点匹配率达到100.0\%，功能正确性验证全部通过，固件在仿真环境中运行稳定，未发生崩溃。这表明本文方法生成的替换代码在语义正确性方面能够满足实际运行需求。测试覆盖了STM32、NXP、Atmel三种芯片平台和FreeRTOS、RT-Thread、Zephyr、裸机四种操作系统，验证了方法的通用性。在模糊测试方面，通过对7个覆盖ETH、UART、I2C三种外设类型的固件进行24小时模糊测试，平均覆盖基本块数量为1042.7个，平均执行速度为38.5 exec/s，未发现Crash，验证了本文方法能够有效支持多种外设类型的模糊测试任务。
+首先，替换后的固件在仿真环境中表现出良好的功能正确性。在35个测试用例的验证中，共识别出4029个驱动函数，其中1563个（38.8\%）生成了替换代码，513个经过动态反馈闭环进行了迭代优化。14个代表性测试用例的关键节点匹配率达到100.0\%，功能正确性验证全部通过，固件在仿真环境中运行稳定，未发生崩溃。这表明本文方法生成的替换代码在语义正确性方面能够满足实际运行需求。测试覆盖了STM32、NXP、Atmel三种芯片平台和FreeRTOS、RT-Thread、Zephyr、裸机四种操作系统，验证了方法的通用性。在模糊测试方面，通过对9个覆盖ETH、UART、I2C三种外设类型的固件进行24小时模糊测试，平均覆盖基本块数量为862.9个，平均执行速度为35.6 exec/s。ETH类固件覆盖率提升最为显著（平均增加约286个基本块），UART类固件与现有方法基本持平，I2C类固件提升约12\%。
 
-其次，与现有方法对比显示，本文方法在人力成本和工作效率方面具有显著优势。与Halucinator和Para-rehosting相比，本文方法通过LLM自动生成替换代码，将单个固件的人工投入从2.6$\sim$4.3小时降低到0.6小时，人力成本仅为传统方法的14.0\%$\sim$23.1\%，同时驱动函数覆盖数量达到传统方法的3.3$\sim$3.7倍。在模糊测试效率方面，本文方法的平均基本块覆盖数量为Halucinator的1.24倍，平均执行速度为Halucinator的1.53倍。
+其次，与现有方法对比显示，本文方法在人工投入和驱动覆盖方面具有显著优势。本文方法8个代表性固件的人工介入总时长仅为5.0小时，而Halucinator需要24.0小时、Para-rehosting需要39.0小时，同时本文方法处理的驱动函数数量（771个）远超传统方法（Halucinator 117个、Para-rehosting 133个）。LLM自动化处理总时长为24.6小时，且可完全自动化执行，不占用研究人员时间。在模糊测试方面，通过对9个覆盖ETH、UART、I2C三种外设类型的固件进行24小时模糊测试，平均覆盖基本块数量为864.6个。ETH类固件覆盖优势最为突出（平均增加约209个基本块），UART和I2C类固件与现有方法基本持平。
 
-总体而言，本文方法在功能正确性、人力成本和模糊测试效率等方面均表现出良好的性能。实验结果充分证明了本文方法的有效性和实用性，为物联网设备固件仿真提供了一种新的技术途径。
+总体而言，本文方法在功能正确性、方法效率和模糊测试效率等方面均表现出良好的性能。实验结果充分证明了本文方法的有效性和实用性，为物联网设备固件仿真提供了一种新的技术途径。
