@@ -445,8 +445,8 @@ class EmulatorState(TypedDict):
     mainbox/.style={draw, rounded corners=4pt, minimum width=2.8cm, minimum height=0.9cm, align=center, fill=blue!8, font=\small},
     subbox/.style={draw, rounded corners=4pt, minimum width=2.6cm, minimum height=0.9cm, align=center, fill=orange!10, font=\small},
     tool/.style={draw, rounded corners=2pt, minimum width=2.2cm, minimum height=0.6cm, align=center, fill=gray!12, font=\scriptsize},
-    arr/.style={-{Stealth[length=5pt]}, thick},
-    darr/.style={-{Stealth[length=5pt]}, thick, dashed},
+    arr/.style={->, thick},
+    darr/.style={->, thick, dashed},
 ]
 \node[mainbox] (emulate) {Emulate\\仿真运行};
 \node[mainbox, right=of emulate] (diagnose) {Diagnose\\故障诊断};
@@ -501,7 +501,7 @@ class EmulatorState(TypedDict):
     state/.style={draw, rounded corners=4pt, minimum width=2.4cm, minimum height=0.8cm, align=center, fill=blue!8, font=\small},
     decision/.style={draw, diamond, aspect=2.2, inner sep=1pt, align=center, fill=yellow!12, font=\small},
     terminal/.style={draw, rounded corners=8pt, minimum width=2cm, minimum height=0.7cm, align=center, font=\small},
-    arr/.style={-{Stealth[length=5pt]}, thick},
+    arr/.style={->, thick},
 ]
 \node[state] (init) {环境准备\\加载固件};
 \node[state, right=of init] (run) {仿真运行};

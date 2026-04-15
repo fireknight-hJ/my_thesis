@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026/Homebrew) (preloaded format=xelatex 2026.3.4)  9 APR 2026 09:45
+This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026/Homebrew) (preloaded format=xelatex 2026.3.4)  15 APR 2026 18:48
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1469,6 +1469,10 @@ dlayer/tikz/libraries/tikzlibrarypositioning.code.tex
 File: tikzlibrarypositioning.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 )
 (/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgf/fronten
+dlayer/tikz/libraries/tikzlibraryfit.code.tex
+File: tikzlibraryfit.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+)
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgf/fronten
 dlayer/tikz/libraries/tikzlibrarydecorations.pathmorphing.code.tex
 (/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgf/fronten
 dlayer/tikz/libraries/tikzlibrarydecorations.code.tex
@@ -1526,7 +1530,7 @@ utils.tex
 File: xkeyval.tex 2014/12/03 v2.7a key=value parser (HA)
 ))
 \verbatim@out=\write4
-runsystem(echo 'write18-test-202649585'>"main.w18")...disabled (restricted).
+runsystem(echo 'write18-test-20264151128'>"main.w18")...disabled (restricted).
 
 
 
@@ -1663,6 +1667,116 @@ Package: mhsetup 2021/03/18 v1.4 programming setup (MH)
 \xmathstrut@box=\box125
 \xmathstrut@dim=\dimen411
 ))
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/latex/pgfplots/pgfp
+lots.sty
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgfplots/pg
+fplots.revision.tex)
+Package: pgfplots 2025/08/14 v1.18.2 Data Visualization (1.18.2)
+
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgfplots/pg
+fplots.code.tex
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgfplots/pg
+fplotscore.code.tex
+\t@pgfplots@toka=\toks84
+\t@pgfplots@tokb=\toks85
+\t@pgfplots@tokc=\toks86
+\pgfplots@tmpa=\dimen412
+\c@pgfplots@coordindex=\count482
+\c@pgfplots@scanlineindex=\count483
+
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgfplots/sy
+s/pgfplotssysgeneric.code.tex))
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgfplots/li
+bs/pgfplotslibrary.code.tex)
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgfplots/ol
+dpgfcompatib/pgfplotsoldpgfsupp_loader.code.tex
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgf/librari
+es/pgflibraryfpu.code.tex)
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgfplots/ol
+dpgfcompatib/pgfplotsoldpgfsupp_pgfutil-common-lists.tex))
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgfplots/ut
+il/pgfplotsutil.code.tex
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgfplots/li
+ststructure/pgfplotsliststructure.code.tex)
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgfplots/li
+ststructure/pgfplotsliststructureext.code.tex)
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgfplots/li
+ststructure/pgfplotsarray.code.tex
+\c@pgfplotsarray@tmp=\count484
+)
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgfplots/li
+ststructure/pgfplotsmatrix.code.tex)
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgfplots/nu
+mtable/pgfplotstableshared.code.tex
+\c@pgfplotstable@counta=\count485
+\t@pgfplotstable@a=\toks87
+)
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgfplots/li
+ststructure/pgfplotsdeque.code.tex)
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgfplots/ut
+il/pgfplotsbinary.code.tex
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgfplots/ut
+il/pgfplotsbinary.data.code.tex))
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgfplots/ut
+il/pgfplotsutil.verb.code.tex)
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgfplots/li
+bs/pgflibrarypgfplots.surfshading.code.tex
+\c@pgfplotslibrarysurf@no=\count486
+
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgfplots/sy
+s/pgflibrarypgfplots.surfshading.pgfsys-xetex.def
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgfplots/sy
+s/pgflibrarypgfplots.surfshading.pgfsys-dvipdfmx.def
+\c@pgfplotslibrarysurf@streamlen=\count487
+))))
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgfplots/ut
+il/pgfplotscolormap.code.tex
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgfplots/ut
+il/pgfplotscolor.code.tex))
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgfplots/pg
+fplotsstackedplots.code.tex)
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgfplots/pg
+fplotsplothandlers.code.tex
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgfplots/pg
+fplotsmeshplothandler.code.tex
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgfplots/pg
+fplotsmeshplotimage.code.tex)))
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgfplots/pg
+fplots.scaling.code.tex)
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgfplots/pg
+fplotscoordprocessing.code.tex)
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgfplots/pg
+fplots.errorbars.code.tex)
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgfplots/pg
+fplots.markers.code.tex)
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgfplots/pg
+fplotsticks.code.tex)
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgfplots/pg
+fplots.paths.code.tex)
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgfplots/li
+bs/tikzlibrarypgfplots.contourlua.code.tex)
+\pgfplots@numplots=\count488
+\pgfplots@xmin@reg=\dimen413
+\pgfplots@xmax@reg=\dimen414
+\pgfplots@ymin@reg=\dimen415
+\pgfplots@ymax@reg=\dimen416
+\pgfplots@zmin@reg=\dimen417
+\pgfplots@zmax@reg=\dimen418
+)
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgf/fronten
+dlayer/tikz/libraries/tikzlibraryplotmarks.code.tex
+File: tikzlibraryplotmarks.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgf/librari
+es/pgflibraryplotmarks.code.tex
+File: pgflibraryplotmarks.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+)))
+(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgfplots/li
+bs/tikzlibrarypgfplots.groupplots.code.tex
+\pgfplots@group@current@plot=\count489
+\pgfplots@group@current@row=\count490
+\pgfplots@group@current@column=\count491
+)
 
 Package fontspec Info: 
 (fontspec)             Font family 'TimesNewRoman(0)' created for font 'Times
@@ -1682,32 +1796,33 @@ Package fontspec Info:
 
 
 Package translations Info: No language package found. I am going to use `englis
-h' as default language. on input line 61.
- (./main.aux (./body/chap01.aux) (./body/chap02.aux)
-(./body/chap03_design.aux) (./body/chap04_implementation.aux)
-(./body/chap05_experiment.aux) (./body/conclusion.aux))
+h' as default language. on input line 64.
+ (./main.aux (./body/chap01.aux)
+(./body/chap02.aux) (./body/chap03_design.aux)
+(./body/chap04_implementation.aux) (./body/chap05_experiment.aux)
+(./body/conclusion.aux))
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 61.
-LaTeX Font Info:    ... okay on input line 61.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 61.
-LaTeX Font Info:    ... okay on input line 61.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 61.
-LaTeX Font Info:    ... okay on input line 61.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 61.
-LaTeX Font Info:    ... okay on input line 61.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 61.
-LaTeX Font Info:    ... okay on input line 61.
-LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 61.
-LaTeX Font Info:    ... okay on input line 61.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 61.
-LaTeX Font Info:    ... okay on input line 61.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 61.
-LaTeX Font Info:    ... okay on input line 61.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 61.
-LaTeX Font Info:    ... okay on input line 61.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 61.
-LaTeX Font Info:    ... okay on input line 61.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 64.
+LaTeX Font Info:    ... okay on input line 64.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 64.
+LaTeX Font Info:    ... okay on input line 64.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 64.
+LaTeX Font Info:    ... okay on input line 64.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 64.
+LaTeX Font Info:    ... okay on input line 64.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 64.
+LaTeX Font Info:    ... okay on input line 64.
+LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 64.
+LaTeX Font Info:    ... okay on input line 64.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 64.
+LaTeX Font Info:    ... okay on input line 64.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 64.
+LaTeX Font Info:    ... okay on input line 64.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 64.
+LaTeX Font Info:    ... okay on input line 64.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 64.
+LaTeX Font Info:    ... okay on input line 64.
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: subfig package v1.3 is loaded.
 Package caption Info: float package is loaded.
@@ -1727,65 +1842,65 @@ Package fontspec Info:
 
 \symlegacymaths=\mathgroup7
 LaTeX Font Info:    Overwriting symbol font `legacymaths' in version `bold'
-(Font)                  OT1/cmr/m/n --> OT1/cmr/bx/n on input line 61.
-LaTeX Font Info:    Redeclaring math accent \acute on input line 61.
-LaTeX Font Info:    Redeclaring math accent \grave on input line 61.
-LaTeX Font Info:    Redeclaring math accent \ddot on input line 61.
-LaTeX Font Info:    Redeclaring math accent \tilde on input line 61.
-LaTeX Font Info:    Redeclaring math accent \bar on input line 61.
-LaTeX Font Info:    Redeclaring math accent \breve on input line 61.
-LaTeX Font Info:    Redeclaring math accent \check on input line 61.
-LaTeX Font Info:    Redeclaring math accent \hat on input line 61.
-LaTeX Font Info:    Redeclaring math accent \dot on input line 61.
-LaTeX Font Info:    Redeclaring math accent \mathring on input line 61.
-LaTeX Font Info:    Redeclaring math symbol \Gamma on input line 61.
-LaTeX Font Info:    Redeclaring math symbol \Delta on input line 61.
-LaTeX Font Info:    Redeclaring math symbol \Theta on input line 61.
-LaTeX Font Info:    Redeclaring math symbol \Lambda on input line 61.
-LaTeX Font Info:    Redeclaring math symbol \Xi on input line 61.
-LaTeX Font Info:    Redeclaring math symbol \Pi on input line 61.
-LaTeX Font Info:    Redeclaring math symbol \Sigma on input line 61.
-LaTeX Font Info:    Redeclaring math symbol \Upsilon on input line 61.
-LaTeX Font Info:    Redeclaring math symbol \Phi on input line 61.
-LaTeX Font Info:    Redeclaring math symbol \Psi on input line 61.
-LaTeX Font Info:    Redeclaring math symbol \Omega on input line 61.
-LaTeX Font Info:    Redeclaring math symbol \mathdollar on input line 61.
-LaTeX Font Info:    Redeclaring symbol font `operators' on input line 61.
+(Font)                  OT1/cmr/m/n --> OT1/cmr/bx/n on input line 64.
+LaTeX Font Info:    Redeclaring math accent \acute on input line 64.
+LaTeX Font Info:    Redeclaring math accent \grave on input line 64.
+LaTeX Font Info:    Redeclaring math accent \ddot on input line 64.
+LaTeX Font Info:    Redeclaring math accent \tilde on input line 64.
+LaTeX Font Info:    Redeclaring math accent \bar on input line 64.
+LaTeX Font Info:    Redeclaring math accent \breve on input line 64.
+LaTeX Font Info:    Redeclaring math accent \check on input line 64.
+LaTeX Font Info:    Redeclaring math accent \hat on input line 64.
+LaTeX Font Info:    Redeclaring math accent \dot on input line 64.
+LaTeX Font Info:    Redeclaring math accent \mathring on input line 64.
+LaTeX Font Info:    Redeclaring math symbol \Gamma on input line 64.
+LaTeX Font Info:    Redeclaring math symbol \Delta on input line 64.
+LaTeX Font Info:    Redeclaring math symbol \Theta on input line 64.
+LaTeX Font Info:    Redeclaring math symbol \Lambda on input line 64.
+LaTeX Font Info:    Redeclaring math symbol \Xi on input line 64.
+LaTeX Font Info:    Redeclaring math symbol \Pi on input line 64.
+LaTeX Font Info:    Redeclaring math symbol \Sigma on input line 64.
+LaTeX Font Info:    Redeclaring math symbol \Upsilon on input line 64.
+LaTeX Font Info:    Redeclaring math symbol \Phi on input line 64.
+LaTeX Font Info:    Redeclaring math symbol \Psi on input line 64.
+LaTeX Font Info:    Redeclaring math symbol \Omega on input line 64.
+LaTeX Font Info:    Redeclaring math symbol \mathdollar on input line 64.
+LaTeX Font Info:    Redeclaring symbol font `operators' on input line 64.
 LaTeX Font Info:    Encoding `OT1' has changed to `TU' for symbol font
-(Font)              `operators' in the math version `normal' on input line 61.
+(Font)              `operators' in the math version `normal' on input line 64.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
 (Font)                  OT1/cmr/m/n --> TU/TimesNewRoman(0)/m/n on input line 6
-1.
+4.
 LaTeX Font Info:    Encoding `OT1' has changed to `TU' for symbol font
-(Font)              `operators' in the math version `bold' on input line 61.
+(Font)              `operators' in the math version `bold' on input line 64.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
 (Font)                  OT1/cmr/bx/n --> TU/TimesNewRoman(0)/m/n on input line 
-61.
+64.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
 (Font)                  TU/TimesNewRoman(0)/m/n --> TU/TimesNewRoman(0)/m/n on 
-input line 61.
+input line 64.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
 (Font)                  OT1/cmr/m/it --> TU/TimesNewRoman(0)/m/it on input line
- 61.
+ 64.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
 (Font)                  OT1/cmr/bx/n --> TU/TimesNewRoman(0)/b/n on input line 
-61.
+64.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
-(Font)                  OT1/cmss/m/n --> TU/lmss/m/n on input line 61.
+(Font)                  OT1/cmss/m/n --> TU/lmss/m/n on input line 64.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
-(Font)                  OT1/cmtt/m/n --> TU/lmtt/m/n on input line 61.
+(Font)                  OT1/cmtt/m/n --> TU/lmtt/m/n on input line 64.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
 (Font)                  TU/TimesNewRoman(0)/m/n --> TU/TimesNewRoman(0)/b/n on 
-input line 61.
+input line 64.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
 (Font)                  OT1/cmr/bx/it --> TU/TimesNewRoman(0)/b/it on input lin
-e 61.
+e 64.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
-(Font)                  OT1/cmss/bx/n --> TU/lmss/b/n on input line 61.
+(Font)                  OT1/cmss/bx/n --> TU/lmss/b/n on input line 64.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
-(Font)                  OT1/cmtt/m/n --> TU/lmtt/b/n on input line 61.
-\c@lstlisting=\count482
-Package hyperref Info: Link coloring ON on input line 61.
+(Font)                  OT1/cmtt/m/n --> TU/lmtt/b/n on input line 64.
+\c@lstlisting=\count492
+Package hyperref Info: Link coloring ON on input line 64.
  (./main.out) (./main.out)
 \@outlinefile=\write5
 \openout5 = `main.out'.
@@ -1825,21 +1940,25 @@ File: translations-basic-dictionary-english.trsl (english translation file `tra
 nslations-basic-dictionary')
 )
 Package translations Info: loading dictionary `translations-basic-dictionary' f
-or `english'. on input line 61.
-LaTeX Info: Redefining \celsius on input line 61.
-Package gensymb Info: Faking symbols for \degree and \celsius on input line 61.
+or `english'. on input line 64.
+LaTeX Info: Redefining \celsius on input line 64.
+Package gensymb Info: Faking symbols for \degree and \celsius on input line 64.
 
-LaTeX Info: Redefining \ohm on input line 61.
-Package gensymb Info: Using \Omega for \ohm on input line 61.
- (./body/0cover.tex)
-LaTeX Font Info:    Trying to load font information for U+msa on input line 69.
+LaTeX Info: Redefining \ohm on input line 64.
+Package gensymb Info: Using \Omega for \ohm on input line 64.
+
+Package pgfplots notification 'compat/show suggested version=true': document ha
+s been generated with the most recent feature set (\pgfplotsset{compat=1.18}).
+
+(./body/0cover.tex)
+LaTeX Font Info:    Trying to load font information for U+msa on input line 72.
 
 
 (/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/latex/amsfonts/umsa
 .fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 69.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 72.
 
 
 (/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/latex/amsfonts/umsb
@@ -1847,14 +1966,14 @@ LaTeX Font Info:    Trying to load font information for U+msb on input line 69.
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 LaTeX Font Info:    Trying to load font information for OMX+yhex on input line 
-69.
+72.
 
 (/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/latex/yhmath/OMXyhe
 x.fd
 File: OMXyhex.fd 
 File: OMXyhex.fd 2013/07/03 v1.1 YH's humble contribution to TeX maths (NP)
 )
-Overfull \hbox (60.0pt too wide) in paragraph at lines 69--69
+Overfull \hbox (60.0pt too wide) in paragraph at lines 72--72
  [] 
  []
 
@@ -1879,13 +1998,13 @@ embolden=2.25;"
 (fontspec)             - 'italic' (m/it) with NFSS spec.:
 (fontspec)             <->"[font/simkai.ttf]/OT:script=hani;language=dflt;"
 
-LaTeX Font Info:    Calculating math sizes for size <15> on input line 69.
+LaTeX Font Info:    Calculating math sizes for size <15> on input line 72.
 [1
 
 
 
 ]
-Overfull \hbox (86.63875pt too wide) in paragraph at lines 69--69
+Overfull \hbox (86.63875pt too wide) in paragraph at lines 72--72
  [][] 
  []
 
@@ -1911,17 +2030,17 @@ den=2.25;"
 (fontspec)             <->"[font/simkai.ttf]/OT:script=hani;language=dflt;"
 
 
-Overfull \hbox (26.0pt too wide) in paragraph at lines 69--69
+Overfull \hbox (26.0pt too wide) in paragraph at lines 72--72
  []|  [] 
  []
 
 
-Overfull \hbox (26.0pt too wide) in paragraph at lines 69--69
+Overfull \hbox (26.0pt too wide) in paragraph at lines 72--72
  []|  [] 
  []
 
 
-Overfull \hbox (2.0pt too wide) in paragraph at lines 69--69
+Overfull \hbox (2.0pt too wide) in paragraph at lines 72--72
  []|  [] 
  []
 
@@ -1930,10 +2049,10 @@ Overfull \hbox (2.0pt too wide) in paragraph at lines 69--69
 ]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\sihao' on input line 69.
+(hyperref)                removing `\sihao' on input line 72.
 
 
-Overfull \hbox (6.0pt too wide) in paragraph at lines 69--69
+Overfull \hbox (6.0pt too wide) in paragraph at lines 72--72
 [] 
  []
 
@@ -1976,7 +2095,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
 ]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\sihao' on input line 69.
+(hyperref)                removing `\sihao' on input line 72.
 
 
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
@@ -1997,7 +2116,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
 
 
 ]
-Overfull \hbox (6.0pt too wide) in paragraph at lines 69--70
+Overfull \hbox (6.0pt too wide) in paragraph at lines 72--73
 []
  []
 
@@ -2122,34 +2241,34 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [4]
-LaTeX Font Info:    Calculating math sizes for size <11> on input line 56.
+LaTeX Font Info:    Calculating math sizes for size <11> on input line 58.
 
-Underfull \hbox (badness 10000) in paragraph at lines 60--60
+Underfull \hbox (badness 10000) in paragraph at lines 62--62
 []|\TU/TimesNewRoman(0)/m/n/11 QEMU, Pre-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 62--62
+Underfull \hbox (badness 10000) in paragraph at lines 64--64
 []|\TU/TimesNewRoman(0)/m/n/11 P2IM, uEmu,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 62--62
+Underfull \hbox (badness 10000) in paragraph at lines 64--64
 \TU/TimesNewRoman(0)/m/n/11 Laelaps, Fuz-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 64--64
+Underfull \hbox (badness 10000) in paragraph at lines 66--66
 []|\TU/TimesNewRoman(0)/m/n/11 HALucinator,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 64--64
+Underfull \hbox (badness 10000) in paragraph at lines 66--66
 \TU/TimesNewRoman(0)/m/n/11 SAFIREFUZZ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 64--64
+Underfull \hbox (badness 10000) in paragraph at lines 66--66
 \TU/TimesNewRoman(0)/m/n/11 Firmadyne,
  []
 
@@ -2246,7 +2365,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[10]
+[10])
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -2261,22 +2380,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[11])
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
- []
-
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
- []
-
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
- []
-
-[12]
+[11]
 \openout2 = `body/chap02.aux'.
 
  (./body/chap02.tex
@@ -2296,12 +2400,33 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[13
+[12
 
 
 
 
 ]
+File: figures/Arm Cortex M内存地址空间布局图.pdf Graphic file (type pdf)
+<use figures/Arm Cortex M内存地址空间布局图.pdf>
+
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+ []
+
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+ []
+
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+ []
+
+[13]
+File: figures/搭载RTOS的嵌入式固件的系统架构图.png Graphic file (type bmp)
+<figures/搭载RTOS的嵌入式固件的系统架构图.png>
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -2376,7 +2501,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[18])
+[18]
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -2391,20 +2516,26 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[19]
+[19])
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+ []
+
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+ []
+
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+ []
+
+[20]
 \openout2 = `body/chap03_design.aux'.
 
  (./body/chap03_design.tex
 Chapter 3.
-
-(/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/generic/pgf/librari
-es/pgflibraryarrows.meta.code.tex
-File: pgflibraryarrows.meta.code.tex 2025-08-29 v3.1.11a (3.1.11a)
-\pgfarrowinset=\dimen412
-\pgfarrowlength=\dimen413
-\pgfarrowwidth=\dimen414
-\pgfarrowlinewidth=\dimen415
-)
 File: figures/system_architecture.png Graphic file (type bmp)
 <figures/system_architecture.png>
 
@@ -2422,27 +2553,12 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[20
+[21
 
 
 
 
 ]
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
- []
-
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
- []
-
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
- []
-
-[21]
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -2467,11 +2583,11 @@ isc.sty
 File: lstmisc.sty 2025/11/14 1.11b (Carsten Heinz)
 )
 Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on i
-nput line 43.
+nput line 31.
 LaTeX Font Info:    Font shape `TU/lmtt/bx/n' in size <8> not available
-(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 43.
+(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 31.
 LaTeX Font Info:    Font shape `TU/lmtt/bx/n' in size <12> not available
-(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 62.
+(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 41.
 
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
@@ -2503,6 +2619,9 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [24]
+File: figures/驱动函数分析替换与编译.png Graphic file (type bmp)
+<figures/驱动函数分析替换与编译.png>
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -2563,6 +2682,22 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [28]
+Underfull \hbox (badness 10000) in paragraph at lines 181--182
+[]|\TU/lmtt/m/n/11 HAL_UART_WaitOnFlag\TU/TimesNewRoman(0)/m/n/11 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 182--183
+[]|\TU/lmtt/m/n/11 HAL_UART_IRQHandler\TU/TimesNewRoman(0)/m/n/11 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 183--184
+[]|\TU/lmtt/m/n/11 HAL_GPIO_DeInit\TU/TimesNewRoman(0)/m/n/11 , \TU/lmtt/m/n/11
+ HAL_ADC_MspInit\TU/TimesNewRoman(0)/m/n/11 ,
+ []
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -2578,9 +2713,6 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [29]
-File: figures/驱动函数分析替换与编译.png Graphic file (type bmp)
-<figures/驱动函数分析替换与编译.png>
-
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -2641,26 +2773,6 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [33]
-Underfull \hbox (badness 10000) in paragraph at lines 305--306
-[]|\TU/lmtt/m/n/11 HAL_UART_WaitOnFlag\TU/TimesNewRoman(0)/m/n/11 ,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 306--307
-[]|\TU/lmtt/m/n/11 HAL_UART_IRQHandler\TU/TimesNewRoman(0)/m/n/11 ,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 307--308
-[]|\TU/lmtt/m/n/11 HAL_GPIO_DeInit\TU/TimesNewRoman(0)/m/n/11 ,
- []
-
-
-Overfull \hbox (1.50378pt too wide) in paragraph at lines 299--314
- [][] 
- []
-
-
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -2720,7 +2832,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[37]
+[37])
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -2736,6 +2848,11 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [38]
+\openout2 = `body/chap04_implementation.aux'.
+
+ (./body/chap04_implementation.tex
+Chapter 4.
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -2750,7 +2867,12 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[39]
+[39
+
+
+
+
+]
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -2840,7 +2962,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[45])
+[45]
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -2856,11 +2978,6 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [46]
-\openout2 = `body/chap04_implementation.aux'.
-
- (./body/chap04_implementation.tex
-Chapter 4.
-
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -2875,12 +2992,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[47
-
-
-
-
-]
+[47]
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -2911,6 +3023,21 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [49]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+ []
+
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+ []
+
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+ []
+
+[50]
 (/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/latex/listings/lstl
 ang1.sty
 File: lstlang1.sty 2025/11/14 1.11b listings language file
@@ -2929,22 +3056,12 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[50]
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
- []
-
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
- []
-
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
- []
-
 [51]
+Overfull \hbox (125.2346pt too wide) in paragraph at lines 486--487
+ [][] 
+ []
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -2989,7 +3106,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[54]
+[54])
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3005,6 +3122,11 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [55]
+\openout2 = `body/chap05_experiment.aux'.
+
+ (./body/chap05_experiment.tex
+Chapter 5.
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3019,7 +3141,12 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[56]
+[56
+
+
+
+
+]
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3110,13 +3237,6 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [62]
-Overfull \hbox (10.56064pt too wide) in paragraph at lines 519--520
-[]\TU/SimSun.ttf(0)/m/n/12 弱 符 号 桩 函 数 的 实 现 如 代 码 [][]\TU/TimesNewRoman(0)/m/n
-/12 4.20[][]\TU/SimSun.ttf(0)/m/n/12 所 示。|  所 有 桩 函 数 均 使 用 \TU/lmtt/m/n/12 __a
-ttribute__((weak))
- []
-
-
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3147,6 +3267,20 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [64]
+Overfull \hbox (1.25813pt too wide) in paragraph at lines 442--443
+[]\TU/SimSun.ttf(0)/m/n/12 上 述 调 用 链 中，| \TU/lmtt/m/n/12 BOARD_InitHardware\TU/
+SimSun.ttf(0)/m/n/12 、| \TU/lmtt/m/n/12 SysTick_Config\TU/SimSun.ttf(0)/m/n/12 
+、| \TU/lmtt/m/n/12 CLOCK_InitExternalClk
+ []
+
+
+Overfull \hbox (13.77003pt too wide) in paragraph at lines 464--465
+[]\TU/SimSun.ttf(0)/m/n/12 该 阶 段 是 验 证 替 换 代 码 功 能 正 确 性 的 核 心 环 节。|  调 用 链 显 示
+： （\TU/TimesNewRoman(0)/m/n/12 1\TU/SimSun.ttf(0)/m/n/12 ）| \TU/lmtt/m/n/12 eth
+ernetif_input
+ []
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3192,6 +3326,21 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [67]
+Overfull \hbox (7.16463pt too wide) in paragraph at lines 655--656
+[]\TU/SimSun.ttf(0)/b/n/12 案 例 \TU/TimesNewRoman(0)/b/n/12 2\TU/SimSun.ttf(0)/b
+/n/12 ：|  反 馈 闭 环 策 略 边 界 与 \TU/TimesNewRoman(0)/b/n/12 CORE \TU/SimSun.ttf(0)/
+b/n/12 函 数 人 工 修 复。|  \TU/SimSun.ttf(0)/m/n/12 在 \TU/TimesNewRoman(0)/m/n/12 st
+m32/LwIP_StreamingServer
+ []
+
+
+Overfull \hbox (33.86882pt too wide) in paragraph at lines 655--656
+|\TU/SimSun.ttf(0)/m/n/12 （\TU/TimesNewRoman(0)/m/n/12 FreeRTOS\TU/SimSun.ttf(0
+)/m/n/12 ）|  的 仿 真 执 行 过 程 中，|  调 度 器 启 动 阶 段 触 发 异 常。|  具 体 而 言，| \TU/lmtt/m/n
+/12 vTaskStartScheduler
+ []
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3251,7 +3400,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[71])
+[71]
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3267,11 +3416,6 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [72]
-\openout2 = `body/chap05_experiment.aux'.
-
- (./body/chap05_experiment.tex
-Chapter 5.
-
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3286,27 +3430,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[73
-
-
-
-
-]
-Overfull \hbox (5.02031pt too wide) in paragraph at lines 106--106
-[]|\TU/TimesNewRoman(0)/m/n/11 STM32F401| 
- []
-
-
-Overfull \hbox (5.02031pt too wide) in paragraph at lines 107--107
-[]|\TU/TimesNewRoman(0)/m/n/11 STM32F401| 
- []
-
-
-Overfull \hbox (5.02031pt too wide) in paragraph at lines 108--108
-[]|\TU/TimesNewRoman(0)/m/n/11 STM32F401| 
- []
-
-
+[73]
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3321,7 +3445,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[74]
+[74])
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3337,6 +3461,11 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [75]
+\openout2 = `body/conclusion.aux'.
+
+ (./body/conclusion.tex
+Chapter 6.
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3351,7 +3480,12 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[76]
+[76
+
+
+
+
+]
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3382,23 +3516,6 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [78]
-Overfull \hbox (7.84819pt too wide) in paragraph at lines 283--284
-[]|\TU/SimSun.ttf(0)/b/n/12 （\TU/TimesNewRoman(0)/b/n/12 2\TU/SimSun.ttf(0)/b/n
-/12 ）|  驱 动 库 层 级 影 响 \TU/TimesNewRoman(0)/b/n/12 NODRIVER \TU/SimSun.ttf(0)/b/
-n/12 函 数 比 例\TU/SimSun.ttf(0)/m/n/12 。| \TU/TimesNewRoman(0)/m/n/12 NXP_UART_Ba
-reMetal \TU/SimSun.ttf(0)/m/n/12 的 \TU/TimesNewRoman(0)/m/n/12 NODRIVER
- []
-
-
-Overfull \hbox (23.29443pt too wide) in paragraph at lines 287--288
-[]|\TU/SimSun.ttf(0)/b/n/12 （\TU/TimesNewRoman(0)/b/n/12 4\TU/SimSun.ttf(0)/b/n
-/12 ）| \TU/TimesNewRoman(0)/b/n/12 RTOS \TU/SimSun.ttf(0)/b/n/12 与 裸 机 固 件 的 \T
-U/TimesNewRoman(0)/b/n/12 IRQ \TU/SimSun.ttf(0)/b/n/12 函 数 分 布\TU/SimSun.ttf(0)
-/m/n/12 。|  搭 载 \TU/TimesNewRoman(0)/m/n/12 RTOS \TU/SimSun.ttf(0)/m/n/12 的 固 件
-  |（如 \TU/TimesNewRoman(0)/m/n/12 NXP_LwIP_FreeRTOS\TU/SimSun.ttf(0)/m/n/12 、|
- []
-
-
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3428,7 +3545,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[80]
+[80])
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3443,7 +3560,12 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[81]
+[81] (./main.bbl
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\sihao' on input line 1.
+
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3458,7 +3580,12 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[82]
+[82
+
+
+
+
+]
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3518,7 +3645,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[86]
+[86])
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3533,7 +3660,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[87]
+[87] (./body/ap_feedback_loop_stats.tex)
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3548,222 +3675,9 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[88]
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
- []
-
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
- []
-
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
- []
-
-[89])
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
- []
-
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
- []
-
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
- []
-
-[90]
-\openout2 = `body/conclusion.aux'.
-
- (./body/conclusion.tex
-Chapter 6.
-
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
- []
-
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
- []
-
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
- []
-
-[91
-
-
-
+[88
 
 ]
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
- []
-
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
- []
-
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
- []
-
-[92]
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
- []
-
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
- []
-
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
- []
-
-[93]
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
- []
-
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
- []
-
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
- []
-
-[94]
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
- []
-
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
- []
-
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
- []
-
-[95])
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
- []
-
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
- []
-
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
- []
-
-[96] (./main.bbl
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\sihao' on input line 1.
-
-
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
- []
-
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
- []
-
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
- []
-
-[97
-
-
-
-
-]
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
- []
-
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
- []
-
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
- []
-
-[98]
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
- []
-
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
- []
-
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
- []
-
-[99]
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
- []
-
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
- []
-
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
- []
-
-[100]
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
- []
-
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
- []
-
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
- []
-
-[101])
 \tf@thm=\write7
 \openout7 = `main.thm'.
 
@@ -3782,7 +3696,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[102] (./main.aux (./body/chap01.aux) (./body/chap02.aux)
+[89] (./main.aux (./body/chap01.aux) (./body/chap02.aux)
 (./body/chap03_design.aux) (./body/chap04_implementation.aux)
 (./body/chap05_experiment.aux) (./body/conclusion.aux))
  ***********
@@ -3790,15 +3704,15 @@ LaTeX2e <2025-11-01>
 L3 programming layer <2022/08/05>
  ***********
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: EA1EDE24CEC1EB5AD00B16A49DF667E7;4816.
+(rerunfilecheck)             Checksum: BD9BB0C837BCFA5407703E4B4A3B27B8;5637.
  ) 
 Here is how much of TeX's memory you used:
- 44590 strings out of 468168
- 994045 string characters out of 5423555
- 1867536 words of memory out of 5000000
- 72445 multiletter control sequences out of 15000+600000
- 647345 words of font info for 197 fonts, out of 8000000 for 9000
+ 54319 strings out of 468168
+ 1324873 string characters out of 5423555
+ 2259351 words of memory out of 5000000
+ 82043 multiletter control sequences out of 15000+600000
+ 648406 words of font info for 205 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 99i,17n,108p,1208b,2539s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 99i,17n,108p,1208b,2534s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on main.pdf (110 pages).
+Output written on main.xdv (97 pages, 1855628 bytes).

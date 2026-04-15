@@ -1,103 +1,89 @@
 \relax 
 \providecommand\hyper@newdestlabel[2]{}
-\@writefile{toc}{\contentsline {chapter}{\numberline {4}系统实现}{47}{chapter.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{\numberline {4}系统实现}{39}{chapter.4}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
 \@writefile{loa}{\addvspace {10\p@ }}
-\newlabel{chap:implementation}{{4}{47}{系统实现}{chapter.4}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {4.1}驱动函数接口静态分析与识别模块实现}{47}{section.4.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1.1}CodeQL 查询实现}{47}{subsection.4.1.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.1.1.1}MMIO 操作定位查询实现}{47}{subsubsection.4.1.1.1}\protected@file@percent }
-\newlabel{lst:mmio-collect}{{4.1}{47}{MMIO表达式收集查询示例}{lstlisting.4.1}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.1}{\ignorespaces MMIO表达式收集查询示例}}{47}{lstlisting.4.1}\protected@file@percent }
-\newlabel{lst:taint-tracking}{{4.2}{48}{常量基址数据流追踪查询示例}{lstlisting.4.2}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.2}{\ignorespaces 常量基址数据流追踪查询示例}}{48}{lstlisting.4.2}\protected@file@percent }
-\newlabel{lst:mmio-propagation}{{4.3}{48}{常量基址在代码中的传播示例}{lstlisting.4.3}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.3}{\ignorespaces 常量基址在代码中的传播示例}}{48}{lstlisting.4.3}\protected@file@percent }
-\newlabel{lst:param-type-match}{{4.4}{48}{函数参数类型匹配查询示例}{lstlisting.4.4}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.4}{\ignorespaces 函数参数类型匹配查询示例}}{48}{lstlisting.4.4}\protected@file@percent }
-\newlabel{lst:pointer-param-pass}{{4.5}{49}{常量指针参数传递示例}{lstlisting.4.5}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.5}{\ignorespaces 常量指针参数传递示例}}{49}{lstlisting.4.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.1.1.2}驱动函数定位查询实现}{49}{subsubsection.4.1.1.2}\protected@file@percent }
-\newlabel{lst:driver-function-rule}{{4.6}{49}{驱动函数判定规则}{lstlisting.4.6}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.6}{\ignorespaces 驱动函数判定规则}}{49}{lstlisting.4.6}\protected@file@percent }
-\newlabel{lst:driver-call-query}{{4.7}{50}{驱动函数调用关系查询}{lstlisting.4.7}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.7}{\ignorespaces 驱动函数调用关系查询}}{50}{lstlisting.4.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1.2}数据模型实现}{50}{subsection.4.1.2}\protected@file@percent }
-\newlabel{lst:data-model}{{4.8}{50}{数据模型定义示例}{lstlisting.4.8}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.8}{\ignorespaces 数据模型定义示例}}{50}{lstlisting.4.8}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.1.2.1}查询工具函数实现}{51}{subsubsection.4.1.2.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1.3}分析流程实现}{52}{subsection.4.1.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4.2}驱动函数分析、替换与编译模块实现}{52}{section.4.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2.1}智能体工作流实现}{52}{subsection.4.2.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.1.1}驱动函数分析与替换代码生成模块实现}{53}{subsubsection.4.2.1.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.1.2}替换代码修正与编译集成模块实现}{53}{subsubsection.4.2.1.2}\protected@file@percent }
-\newlabel{sec:builder-fixer-impl}{{4.2.1.2}{53}{替换代码修正与编译集成模块实现}{subsubsection.4.2.1.2}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.1.3}替换代码验证机制实现}{54}{subsubsection.4.2.1.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2.2}替换策略实现}{55}{subsection.4.2.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.2.1}Skip 策略实现}{55}{subsubsection.4.2.2.1}\protected@file@percent }
-\newlabel{lst:skip-strategy}{{4.9}{55}{Skip 策略替换示例（初始化类和轮询类）}{lstlisting.4.9}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.9}{\ignorespaces Skip 策略替换示例（初始化类和轮询类）}}{55}{lstlisting.4.9}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.2.2}Redirect 策略实现}{56}{subsubsection.4.2.2.2}\protected@file@percent }
-\newlabel{lst:redirect-uart}{{4.10}{56}{Redirect 策略替换示例（UART 接收函数）}{lstlisting.4.10}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.10}{\ignorespaces Redirect 策略替换示例（UART 接收函数）}}{56}{lstlisting.4.10}\protected@file@percent }
-\newlabel{lst:redirect-enet}{{4.11}{57}{Redirect 策略替换示例（变长报文接收）}{lstlisting.4.11}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.11}{\ignorespaces Redirect 策略替换示例（变长报文接收）}}{57}{lstlisting.4.11}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.2.3}Event 策略实现}{57}{subsubsection.4.2.2.3}\protected@file@percent }
-\newlabel{lst:event-strategy}{{4.12}{57}{Event 策略替换示例}{lstlisting.4.12}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.12}{\ignorespaces Event 策略替换示例}}{57}{lstlisting.4.12}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.2.4}Steering 策略实现}{57}{subsubsection.4.2.2.4}\protected@file@percent }
-\newlabel{lst:steering-original}{{4.13}{58}{Steering 策略原始代码示例（NXP ENET\_GetRxFrame）}{lstlisting.4.13}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.13}{\ignorespaces Steering 策略原始代码示例（NXP ENET\_GetRxFrame）}}{58}{lstlisting.4.13}\protected@file@percent }
-\newlabel{lst:steering-replaced}{{4.14}{58}{Steering 策略替换代码示例（NXP ENET\_GetRxFrame）}{lstlisting.4.14}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.14}{\ignorespaces Steering 策略替换代码示例（NXP ENET\_GetRxFrame）}}{58}{lstlisting.4.14}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.2.5}ReturnOK 策略实现}{59}{subsubsection.4.2.2.5}\protected@file@percent }
-\newlabel{lst:returnok-strategy}{{4.15}{59}{ReturnOK 策略替换示例}{lstlisting.4.15}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.15}{\ignorespaces ReturnOK 策略替换示例}}{59}{lstlisting.4.15}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2.3}LLM 提示词工程实现}{59}{subsection.4.2.3}\protected@file@percent }
-\newlabel{sec:prompt-engineering}{{4.2.3}{59}{LLM 提示词工程实现}{subsection.4.2.3}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.3.1}分类提示词模板设计}{60}{subsubsection.4.2.3.1}\protected@file@percent }
-\newlabel{lst:classifier-prompt-overview}{{4.16}{60}{分类提示词模板骨架}{lstlisting.4.16}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.16}{\ignorespaces 分类提示词模板骨架}}{60}{lstlisting.4.16}\protected@file@percent }
-\newlabel{lst:prompt-tools}{{4.17}{60}{提示词中的工具声明与调用顺序}{lstlisting.4.17}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.17}{\ignorespaces 提示词中的工具声明与调用顺序}}{60}{lstlisting.4.17}\protected@file@percent }
-\newlabel{lst:prompt-recv}{{4.18}{61}{提示词中 RECV 类函数的分类描述}{lstlisting.4.18}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.18}{\ignorespaces 提示词中 RECV 类函数的分类描述}}{61}{lstlisting.4.18}\protected@file@percent }
-\newlabel{lst:prompt-rules}{{4.19}{61}{提示词中的通用替换规则}{lstlisting.4.19}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.19}{\ignorespaces 提示词中的通用替换规则}}{61}{lstlisting.4.19}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4.3}动态测试反馈闭环模块实现}{62}{section.4.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3.1}仿真平台实现}{62}{subsection.4.3.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.1.1}Unicorn 引擎初始化与内存映射}{62}{subsubsection.4.3.1.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.1.2}钩子机制的实现}{62}{subsubsection.4.3.1.2}\protected@file@percent }
-\newlabel{sec:hook-mechanism}{{4.3.1.2}{62}{钩子机制的实现}{subsubsection.4.3.1.2}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.1.3}弱符号桩函数实现}{63}{subsubsection.4.3.1.3}\protected@file@percent }
-\newlabel{lst:weak-stubs}{{4.20}{63}{弱符号桩函数实现示例}{lstlisting.4.20}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.20}{\ignorespaces 弱符号桩函数实现示例}}{63}{lstlisting.4.20}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.1.4}运行日志记录模块实现}{64}{subsubsection.4.3.1.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3.2}仿真执行智能体实现}{64}{subsection.4.3.2}\protected@file@percent }
-\newlabel{lst:emulator-state}{{4.21}{64}{仿真执行智能体状态定义}{lstlisting.4.21}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.21}{\ignorespaces 仿真执行智能体状态定义}}{64}{lstlisting.4.21}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3.3}反馈闭环实现}{65}{subsection.4.3.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.3.1}多智能体协同的 LangGraph 实现}{65}{subsubsection.4.3.3.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.3.2}闭环工作流的具体实现}{65}{subsubsection.4.3.3.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.3.3}终止条件与错误处理的实现}{66}{subsubsection.4.3.3.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.3.4}修复智能体提示词模板设计}{66}{subsubsection.4.3.3.4}\protected@file@percent }
-\newlabel{lst:fixer-prompt-overview}{{4.22}{66}{修复提示词模板骨架}{lstlisting.4.22}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.22}{\ignorespaces 修复提示词模板骨架}}{66}{lstlisting.4.22}\protected@file@percent }
-\newlabel{lst:fixer-context}{{4.23}{67}{修复提示词中的上下文获取要求}{lstlisting.4.23}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.23}{\ignorespaces 修复提示词中的上下文获取要求}}{67}{lstlisting.4.23}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.3.5}仿真执行智能体与闭环构建智能体提示词设计}{67}{subsubsection.4.3.3.5}\protected@file@percent }
-\newlabel{lst:emulator-prompt}{{4.24}{67}{仿真执行智能体提示词骨架}{lstlisting.4.24}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.24}{\ignorespaces 仿真执行智能体提示词骨架}}{67}{lstlisting.4.24}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4.4}实现挑战与解决方案}{68}{section.4.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.4.1}CodeQL 对嵌入式 C 代码的支持问题}{68}{subsection.4.4.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.4.2}LLM 生成代码的可靠性保障}{69}{subsection.4.4.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.4.3}Unicorn 仿真环境搭建与 Hook 机制实现}{70}{subsection.4.4.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.4.4}多智能体状态管理与协同}{70}{subsection.4.4.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.4.5}系统性能与可扩展性分析}{71}{subsection.4.4.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4.5}本章小结}{72}{section.4.5}\protected@file@percent }
+\newlabel{chap:implementation}{{4}{39}{系统实现}{chapter.4}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4.1}驱动函数接口静态分析与识别模块实现}{39}{section.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1.1}CodeQL 查询实现}{39}{subsection.4.1.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.1.1.1}MMIO 操作定位查询实现}{39}{subsubsection.4.1.1.1}\protected@file@percent }
+\newlabel{lst:mmio-collect}{{4.1}{39}{MMIO表达式收集查询示例}{lstlisting.4.1}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.1}{\ignorespaces MMIO表达式收集查询示例}}{39}{lstlisting.4.1}\protected@file@percent }
+\newlabel{lst:taint-tracking}{{4.2}{39}{常量基址数据流追踪查询示例}{lstlisting.4.2}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.2}{\ignorespaces 常量基址数据流追踪查询示例}}{39}{lstlisting.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.1.1.2}驱动函数定位查询实现}{40}{subsubsection.4.1.1.2}\protected@file@percent }
+\newlabel{lst:driver-function-rule}{{4.3}{40}{驱动函数判定规则}{lstlisting.4.3}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.3}{\ignorespaces 驱动函数判定规则}}{40}{lstlisting.4.3}\protected@file@percent }
+\newlabel{lst:driver-call-query}{{4.4}{40}{驱动函数调用关系查询}{lstlisting.4.4}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.4}{\ignorespaces 驱动函数调用关系查询}}{40}{lstlisting.4.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1.2}数据模型实现}{41}{subsection.4.1.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.1.2.1}查询工具函数实现}{41}{subsubsection.4.1.2.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {4.1}{\ignorespaces 主要工具函数}}{41}{table.caption.16}\protected@file@percent }
+\newlabel{tab:tools}{{4.1}{41}{主要工具函数}{table.caption.16}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1.3}分析流程实现}{42}{subsection.4.1.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4.2}驱动函数分析、替换与编译模块实现}{42}{section.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2.1}智能体工作流实现}{42}{subsection.4.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.1.1}驱动函数分析与替换代码生成模块实现}{42}{subsubsection.4.2.1.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.1.2}替换代码修正与编译集成模块实现}{42}{subsubsection.4.2.1.2}\protected@file@percent }
+\newlabel{sec:builder-fixer-impl}{{4.2.1.2}{42}{替换代码修正与编译集成模块实现}{subsubsection.4.2.1.2}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.1.3}替换代码验证机制实现}{43}{subsubsection.4.2.1.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2.2}替换策略实现}{43}{subsection.4.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.2.1}Skip 策略实现}{43}{subsubsection.4.2.2.1}\protected@file@percent }
+\newlabel{lst:skip-strategy}{{4.5}{43}{Skip 策略替换示例（初始化类和轮询类）}{lstlisting.4.5}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.5}{\ignorespaces Skip 策略替换示例（初始化类和轮询类）}}{43}{lstlisting.4.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.2.2}Redirect 策略实现}{44}{subsubsection.4.2.2.2}\protected@file@percent }
+\newlabel{lst:redirect-uart}{{4.6}{44}{Redirect 策略替换示例（UART 接收函数）}{lstlisting.4.6}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.6}{\ignorespaces Redirect 策略替换示例（UART 接收函数）}}{44}{lstlisting.4.6}\protected@file@percent }
+\newlabel{lst:redirect-enet}{{4.7}{44}{Redirect 策略替换示例（变长报文接收）}{lstlisting.4.7}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.7}{\ignorespaces Redirect 策略替换示例（变长报文接收）}}{44}{lstlisting.4.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.2.3}Event 策略实现}{45}{subsubsection.4.2.2.3}\protected@file@percent }
+\newlabel{lst:event-strategy}{{4.8}{45}{Event 策略替换示例}{lstlisting.4.8}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.8}{\ignorespaces Event 策略替换示例}}{45}{lstlisting.4.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.2.4}Steering 策略实现}{45}{subsubsection.4.2.2.4}\protected@file@percent }
+\newlabel{lst:steering-original}{{4.9}{45}{Steering 策略原始代码示例（NXP ENET\_GetRxFrame）}{lstlisting.4.9}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.9}{\ignorespaces Steering 策略原始代码示例（NXP ENET\_GetRxFrame）}}{45}{lstlisting.4.9}\protected@file@percent }
+\newlabel{lst:steering-replaced}{{4.10}{46}{Steering 策略替换代码示例（NXP ENET\_GetRxFrame）}{lstlisting.4.10}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.10}{\ignorespaces Steering 策略替换代码示例（NXP ENET\_GetRxFrame）}}{46}{lstlisting.4.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.2.5}ReturnOK 策略实现}{46}{subsubsection.4.2.2.5}\protected@file@percent }
+\newlabel{lst:returnok-strategy}{{4.11}{47}{ReturnOK 策略处理示例}{lstlisting.4.11}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.11}{\ignorespaces ReturnOK 策略处理示例}}{47}{lstlisting.4.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2.3}LLM 提示词工程实现}{47}{subsection.4.2.3}\protected@file@percent }
+\newlabel{sec:prompt-engineering}{{4.2.3}{47}{LLM 提示词工程实现}{subsection.4.2.3}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.3.1}分类提示词模板设计}{47}{subsubsection.4.2.3.1}\protected@file@percent }
+\newlabel{lst:classifier-prompt-overview}{{4.12}{47}{分类提示词模板骨架}{lstlisting.4.12}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.12}{\ignorespaces 分类提示词模板骨架}}{47}{lstlisting.4.12}\protected@file@percent }
+\newlabel{lst:prompt-tools}{{4.13}{48}{提示词中的工具声明与调用顺序}{lstlisting.4.13}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.13}{\ignorespaces 提示词中的工具声明与调用顺序}}{48}{lstlisting.4.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4.3}动态测试反馈闭环模块实现}{48}{section.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3.1}仿真平台实现}{49}{subsection.4.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.1.1}Unicorn 引擎初始化与内存映射}{49}{subsubsection.4.3.1.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.1.2}钩子机制的实现}{49}{subsubsection.4.3.1.2}\protected@file@percent }
+\newlabel{sec:hook-mechanism}{{4.3.1.2}{49}{钩子机制的实现}{subsubsection.4.3.1.2}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.1.3}弱符号桩函数实现}{50}{subsubsection.4.3.1.3}\protected@file@percent }
+\newlabel{lst:weak-stubs}{{4.14}{50}{弱符号桩函数实现示例}{lstlisting.4.14}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.14}{\ignorespaces 弱符号桩函数实现示例}}{50}{lstlisting.4.14}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.1.4}运行日志记录模块实现}{50}{subsubsection.4.3.1.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3.2}仿真执行智能体实现}{51}{subsection.4.3.2}\protected@file@percent }
+\newlabel{lst:emulator-state}{{4.15}{51}{仿真执行智能体状态定义}{lstlisting.4.15}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.15}{\ignorespaces 仿真执行智能体状态定义}}{51}{lstlisting.4.15}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3.3}反馈闭环实现}{51}{subsection.4.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.3.1}多智能体协同的 LangGraph 实现}{51}{subsubsection.4.3.3.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4.1}{\ignorespaces 多智能体协同的 LangGraph 图结构}}{52}{figure.caption.17}\protected@file@percent }
+\newlabel{fig:multi-agent-langgraph}{{4.1}{52}{多智能体协同的 LangGraph 图结构}{figure.caption.17}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.3.2}闭环工作流的具体实现}{52}{subsubsection.4.3.3.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4.2}{\ignorespaces 仿真执行智能体状态机转移图}}{53}{figure.caption.18}\protected@file@percent }
+\newlabel{fig:emulator-state-machine}{{4.2}{53}{仿真执行智能体状态机转移图}{figure.caption.18}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.3.3}终止条件与错误处理的实现}{53}{subsubsection.4.3.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.3.4}修复智能体提示词模板设计}{54}{subsubsection.4.3.3.4}\protected@file@percent }
+\newlabel{lst:fixer-prompt-overview}{{4.16}{54}{修复提示词模板骨架}{lstlisting.4.16}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.16}{\ignorespaces 修复提示词模板骨架}}{54}{lstlisting.4.16}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.3.5}仿真执行智能体与闭环构建智能体提示词设计}{54}{subsubsection.4.3.3.5}\protected@file@percent }
+\newlabel{lst:emulator-prompt}{{4.17}{55}{仿真执行智能体提示词骨架}{lstlisting.4.17}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {4.17}{\ignorespaces 仿真执行智能体提示词骨架}}{55}{lstlisting.4.17}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4.4}本章小结}{55}{section.4.4}\protected@file@percent }
 \@setckpt{body/chap04_implementation}{
-\setcounter{page}{73}
+\setcounter{page}{56}
 \setcounter{equation}{0}
 \setcounter{enumi}{0}
 \setcounter{enumii}{0}
@@ -107,13 +93,13 @@
 \setcounter{mpfootnote}{0}
 \setcounter{part}{0}
 \setcounter{chapter}{4}
-\setcounter{section}{5}
+\setcounter{section}{4}
 \setcounter{subsection}{0}
 \setcounter{subsubsection}{0}
 \setcounter{paragraph}{0}
 \setcounter{subparagraph}{0}
-\setcounter{figure}{0}
-\setcounter{table}{0}
+\setcounter{figure}{2}
+\setcounter{table}{1}
 \setcounter{parentequation}{0}
 \setcounter{caption@flags}{2}
 \setcounter{continuedfloat}{0}
@@ -132,7 +118,7 @@
 \setcounter{Item}{0}
 \setcounter{Hfootnote}{0}
 \setcounter{Hy@AnnotLevel}{0}
-\setcounter{bookmark@seq@number}{25}
+\setcounter{bookmark@seq@number}{24}
 \setcounter{currdefinitionctr}{0}
 \setcounter{enddefinitionctr}{0}
 \setcounter{definition}{0}
@@ -177,5 +163,5 @@
 \setcounter{float@type}{8}
 \setcounter{LT@tables}{0}
 \setcounter{LT@chunks}{0}
-\setcounter{lstlisting}{24}
+\setcounter{lstlisting}{17}
 }

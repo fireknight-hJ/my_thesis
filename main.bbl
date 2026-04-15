@@ -1,43 +1,16 @@
 \begin{thebibliography}{10}
 
-\bibitem{statistaIOT2024}
-Statista.
-\newblock Number of Internet of Things (IoT) connections worldwide from 2022 to
-  2023, with forecasts from 2024 to 2033.
-\newblock
-  \url{https://www.statista.com/statistics/1183457/iot-connected-devices-worldwide/},
-  2024
-
-\bibitem{openharmony}
-{OpenHarmony Community}.
-\newblock OpenHarmony - Open Source Project.
-\newblock \url{https://www.openharmony.cn/mainPlay}
-
-\bibitem{freertos}
-{Amazon Web Services}.
-\newblock FreeRTOS - Real-time operating system for microcontrollers.
-\newblock \url{https://www.freertos.org/}
-
-\bibitem{zephyr}
-{Linux Foundation}.
-\newblock Zephyr Project - Real-time operating system for IoT.
-\newblock \url{https://www.zephyrproject.org/}
-
 \bibitem{yang2021iotsurvey}
 杨毅宇, 周威, 赵尚儒, 刘聪, 张宇辉, 王鹤, et~al.
 \newblock 物联网安全研究综述:威胁,检测与防御.
 \newblock 通信学报, 2021, 42(8): 18
 
-\bibitem{iotpot}
-Yin Minn~Pa Pa, et~al.
-\newblock IoTPOT: Analysing and Detecting Malware in IoT.
-\newblock Journal of Computer Virology and Hacking Techniques, 2016
-
 \bibitem{mirai2018}
-Manos Antonakakis, Tim April, Michael Bailey, Mathew Bernhard, Elie Bursztein,
+Manos Antonakakis, Tim April, Michael Bailey, Matt Bernhard, Elie Bursztein,
   Jaime Cochran, et~al.
-\newblock Analysis of the Mirai Botnet.
-\newblock In: USENIX Security Symposium, 2018
+\newblock Understanding the mirai botnet.
+\newblock In: 26th USENIX Security Symposium (USENIX Security 17), 2017:
+  1093--1110
 
 \bibitem{li2022iotfirmwaresurvey}
 李涛, 田迎军, 葛阳晨, 田源, 李剑.
@@ -50,10 +23,10 @@ Manos Antonakakis, Tim April, Michael Bailey, Mathew Bernhard, Elie Bursztein,
 \newblock 网络与信息安全学报, 2025, 11(2): 26--49
 
 \bibitem{clements2020halucinator}
-Abraham~A Clements, Eric Gustafson, Tobias Scharnowski, Paul Grosen, David
+Abraham~A. Clements, Eric Gustafson, Tobias Scharnowski, Paul Grosen, David
   Fritz, Christopher Kruegel, et~al.
 \newblock HALucinator: Firmware Re-hosting Through Abstraction Layer Emulation.
-\newblock In: 29th USENIX Security Symposium, 2020: 1--18
+\newblock In: 29th USENIX Security Symposium, 2020: 1201--1218
 
 \bibitem{luo_vulhawk_2023}
 Zhenhao Luo, Pengfei Wang, Baosheng Wang, Yong Tang, Wei Xie, Xu~Zhou, et~al.
@@ -70,8 +43,10 @@ Daming~D Chen, Manuel Egele, Maverick Woo, David Brumley.
 \bibitem{fuzzware}
 Tobias Scharnowski, Nils Bars, Moritz Schloegel, Eric Gustafson, Marius Muench,
   Giovanni Vigna, et~al.
-\newblock Fuzzware: Using Precise MMIO Modeling for Effective Firmware Fuzzing.
-\newblock In: 31st USENIX Security Symposium, 2022
+\newblock Fuzzware: Using Precise $\{$MMIO$\}$ Modeling for Effective Firmware
+  Fuzzing.
+\newblock In: 31st USENIX Security Symposium (USENIX Security 22), 2022:
+  1239--1256
 
 \bibitem{qemu}
 Fabrice Bellard.
@@ -80,10 +55,10 @@ Fabrice Bellard.
   CA: USENIX Association, 2005
 
 \bibitem{avatar}
-Musard Kamilov, et~al.
+Jonas Zaddach, Luca Bruno, Davide Balzarotti, Aurelien Francillon.
 \newblock Avatar: A Framework to Support Dynamic Security Analysis of Embedded
-  Firmware Binaries.
-\newblock In: NDSS, 2015
+  Systems' Firmwares.
+\newblock In: Network and Distributed System Security (NDSS) Symposium, 2014
 
 \bibitem{avatar2}
 Marius Muench, Jan Stijohann, Fabian Kargl, Aur{\'e}lien Francillon, Davide
@@ -111,9 +86,10 @@ Wei Zhou, Lan Zhang, Le~Guan, Peng Liu, Yuqing Zhang.
 
 \bibitem{fengp2020p2im}
 Bo~Feng, Alejandro Mera, Long Lu.
-\newblock P2IM: Scalable and Hardware-independent Firmware Testing via
+\newblock $\{$P2IM$\}$: Scalable and Hardware-Independent Firmware Testing via
   Automatic Peripheral Interface Modeling.
-\newblock In: Proceedings of Usenix Security Symposium, 2020
+\newblock In: 29th USENIX Security Symposium (USENIX Security 20), 2020:
+  1237--1254
 
 \bibitem{laelaps}
 Chen Cao, Le~Guan, Peng Cui, Limin Cheng, Mingyu Zhu.
@@ -123,9 +99,11 @@ Chen Cao, Le~Guan, Peng Cui, Limin Cheng, Mingyu Zhu.
   2021
 
 \bibitem{uemu}
-Wei Zhou, et~al.
-\newblock uEmu: A Framework for Firmware Emulation and Vulnerability Discovery.
-\newblock In: ACM CCS, 2021
+Wei Zhou, Le~Guan, Peng Liu, Yuqing Zhang.
+\newblock Automatic Firmware Emulation through Invalidity-guided Knowledge
+  Inference.
+\newblock In: 30th USENIX Security Symposium (USENIX Security 21), 2021:
+  2007--2024
 
 \bibitem{firmalice}
 Yan Shoshitaishvili, Ruoyu Wang, Christophe Hauser, Christopher Kruegel,
@@ -135,10 +113,11 @@ Yan Shoshitaishvili, Ruoyu Wang, Christophe Hauser, Christopher Kruegel,
 \newblock In: NDSS, 2015
 
 \bibitem{johnson_jetset_2021}
-Evan Johnson, Maxwell Bland, {YiFei} Zhu, Joshua Mason, Stephen Checkoway,
-  Stefan Savage, et~al.
+Evan Johnson, Maxwell Bland, YiFei Zhu, Joshua Mason, Stephen Checkoway, Stefan
+  Savage, et~al.
 \newblock Jetset: Targeted Firmware Rehosting for Embedded Systems.
-\newblock : 321--338
+\newblock In: 30th USENIX Security Symposium (USENIX Security 21). USENIX
+  Association, 2021: 321--338
 
 \bibitem{mera_dice_2021}
 Alejandro Mera, Bo~Feng, Long Lu, Engin Kirda.
@@ -148,10 +127,11 @@ Alejandro Mera, Bo~Feng, Long Lu, Engin Kirda.
   1938--1954
 
 \bibitem{pararehosting}
-Wenqiang Li, Libo Li, Shenglin Zhang, Tao Xie, Lei Ma, et~al.
-\newblock Para-rehosting: Automatic Payload Generation for Embedded
-  Inter-Process Communication.
-\newblock In: USENIX Security Symposium, 2022
+Wenqiang Li, Le~Guan, Jingqiang Lin, Jiameng Shi, Fengjun Li.
+\newblock From Library Portability to Para-rehosting: Natively Executing
+  Microcontroller Software on Commodity Hardware.
+\newblock In: Proceedings 2021 Network and Distributed System Security
+  Symposium. Internet Society, 2021
 
 \bibitem{seidel_forming_2023}
 Lukas Seidel, Dominik Maier, Marius Muench.
@@ -186,14 +166,15 @@ Hangtian Liu, Shuitao Gan, Chao Zhang, Zicong Gao, Hongqi Zhang, Xiangzhi Wang,
 \bibitem{scharnowski2023hoedur}
 Tobias Scharnowski, Simon W{\"o}rner, Felix Buchmann, Nils Bars, Moritz
   Schloegel, Thorsten Holz.
-\newblock Hoedur: Embedded Firmware Fuzzing using Multi-Stream Inputs.
-\newblock 2023
+\newblock HOEDUR: embedded firmware fuzzing using multi-stream inputs.
+\newblock In: Proceedings of the 32nd USENIX Conference on Security Symposium,
+  2023: 2885--2902
 
 \bibitem{firmafl}
-Wei Zheng, et~al.
+Yaowen Zheng, Ali Davanian, Heng Yin, Chengyu Song, Hongsong Zhu, Limin Sun.
 \newblock FirmAFL: High-Throughput Greybox Fuzzing of IoT Firmware via
   Augmented Process Emulation.
-\newblock In: USENIX Security, 2019
+\newblock In: 28th USENIX Security Symposium, 2019: 1099--1114
 
 \bibitem{chen_sfuzz_2022}
 Libo Chen, Quanpu Cai, Zhenbang Ma, Yanhao Wang, Hong Hu, Minghang Shen, et~al.
@@ -216,14 +197,16 @@ Nick Stephens, Jack Grosen, Christopher Salls, Andrew Dutcher, Ruoyu Wang,
 
 \bibitem{qsym}
 Insu Yun, Sangho Lee, Meng Xu, Yeongjin Jang, Taesoo Kim.
-\newblock QSYM: A Practical Concolic Execution Engine Tailored for Hybrid
-  Fuzzing.
-\newblock In: USENIX Security Symposium, 2018
+\newblock $\{$QSYM$\}$: A Practical Concolic Execution Engine Tailored for
+  Hybrid Fuzzing.
+\newblock In: 27th USENIX Security Symposium (USENIX Security 18), 2018:
+  745--761
 
 \bibitem{angora}
 Peng Chen, Hao Chen.
 \newblock Angora: Efficient Fuzzing by Principled Search.
-\newblock In: IEEE Symposium on Security and Privacy, 2018
+\newblock In: 2018 IEEE Symposium on Security and Privacy (SP). IEEE, 2018:
+  711--725
 
 \bibitem{shi_facilitating_2024}
 Jiameng Shi, Wenqiang Li, Wenwen Wang, Le~Guan.
@@ -231,6 +214,11 @@ Jiameng Shi, Wenqiang Li, Wenwen Wang, Le~Guan.
   Instrumentation.
 \newblock In: Proceedings 2024 Network and Distributed System Security
   Symposium. Internet Society
+
+\bibitem{openai2023gpt4}
+OpenAI.
+\newblock GPT-4 Technical Report.
+\newblock arXiv preprint arXiv:2303.08774, 2023
 
 \bibitem{claude35sonnet}
 Anthropic.
@@ -245,10 +233,11 @@ Gheorghe Comanici, Eric Bieber, Mike Schaekermann, Ice Pasupat, Noveen
 \newblock  {\url{https://arxiv.org/abs/2507.06261}}
 
 \bibitem{deepseekr1}
-DeepSeek-AI, et~al.
-\newblock DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via
-  Reinforcement Learning.
-\newblock Nature, 2025, 645: 633--638
+Daya Guo, Dejian Yang, Haowei Zhang, Junxiao Song, Peiyi Wang, Qihao Zhu,
+  et~al.
+\newblock DeepSeek-R1 incentivizes reasoning in LLMs through reinforcement
+  learning.
+\newblock Nature, 2025, 645(8081): 633--638
 
 \bibitem{glm5}
 Zhengxiao Du, Yujie Qian, Xiao Liu, Ming Ding, Jiezhong Qiu, Zhilin Yang,
@@ -266,93 +255,98 @@ MiniMax, Aonian Li, Bangwei Gong, Bo~Yang, Boji Shan, Chang Liu, et~al.
 \newblock  {\url{https://arxiv.org/abs/2501.08313}}
 
 \bibitem{wei2022finetuned}
-Jason Wei, Maarten Bosma, Vincent~Y Zhao, Kelvin Guu, Adams~Wei Yu, Brian
-  Lester, et~al.
-\newblock Finetuned Language Models Are Zero-Shot Learners.
-\newblock arXiv preprint arXiv:2109.01652, 2022
+Jason Wei, Maarten Bosma, Vincent Zhao, Kelvin Guu, Adams~Wei Yu, Brian Lester,
+  et~al.
+\newblock Finetuned Language Models are Zero-Shot Learners.
+\newblock In: International Conference on Learning Representations, 2022
 
 \bibitem{dolphcoder2024}
-Weize Wang, Qipeng Chen, Zihao Zhang, Yang Li, Xin Cui, Jing Chen, et~al.
-\newblock DolphCoder: Echo-Locating Code with Diverse and Multi-Objective
-  Instruction Tuning.
-\newblock arXiv preprint, 2024
-
-\bibitem{codelsi2024}
-Tianyu Zhang, et~al.
-\newblock CodeLSI: Leveraging Foundation Models for Automated Code Generation
-  with Low-Rank Optimization and Domain-Specific Instruction Tuning.
-\newblock arXiv preprint, 2024
+Yejie Wang, Keqing He, Guanting Dong, Pei Wang, Weihao Zeng, Muxi Diao, et~al.
+\newblock Dolphcoder: Echo-locating code large language models with diverse and
+  multi-objective instruction tuning.
+\newblock In: Proceedings of the 62nd Annual Meeting of the Association for
+  Computational Linguistics (Volume 1: Long Papers), 2024: 4706--4721
 
 \bibitem{chen2023teaching}
-Xinyun Chen, Maxwell Lin, Dale Schuurmans, Quoc Le.
+Xinyun Chen, Maxwell Lin, Nathanael Sch{\"a}rli, Denny Zhou.
 \newblock Teaching Large Language Models to Self-Debug.
-\newblock arXiv preprint arXiv:2304.05128, 2023
+\newblock In: The Twelfth International Conference on Learning Representations,
+  2024
+
+\bibitem{mathews2024test}
+Noble~Saji Mathews, Meiyappan Nagappan.
+\newblock Test-driven development and llm-based code generation.
+\newblock In: Proceedings of the 39th IEEE/ACM International Conference on
+  Automated Software Engineering, 2024: 1583--1594
 
 \bibitem{rlcf2024}
-Kechi Liu, Shusheng Zhang, Ge~Li, Zhi Jin, Li~Zhao, Yang Li.
-\newblock Tuning Models of Code with Compiler-Generated Reinforcement Learning
-  Feedback.
-\newblock arXiv preprint, 2024
+Xin Wang, Yasheng Wang, Yao Wan, Fei Mi, Yitong Li, Pingyi Zhou, et~al.
+\newblock Compilable neural code generation with compiler feedback.
+\newblock In: Findings of the Association for Computational Linguistics: ACL
+  2022, 2022: 9--19
 
 \bibitem{codedpo2024}
-Yuxiang Zhang, et~al.
-\newblock CodeDPO: Aligning Code Models with Self-Generated and Verified Source
-  Code.
-\newblock arXiv preprint, 2024
+Kechi Zhang, Ge~Li, Yihong Dong, Jingjing Xu, Jun Zhang, Jing Su, et~al.
+\newblock Codedpo: Aligning code models with self generated and verified source
+  code.
+\newblock In: Proceedings of the 63rd Annual Meeting of the Association for
+  Computational Linguistics (Volume 1: Long Papers), 2025: 15854--15871
 
 \bibitem{wei2022cot}
-Jason Wei, Xuezhi Wang, Dale Schuurmans, Maarten Bosma, Brian Ichter, Fei Xia,
-  et~al.
-\newblock Chain-of-Thought Prompting Elicits Reasoning in Large Language
-  Models.
-\newblock arXiv preprint arXiv:2201.11903, 2022
+Jason Wei, Xuezhi Wang, Dale Schuurmans, Maarten Bosma, Fei Xia, Ed~Chi, et~al.
+\newblock Chain-of-thought prompting elicits reasoning in large language
+  models.
+\newblock Advances in neural information processing systems, 2022, 35:
+  24824--24837
 
-\bibitem{motcoder2024}
-Kechi Zhang, et~al.
-\newblock MoTCoder: Elevating Large Language Models with Modular of Thought for
-  Challenging Programming Tasks.
-\newblock arXiv preprint, 2024
+\bibitem{gao2023pal}
+Luyu Gao, Aman Madaan, Shuyan Zhou, Uri Alon, Pengfei Liu, Yiming Yang, et~al.
+\newblock Pal: Program-aided language models.
+\newblock In: International conference on machine learning. PMLR, 2023:
+  10764--10799
 
 \bibitem{schick2023toolformer}
 Timo Schick, Jane Dwivedi-Yu, Roberto Dess{\`\i}, Roberta Raileanu, Maria
   Lomeli, Eric Hambro, et~al.
-\newblock Toolformer: Language Models Can Teach Themselves to Use Tools.
-\newblock arXiv preprint arXiv:2302.02531, 2023
+\newblock Toolformer: Language models can teach themselves to use tools.
+\newblock Advances in neural information processing systems, 2023, 36:
+  68539--68551
 
 \bibitem{mccoder2024}
-Wei Chen, et~al.
-\newblock MCCoder: Streamlining Motion Control with LLM-Assisted Code
-  Generation and Rigorous Verification.
-\newblock arXiv preprint, 2024
+Yin Li, Liangwei Wang, Shiyuan Piao, Boo-Ho Yang, Ziyue Li, Wei Zeng, et~al.
+\newblock MCCoder: Streamlining motion control with LLM-assisted code
+  generation and rigorous verification.
+\newblock In: 2025 IEEE 21st International Conference on Automation Science and
+  Engineering (CASE). IEEE, 2025: 1597--1603
 
 \bibitem{rgd2024}
-Zhi Li, et~al.
-\newblock RGD: Multi-LLM Based Agent Debugger via Refinement and Generation
-  Guidance.
-\newblock arXiv preprint, 2024
+Haolin Jin, Zechao Sun, Huaming Chen.
+\newblock Rgd: Multi-llm based agent debugger via refinement and generation
+  guidance.
+\newblock In: 2024 IEEE International Conference on Agents (ICA). IEEE, 2024:
+  136--141
 
 \bibitem{agents4plc2024}
-Tianyu Wang, et~al.
-\newblock Agents4PLC: Automating Closed-Loop PLC Code Generation and
-  Verification in Industrial Control Systems Using LLM-Based Agents.
-\newblock arXiv preprint, 2024
+Zihan Liu, Ruinan Zeng, Dongxia Wang, Gengyun Peng, Xiaoxia Liu, Qiang Liu,
+  et~al.
+\newblock Agents4plc: Automating closed-loop plc code generation and
+  verification in industrial control systems using llm-based agents.
+\newblock IEEE Transactions on Software Engineering, 2026
+
+\bibitem{freertos}
+{Amazon Web Services}.
+\newblock FreeRTOS - Real-time operating system for microcontrollers.
+\newblock \url{https://www.freertos.org/}
+
+\bibitem{zephyr}
+{Linux Foundation}.
+\newblock Zephyr Project - Real-time operating system for IoT.
+\newblock \url{https://www.zephyrproject.org/}
 
 \bibitem{rtthread}
 {RT-Thread Community}.
 \newblock RT-Thread: An Open Source Embedded Real-Time Operating System.
 \newblock \url{https://www.rt-thread.org/}
-
-\bibitem{Yao_2022}
-Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik Narasimhan,
-  et~al.
-\newblock ReAct: Synergizing Reasoning and Acting in Language Models.
-\newblock arXiv preprint arXiv:2210.03629, 2022
-
-\bibitem{dong2024selfcollaboration}
-Y.~Dong, X.~Jiang, Z.~Jin, G.~Li.
-\newblock Self-Collaboration Code Generation via ChatGPT.
-\newblock ACM Transactions on Software Engineering and Methodology, 2024,
-  33(7): 1--38
 
 \bibitem{unicorn}
 {Nguyen, Anh Quynh}, et~al.
@@ -360,15 +354,35 @@ Y.~Dong, X.~Jiang, Z.~Jin, G.~Li.
 \newblock \url{https://www.unicorn-engine.org/}
 
 \bibitem{manesArtScienceEngineering2021}
-Valentin~J.M. Manes, {HyungSeok} Han, Choongwoo Han, Sang~Kil Cha, Manuel
-  Egele, Edward~J. Schwartz, et~al.
+Valentin~JM Man{\`e}s, HyungSeok Han, Choongwoo Han, Sang~Kil Cha, Manuel
+  Egele, Edward~J Schwartz, et~al.
 \newblock The Art, Science, and Engineering of Fuzzing: A Survey.
-\newblock 47(11): 2312--2331
+\newblock IEEE Transactions on Software Engineering, 2019, 47(11): 2312--2331
 
 \bibitem{aflplusplus_paper}
 Andrea Fioraldi, Dominik Maier, Heiko Ei{\ss}feldt, Marc Heuse.
 \newblock {AFL++} : Combining Incremental Steps of Fuzzing Research.
 \newblock In: 14th USENIX Workshop on Offensive Technologies (WOOT 20). USENIX
   Association, 2020
+
+\bibitem{Yao_2022}
+Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik~R Narasimhan,
+  et~al.
+\newblock React: Synergizing reasoning and acting in language models.
+\newblock In: The Eleventh International Conference on Learning
+  Representations, 2023
+
+\bibitem{wang2023plan}
+Lei Wang, Wanyu Xu, Yihuai Lan, Zhiqiang Hu, Yunshi Lan, Roy Ka-Wei Lee, et~al.
+\newblock Plan-and-solve prompting: Improving zero-shot chain-of-thought
+  reasoning by large language models.
+\newblock In: Proceedings of the 61st annual meeting of the association for
+  computational linguistics (volume 1: long papers), 2023: 2609--2634
+
+\bibitem{dong2024selfcollaboration}
+Y.~Dong, X.~Jiang, Z.~Jin, G.~Li.
+\newblock Self-Collaboration Code Generation via ChatGPT.
+\newblock ACM Transactions on Software Engineering and Methodology, 2024,
+  33(7): 1--38
 
 \end{thebibliography}

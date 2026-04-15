@@ -1,0 +1,131 @@
+\section{动态反馈闭环替换更新详细统计}
+\label{ap:feedback-loop-stats}
+
+表~\ref{tab:feedback-loop-stats}展示了各测试用例在动态反馈闭环阶段的替换更新统计。其中"替换更新总数"记录了反馈闭环触发的所有替换修正次数（含新增覆盖和质量修正），"闭环新增覆盖函数"记录了仅在反馈闭环阶段才被识别并生成替换代码的函数（即静态分析阶段未覆盖、由运行时故障驱动的增量覆盖）。
+
+\begin{table}[H]
+\centering
+\begingroup
+\setlength{\abovecaptionskip}{6bp}%
+\setlength{\belowcaptionskip}{2bp}%
+\caption{动态反馈闭环替换更新统计}%
+\label{tab:feedback-loop-stats}%
+\endgroup
+\vspace{0.5\baselineskip}%
+\footnotesize
+\setlength{\tabcolsep}{2pt}%
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}c@{\hspace{0.55em}}c@{}}
+\begin{tabular}[t]{lccc}
+\toprule
+\textbf{测试用例} & \textbf{替换更新总数} & \textbf{新增覆盖函数} & \textbf{平台} \\
+\midrule
+NXP\_FATFS\_BareMetal & 26 & 3 & NXP \\
+NXP\_FATFS\_FreeRTOS & 34 & 7 & NXP \\
+NXP\_I2C\_BareMetal & 45 & 2 & NXP \\
+NXP\_I2C\_FreeRTOS & 0 & 0 & NXP \\
+NXP\_LwIP\_BareMetal & 20 & 1 & NXP \\
+NXP\_LwIP\_FreeRTOS & 9 & 0 & NXP \\
+NXP\_UART\_BareMetal & 33 & 3 & NXP \\
+NXP\_UART\_FreeRTOS & 25 & 4 & NXP \\
+imxrt1052-nxp-evk/base & 18 & 4 & NXP \\
+imxrt1052-nxp-evk/fatfs & 24 & 8 & NXP \\
+imxrt1052-nxp-evk/i2c & 33 & 0 & NXP \\
+imxrt1052-nxp-evk/uart & 20 & 4 & NXP \\
+imxrt1060-nxp-evk/base & 4 & 2 & NXP \\
+imxrt1060-nxp-evk/eth & 5 & 1 & NXP \\
+\midrule
+\multicolumn{4}{l}{\textbf{小计}} \\
+\textbf{NXP} & \textbf{296} & \textbf{48} & \\
+\bottomrule
+\end{tabular}
+&
+\begin{tabular}[t]{lccc}
+\toprule
+\textbf{测试用例} & \textbf{替换更新总数} & \textbf{新增覆盖函数} & \textbf{平台} \\
+\midrule
+stm32f401-st-nucleo/base & 26 & 14 & STM32 \\
+stm32f401-st-nucleo/eth & 19 & 13 & STM32 \\
+stm32f401-st-nucleo/fatfs & 14 & 11 & STM32 \\
+stm32f401-st-nucleo/i2c & 5 & 3 & STM32 \\
+stm32f401-st-nucleo/uart & 11 & 11 & STM32 \\
+LwIP\_HTTP\_Server\_Socket\_RTOS & 17 & 1 & STM32 \\
+LwIP\_StreamingServer & 18 & 7 & STM32 \\
+UART\_Hyperterminal\_IT & 8 & 4 & STM32 \\
+atmel/fs\_littlefs\_same54 & 25 & 19 & Atmel \\
+atmel/uart\_echo\_same54 & 13 & 9 & Atmel \\
+atmel/i2c\_shell\_same54 & 11 & 10 & Atmel \\
+atmel/eth\_dhcpv4\_e70 & 7 & 1 & Atmel \\
+nxp-zephyr/eth\_dhcpv4 & 5 & 2 & NXP \\
+nxp-zephyr/fs\_littlefs & 2 & 0 & NXP \\
+\midrule
+\multicolumn{4}{l}{\textbf{小计}} \\
+\textbf{STM32} & \textbf{118} & \textbf{61} & \\
+\textbf{Atmel} & \textbf{56} & \textbf{39} & \\
+\textbf{NXP(Zephyr)} & \textbf{7} & \textbf{2} & \\
+\midrule
+\textbf{总计} & \textbf{513} & \textbf{154} & \\
+\bottomrule
+\end{tabular}
+\end{tabular}%
+}%
+\end{table}
+
+\section{驱动函数分类详细统计}
+\label{ap:function-categories-stats}
+
+表~\ref{tab:function_categories_stats}展示了各测试用例的驱动函数按照不同类别（INIT、LOOP、RETURNOK、RECV、NODRIVER、IRQ、SKIP、CORE）的分布情况。
+
+\begin{table}[H]
+\centering
+\caption{驱动函数分类统计}
+\label{tab:function_categories_stats}
+\footnotesize
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lcccccccc}
+\toprule
+\textbf{Demo 名称} & \textbf{INIT} & \textbf{LOOP} & \textbf{RETURNOK} & \textbf{RECV} & \textbf{NODRIVER} & \textbf{IRQ} & \textbf{SKIP} & \textbf{CORE} \\
+\midrule
+NXP\_FATFS\_BareMetal & 36 & 2 & 12 & 1 & 4 & 3 & 8 & 1 \\
+NXP\_FATFS\_FreeRTOS & 36 & 1 & 16 & 2 & 2 & 2 & 5 & 1 \\
+NXP\_I2C\_BareMetal & 51 & 5 & 15 & 7 & 9 & 11 & 5 & 1 \\
+NXP\_LwIP\_BareMetal & 45 & 3 & 29 & 10 & 3 & 6 & 7 & 2 \\
+NXP\_LwIP\_FreeRTOS & 54 & 4 & 28 & 5 & 4 & 8 & 2 & 2 \\
+NXP\_UART\_BareMetal & 34 & 4 & 30 & 6 & 5 & 5 & 4 & 2 \\
+NXP\_UART\_FreeRTOS & 44 & 5 & 24 & 8 & 1 & 5 & 3 & 1 \\
+imxrt1052-nxp-evk/base & 37 & 0 & 12 & 0 & 1 & 0 & 2 & 1 \\
+imxrt1052-nxp-evk/fatfs & 32 & 2 & 12 & 0 & 1 & 0 & 5 & 1 \\
+imxrt1052-nxp-evk/i2c & 53 & 3 & 29 & 7 & 5 & 4 & 7 & 2 \\
+imxrt1052-nxp-evk/uart & 43 & 0 & 22 & 0 & 1 & 1 & 4 & 2 \\
+imxrt1060-nxp-evk/base & 15 & 0 & 26 & 0 & 18 & 0 & 6 & 0 \\
+imxrt1060-nxp-evk/eth & 20 & 1 & 22 & 2 & 15 & 3 & 8 & 2 \\
+stm32f401-nucleo/base & 28 & 3 & 15 & 0 & 1 & 3 & 4 & 1 \\
+stm32f401-nucleo/eth & 31 & 2 & 11 & 0 & 1 & 3 & 6 & 1 \\
+stm32f401-nucleo/fatfs & 39 & 1 & 11 & 0 & 0 & 3 & 2 & 0 \\
+stm32f401-nucleo/fatfs\_sdcard & 137 & 24 & 82 & 12 & 8 & 9 & 3 & 6 \\
+stm32f401-nucleo/i2c & 33 & 2 & 13 & 0 & 1 & 3 & 0 & 3 \\
+stm32f401-nucleo/uart & 35 & 2 & 10 & 0 & 4 & 3 & 0 & 1 \\
+LwIP\_HTTP\_Srv\_SockRT & 137 & 24 & 82 & 12 & 8 & 9 & 3 & 6 \\
+LwIP\_HTTP\_Srv\_Sock\_RT & 151 & 20 & 64 & 20 & 3 & 30 & 13 & 3 \\
+LwIP\_StreamingSrv & 137 & 24 & 82 & 12 & 8 & 9 & 3 & 6 \\
+UART\_Hyperterminal\_IT & 45 & 12 & 24 & 20 & 4 & 10 & 3 & 2 \\
+atmel/eth\_dhcpv4\_e70 & 10 & 0 & 1 & 2 & 160 & 0 & 0 & 15 \\
+atmel/fs\_littlefs\_same54 & 12 & 5 & 2 & 1 & 40 & 1 & 0 & 15 \\
+atmel/i2c\_shell\_same54 & 13 & 2 & 0 & 0 & 44 & 1 & 0 & 19 \\
+atmel/uart\_echo\_same54 & 11 & 1 & 3 & 0 & 32 & 1 & 0 & 15 \\
+nxp-zephyr/eth\_dhcpv4 & 56 & 2 & 24 & 7 & 160 & 6 & 2 & 19 \\
+nxp-zephyr/fs\_littlefs & 30 & 1 & 19 & 1 & 44 & 0 & 3 & 15 \\
+nxp-zephyr/i2c\_fxos8700 & 46 & 2 & 35 & 1 & 33 & 12 & 2 & 19 \\
+nxp-zephyr/uart\_echo & 29 & 0 & 23 & 1 & 34 & 0 & 0 & 16 \\
+stm32-zephyr/eth\_dhcpv4 & 31 & 1 & 44 & 2 & 153 & 3 & 2 & 24 \\
+stm32-zephyr/fs\_littlefs & 24 & 3 & 13 & 0 & 2 & 5 & 2 & 1 \\
+stm32-zephyr/i2c\_hts221 & 18 & 1 & 15 & 0 & 1 & 2 & 0 & 0 \\
+stm32-zephyr/uart\_echo & 17 & 0 & 10 & 0 & 2 & 2 & 4 & 0 \\
+\midrule
+\textbf{总计} & \textbf{1570} & \textbf{162} & \textbf{860} & \textbf{139} & \textbf{812} & \textbf{163} & \textbf{118} & \textbf{205} \\
+\midrule
+\textbf{占比} & \textbf{39.0\%} & \textbf{4.0\%} & \textbf{21.3\%} & \textbf{3.4\%} & \textbf{20.2\%} & \textbf{4.0\%} & \textbf{2.9\%} & \textbf{5.1\%} \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
