@@ -17,12 +17,12 @@
 \newlabel{tab:peripherals}{{5.3}{56}{外设类型分类\relax }{table.caption.17}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {5.4}{\ignorespaces 测试固件详细信息\relax }}{57}{table.caption.18}\protected@file@percent }
 \newlabel{tab:firmware}{{5.4}{57}{测试固件详细信息\relax }{table.caption.18}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {5.2}驱动函数分类统计}{57}{section.5.2}\protected@file@percent }
-\newlabel{sec:classify_stats}{{5.2}{57}{驱动函数分类统计}{section.5.2}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5.2}驱动函数识别与替换统计}{57}{section.5.2}\protected@file@percent }
+\newlabel{sec:driver_stats}{{5.2}{57}{驱动函数识别与替换统计}{section.5.2}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {5.5}{\ignorespaces 驱动函数识别与替换统计\relax }}{58}{table.caption.19}\protected@file@percent }
 \newlabel{tab:driver_stats}{{5.5}{58}{驱动函数识别与替换统计\relax }{table.caption.19}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {5.3}驱动函数识别与替换统计}{59}{section.5.3}\protected@file@percent }
-\newlabel{sec:driver_stats}{{5.3}{59}{驱动函数识别与替换统计}{section.5.3}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5.3}驱动函数分类统计}{59}{section.5.3}\protected@file@percent }
+\newlabel{sec:classify_stats}{{5.3}{59}{驱动函数分类统计}{section.5.3}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {5.1}{\ignorespaces 驱动函数分类占比分布\relax }}{59}{figure.caption.20}\protected@file@percent }
 \newlabel{fig:classification_pie}{{5.1}{59}{驱动函数分类占比分布\relax }{figure.caption.20}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {5.4}替换功能正确性测试}{60}{section.5.4}\protected@file@percent }
@@ -30,38 +30,40 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.4.1}执行轨迹验证方法}{60}{subsection.5.4.1}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {5.6}{\ignorespaces 测试用例与关键节点对照表\relax }}{61}{table.caption.21}\protected@file@percent }
 \newlabel{tab:testcases}{{5.6}{61}{测试用例与关键节点对照表\relax }{table.caption.21}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {5.7}{\ignorespaces 替换驱动函数行为验证结果\relax }}{62}{table.caption.22}\protected@file@percent }
-\newlabel{tab:function_results}{{5.7}{62}{替换驱动函数行为验证结果\relax }{table.caption.22}{}}
-\newlabel{lst:phaseA}{{5.1}{63}{NXP\_LwIP\_BareMetal 系统启动与协议栈初始化调用链}{lstlisting.5.1}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {5.1}NXP\_LwIP\_BareMetal 系统启动与协议栈初始化调用链}{63}{lstlisting.5.1}\protected@file@percent }
-\newlabel{lst:phaseB}{{5.2}{63}{NXP\_LwIP\_BareMetal 以太网帧接收与协议栈处理调用链}{lstlisting.5.2}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {5.2}NXP\_LwIP\_BareMetal 以太网帧接收与协议栈处理调用链}{63}{lstlisting.5.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5.5}反馈闭环有效性测试}{64}{section.5.5}\protected@file@percent }
-\newlabel{sec:feedback_test}{{5.5}{64}{反馈闭环有效性测试}{section.5.5}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.5.1}替换更新统计}{64}{subsection.5.5.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {5.2}{\ignorespaces 按外设类型分组的反馈闭环统计（各厂商均值）\relax }}{65}{figure.caption.23}\protected@file@percent }
-\newlabel{fig:feedback-by-peripheral}{{5.2}{65}{按外设类型分组的反馈闭环统计（各厂商均值）\relax }{figure.caption.23}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.5.2}典型案例分析}{65}{subsection.5.5.2}\protected@file@percent }
-\newlabel{lst:clock-setdiv}{{5.3}{66}{CLOCK\_SetDiv 原函数（NXP\_I2C\_BareMetal，第1429行）}{lstlisting.5.3}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {5.3}CLOCK\_SetDiv 原函数（NXP\_I2C\_BareMetal，第1429行）}{66}{lstlisting.5.3}\protected@file@percent }
-\newlabel{lst:port-start-scheduler}{{5.4}{66}{xPortStartScheduler 中的中断优先级一致性检查（FreeRTOS port.c）}{lstlisting.5.4}{}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {5.4}xPortStartScheduler 中的中断优先级一致性检查（FreeRTOS port.c）}{66}{lstlisting.5.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.5.3}有效性分析}{67}{subsection.5.5.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5.6}方法效率评估}{68}{section.5.6}\protected@file@percent }
-\newlabel{sec:efficiency_eval}{{5.6}{68}{方法效率评估}{section.5.6}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.6.1}对比方法}{68}{subsection.5.6.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.6.2}测试方法}{69}{subsection.5.6.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.6.3}测试结果}{69}{subsection.5.6.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4.2}行为验证}{62}{subsection.5.4.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5.7}{\ignorespaces 替换驱动函数行为验证结果\relax }}{63}{table.caption.22}\protected@file@percent }
+\newlabel{tab:function_results}{{5.7}{63}{替换驱动函数行为验证结果\relax }{table.caption.22}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4.3}案例分析：NXP\_LwIP\_BareMetal 以太网数据接收}{63}{subsection.5.4.3}\protected@file@percent }
+\newlabel{lst:phaseA}{{5.1}{64}{NXP\_LwIP\_BareMetal 系统启动与协议栈初始化调用链}{lstlisting.5.1}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {5.1}NXP\_LwIP\_BareMetal 系统启动与协议栈初始化调用链}{64}{lstlisting.5.1}\protected@file@percent }
+\newlabel{lst:phaseB}{{5.2}{64}{NXP\_LwIP\_BareMetal 以太网帧接收与协议栈处理调用链}{lstlisting.5.2}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {5.2}NXP\_LwIP\_BareMetal 以太网帧接收与协议栈处理调用链}{64}{lstlisting.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5.5}反馈闭环有效性测试}{65}{section.5.5}\protected@file@percent }
+\newlabel{sec:feedback_test}{{5.5}{65}{反馈闭环有效性测试}{section.5.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.5.1}替换更新统计}{65}{subsection.5.5.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5.2}{\ignorespaces 按外设类型分组的反馈闭环统计（各厂商均值）\relax }}{66}{figure.caption.23}\protected@file@percent }
+\newlabel{fig:feedback-by-peripheral}{{5.2}{66}{按外设类型分组的反馈闭环统计（各厂商均值）\relax }{figure.caption.23}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.5.2}典型案例分析}{66}{subsection.5.5.2}\protected@file@percent }
+\newlabel{lst:clock-setdiv}{{5.3}{67}{CLOCK\_SetDiv 原函数（NXP\_I2C\_BareMetal，第1429行）}{lstlisting.5.3}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {5.3}CLOCK\_SetDiv 原函数（NXP\_I2C\_BareMetal，第1429行）}{67}{lstlisting.5.3}\protected@file@percent }
+\newlabel{lst:port-start-scheduler}{{5.4}{67}{xPortStartScheduler 中的中断优先级一致性检查（FreeRTOS port.c）}{lstlisting.5.4}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {5.4}xPortStartScheduler 中的中断优先级一致性检查（FreeRTOS port.c）}{67}{lstlisting.5.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.5.3}有效性分析}{68}{subsection.5.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5.6}方法效率评估}{69}{section.5.6}\protected@file@percent }
+\newlabel{sec:efficiency_eval}{{5.6}{69}{方法效率评估}{section.5.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.6.1}对比方法}{69}{subsection.5.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.6.2}测试方法}{70}{subsection.5.6.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.6.3}测试结果}{70}{subsection.5.6.3}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {5.8}{\ignorespaces 方法效率评估\relax }}{70}{table.caption.24}\protected@file@percent }
 \newlabel{tab:efficiency_compare}{{5.8}{70}{方法效率评估\relax }{table.caption.24}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {5.7}模糊测试}{71}{section.5.7}\protected@file@percent }
-\newlabel{sec:fuzz_test}{{5.7}{71}{模糊测试}{section.5.7}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.7.1}测试方法}{71}{subsection.5.7.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.7.2}测试结果}{71}{subsection.5.7.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5.7}模糊测试}{72}{section.5.7}\protected@file@percent }
+\newlabel{sec:fuzz_test}{{5.7}{72}{模糊测试}{section.5.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.7.1}测试方法}{72}{subsection.5.7.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.7.2}测试结果}{72}{subsection.5.7.2}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {5.9}{\ignorespaces 模糊测试实验结果对比\relax }}{72}{table.caption.25}\protected@file@percent }
 \newlabel{tab:fuzz_results}{{5.9}{72}{模糊测试实验结果对比\relax }{table.caption.25}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {5.8}本章小结}{73}{section.5.8}\protected@file@percent }
-\newlabel{sec:chap4_summary}{{5.8}{73}{本章小结}{section.5.8}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5.8}本章小结}{74}{section.5.8}\protected@file@percent }
+\newlabel{sec:chap4_summary}{{5.8}{74}{本章小结}{section.5.8}{}}
 \@setckpt{body/chap05_experiment}{
 \setcounter{page}{75}
 \setcounter{equation}{0}
@@ -93,7 +95,7 @@
 \setcounter{endNonectr}{20}
 \setcounter{currNonectr}{0}
 \setcounter{NAT@ctr}{0}
-\setcounter{lstnumber}{15}
+\setcounter{lstnumber}{17}
 \setcounter{Item}{0}
 \setcounter{Hfootnote}{0}
 \setcounter{Hy@AnnotLevel}{0}

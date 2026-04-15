@@ -173,12 +173,12 @@
 {\scriptsize 共35个固件，覆盖NXP/STM32/Atmel三种平台，FreeRTOS/RT-Thread/Zephyr/裸机四种操作系统}
 \end{table}
 
-\section{驱动函数分类统计}
-\label{sec:classify_stats}
+\section{驱动函数识别与替换统计}
+\label{sec:driver_stats}
 
-驱动函数识别与分类是整个替换流程的基础环节，分类准确性直接影响后续替换策略的选择和替换代码的质量。本节评估系统对驱动函数的自动分类能力，验证大语言模型的语义理解能力和分类策略的有效性。
+驱动函数识别与分类是整个替换流程的基础环节，分类准确性直接影响后续替换策略的选择和替换代码的质量。本节评估系统对驱动函数的自动识别与替换能力，验证静态分析模块的函数识别准确性和LLM的替换代码生成效果。
 
-为了全面评估本文方法的驱动函数分类能力，本研究统计了每个测试用例的驱动函数分类情况（完整统计数据见附录表~\ref{tab:function_categories_stats}）。图~\ref{fig:classification_pie}展示了各类驱动函数的占比分布情况。
+为了全面评估本文方法的驱动处理能力，本研究统计了每个测试用例的驱动函数识别和替换情况（完整分类统计数据见附录表~\ref{tab:function_categories_stats}）。表~\ref{tab:driver_stats}展示了各测试用例的驱动函数识别与替换统计。
 
 \begin{table}[H]
 \centering
@@ -250,10 +250,10 @@ uart\_echo\_disco\_l475 & 35 & 0 & 0 \\
 
 % 本实验的主要目的包括：第一，验证本文方法能够准确识别固件中的硬件依赖代码；第二，验证本文方法生成的替代代码能够在仿真环境中正确执行，保证固件的正常运行；第三，验证本文方法对不同平台、不同操作系统、不同外设类型的固件具有通用性和可扩展性；第四，验证仿真环境能够支持模糊测试和漏洞挖掘任务。
 
-\section{驱动函数识别与替换统计}
-\label{sec:driver_stats}
+\section{驱动函数分类统计}
+\label{sec:classify_stats}
 
-为了全面评估本文方法的驱动处理能力，本研究统计了每个测试用例的驱动函数识别和替换情况，统计结果如表~\ref{tab:driver_stats}所示。
+为了全面评估本文方法的驱动函数分类能力，本研究统计了每个测试用例的驱动函数按类别分布情况（完整统计数据见附录表~\ref{tab:function_categories_stats}）。图~\ref{fig:classification_pie}展示了各类驱动函数的占比分布情况。
 
 \begin{figure}[htbp]
 \centering
@@ -371,11 +371,13 @@ LwIP\_HTTP\_Server\_Socket\_RTOS & osKernelStart, ethernetif\_input, HAL\_ETH\_R
 
 实验结果表明，14个代表性测试用例的关键节点匹配率和替换驱动函数行为验证结果均为正常。总体关键节点匹配率为100.0\%（44/44），表明替换后的固件能够正确执行主要功能路径。
 
-\textbf{（2）替换驱动函数行为验证}
+\subsection{行为验证}
 
-本研究进一步对被调用到的替换驱动函数进行行为验证。根据表~\ref{tab:driver_stats}的统计，35个测试用例共识别出4029个驱动函数，其中1563个生成了替换代码。基于关键节点匹配和替换函数行为分析，14个代表性测试用例的验证结果如表~\ref{tab:function_results}所示。
+关键节点匹配验证了固件主流程的可达性，但替换代码本身是否正确执行仍需进一步验证。本研究从三个层面对替换驱动函数进行行为验证：第一，检查替换函数是否被正确调用，即仿真运行期间替换函数的调用次数是否与预期一致；第二，检查替换函数是否正常返回，未导致仿真崩溃、死循环或异常中断；第三，检查替换函数的返回值和副作用是否与原函数的仿真语义一致（如Init策略函数是否正确初始化了仿真数据结构，Redirect策略函数是否正确完成了数据注入）。
 
-\begin{table}[htbp]
+根据表~\ref{tab:driver_stats}的统计，35个测试用例共识别出4029个驱动函数，其中1563个生成了替换代码。基于上述验证方法，14个代表性测试用例的行为验证结果如表~\ref{tab:function_results}所示。
+
+\begin{table}[H]
 \centering
 \caption{替换驱动函数行为验证结果}
 \label{tab:function_results}
@@ -409,11 +411,11 @@ LwIP\_HTTP\_Server\_Socket\_RTOS & 网络功能（ETH） & 53 & 正常 \\
 \end{adjustbox}
 \end{table}
 
-验证结果表明，14个测试用例中被调用到的替换驱动函数均正常返回，未导致仿真崩溃、死循环或异常中断。未被调用到的替换驱动函数主要属于备用初始化路径、异常处理分支等非主流程代码，不影响固件的核心功能运行。
+验证结果表明，14个测试用例中被调用到的替换驱动函数均正常返回，未导致仿真崩溃、死循环或异常中断。未被调用到的替换驱动函数主要属于备用初始化路径、异常处理分支等非主流程代码，不影响固件的核心功能运行。以下以NXP\_LwIP\_BareMetal为例，通过仿真执行调用轨迹展示替换代码在系统启动、协议栈初始化和数据帧接收等阶段的具体行为。
 
-\textbf{（3）案例分析：NXP\_LwIP\_BareMetal 网络数据接收}
+\subsection{案例分析：NXP\_LwIP\_BareMetal 以太网数据接收}
 
-为具体展示替换代码在仿真环境中的运行效果，本节以 NXP\_LwIP\_BareMetal（基于 LwIP 协议栈的裸机 HTTP 服务器）为例，展示其完整的仿真执行调用链。该测试用例运行在 NXP i.MX RT1052 平台上，共识别出105个驱动函数，其中61个生成了替换代码。
+NXP\_LwIP\_BareMetal是基于LwIP协议栈的裸机HTTP服务器测试用例，运行在NXP i.MX RT1052平台上，共识别出105个驱动函数，其中61个生成了替换代码。该用例覆盖了系统启动、以太网控制器初始化、LwIP协议栈配置和数据帧接收等完整执行流程，具有较好的代表性。
 
 仿真执行从系统复位开始，依次经过以下关键阶段（摘自函数调用轨迹日志）：
 
@@ -461,7 +463,7 @@ Reset_Handler -> SystemInit -> _start -> (*@\lstbg[1pt]{red!20}{main}@*)
 
 该阶段是验证替换代码功能正确性的核心环节。调用链显示：（1）\texttt{ethernetif\_input} 作为 LwIP 的轮询入口函数被正常触发，表明 Loop 策略的替换代码正确处理了轮询等待逻辑（通过超时机制避免死循环）；（2）\texttt{ENET\_GetRxFrame} 内部调用 \texttt{HAL\_BE\_ENET\_ReadFrame}，该函数是本文方法通过 Redirect 策略生成的仿真注入接口，将硬件帧接收操作重定向为从仿真缓冲区读取数据，日志表明成功接收了两帧以太网数据；（3）接收到的数据帧通过 \texttt{ethernetif\_rx\_frame\_to\_pbufs} 正确转换为 LwIP 的 \texttt{pbuf} 结构，并传递至 \texttt{ethernet\_input} 进行协议栈解析，最终由 \texttt{ethernetif\_rx\_release} 释放缓冲区，内存管理逻辑完整闭环。
 
-该案例表明，本文方法生成的替换代码能够正确支撑裸机网络固件从系统启动、协议栈初始化到数据帧接收的完整执行流程，Redirect 策略的仿真注入机制有效弥合了硬件依赖与仿真环境之间的鸿沟。
+上述分析表明，本文方法生成的替换代码能够正确支撑从系统启动、协议栈初始化到数据帧接收的完整执行流程，其中Init、Skip、Loop、Redirect四类替换策略各司其职，协同实现了对以太网控制器硬件依赖的完整解耦。
 
 \section{反馈闭环有效性测试}
 \label{sec:feedback_test}
@@ -660,16 +662,18 @@ BaseType_t xPortStartScheduler( void )
     {
         *pucFirstUserPriorityRegister = portMAX_8_BIT_VALUE;
         ucMaxPriorityValue = *pucFirstUserPriorityRegister;
-        ucMaxSysCallPriority = configMAX_SYSCALL_... & ucMaxPriorityValue;
-        (*@\lstbg[1pt]{red!20}{configASSERT( ucMaxSysCallPriority );}@*)  // STUCK: ucMaxSysCallPriority == 0
-        configASSERT( ( configMAX_SYSCALL_... & ~ucMaxPriorityValue ) == 0U );
+        ucMaxSysCallPriority = configMAX_SYSCALL_...
+                              & ucMaxPriorityValue;
+        configASSERT( ucMaxSysCallPriority ); // STUCK here
+        configASSERT( ( configMAX_SYSCALL_...
+                        & ~ucMaxPriorityValue ) == 0U );
     }
     #endif
     // ... if assert passes, start first task ...
 }
 \end{lstlisting}
 
-在仿真环境中，NVIC中断优先级寄存器的读回值与真实硬件不一致，导致\texttt{ucMaxSysCallPriority}为零，触发\texttt{configASSERT}失败（代码清单~\ref{lst:port-start-scheduler}红色高亮行），调度器无法进入首任务路径，仿真卡死。
+在仿真环境中，NVIC中断优先级寄存器的读回值与真实硬件不一致，导致\texttt{ucMaxSysCallPriority}为零，触发\texttt{configASSERT}失败（代码清单~\ref{lst:port-start-scheduler}中标注STUCK here的行），调度器无法进入首任务路径，仿真卡死。
 
 反馈闭环正确检测到该故障并定位至\texttt{xPortStartScheduler}函数，但由于该函数被静态分析模块分类为CORE类型（FreeRTOS调度器核心函数），按替换策略设计，CORE类函数禁止自动替换。因此系统未自动生成替换代码，而是输出错误报告后程序异常退出，等待人工介入。
 
