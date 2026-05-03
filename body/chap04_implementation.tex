@@ -304,7 +304,7 @@ HAL_StatusTypeDef HAL_GPIO_DeInit(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin) {
 
 分析智能体的提示词模板采用分阶段结构设计，包含角色定义、工具说明、分类策略和输出格式四个部分。其整体骨架如代码~\ref{lst:classifier-prompt-overview}所示。阅读时可重点关注四个模块在模板中的组织顺序：先通过角色定义限定任务边界，再通过工具说明约束可调用能力，随后通过分类策略提供判定依据，最后以固定输出格式保证结果可解析。该骨架用于约束模型在分类与生成阶段的输出一致性。
 
-\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt,caption={分类提示词模板骨架},label=lst:classifier-prompt-overview]
+{\renewcommand{\lstlistingname}{代码清单}\begin{lstlisting}[style=PromptStyle,caption={分类提示词模板骨架},label=lst:classifier-prompt-overview]
 **Role**: You are an embedded software engineer tasked with
 replacing driver library functions to eliminate dependencies
 on peripheral hardware while preserving normal functionality
@@ -335,13 +335,13 @@ interrupt triggering).
   "has_replacement": <true|false>,
   "function_replacement": "<code or empty string>"
 }
-\end{lstlisting}
+\end{lstlisting}}
 
 上述骨架采用“角色—工具—策略—输出”的分层组织方式，使提示词既能提供稳定的语义约束，又便于后续流程自动消费模型输出结果。
 
 \textbf{角色定义与工具说明}。提示词以角色设定开场，将 LLM 定位为嵌入式软件工程师，明确任务是消除驱动函数的硬件依赖。随后声明五个可调用的工具函数及其调用顺序，如代码~\ref{lst:prompt-tools}所示。这一顺序用于减少无关工具调用并提高诊断效率。
 
-\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt,caption={提示词中的工具声明与调用顺序},label=lst:prompt-tools]
+{\renewcommand{\lstlistingname}{代码清单}\begin{lstlisting}[style=PromptStyle,caption={提示词中的工具声明与调用顺序},label=lst:prompt-tools]
 1. GetFunctionInfo(func_name): Get function implementation.
    -> Always call this first.
 2. GetMMIOFunctionInfo(func_name): Identify hardware accesses.
@@ -351,7 +351,7 @@ interrupt triggering).
 5. GetDriverInfo(driver_name): Get driver module context.
    Tool Sequence: GetFunctionInfo -> GetMMIOFunctionInfo
                  -> [3|4|5] (as needed)
-\end{lstlisting}
+\end{lstlisting}}
 
 提示词要求 LLM 先调用 GetFunctionInfo 获取函数源码，再调用 GetMMIOFunctionInfo 确认硬件访问方式，最后按需调用其余工具补充上下文。分类策略部分将七类函数的识别特征、替换策略和关键约束以结构化形式嵌入，按 RECV $>$ IRQ $>$ INIT $>$ LOOP 的优先级排列，减少高影响类别的误分类。代码生成约束限制 LLM 不得修改返回类型、不得引入新依赖、必须保留 OS 调用、仅使用 \texttt{HAL\_BE\_*} 注入函数，从源头减少幻觉问题。输出格式要求 JSON 结构化输出，便于后续自动解析。
 
@@ -446,7 +446,7 @@ __attribute__((weak)) void HAL_BE_Block_Write(const uint8_t *buffer,
 
 闭环修复智能体的提示词与分析智能体的分类提示词不同，将错误诊断和修复方案生成整合在一个推理流程中，其骨架如代码~\ref{lst:fixer-prompt-overview}所示。该设计强调先取证再修复，以降低无效迭代。
 
-\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt,caption={修复提示词模板骨架},label=lst:fixer-prompt-overview]
+{\renewcommand{\lstlistingname}{代码清单}\begin{lstlisting}[style=PromptStyle,caption={修复提示词模板骨架},label=lst:fixer-prompt-overview]
 **Role**: Embedded software engineer specializing in HAL
 development and debugging. Your task is to actively and
 independently analyze emulator error logs to identify
@@ -462,7 +462,7 @@ Step 3: Generate fix and apply (UpdateFunctionReplacement)
 **Constraints**: Preserve function signature; no new types
   or headers; preserve OS core functions (scheduler, context
   switch); do not stub VTOR/NVIC/SysTick writes.
-\end{lstlisting}
+\end{lstlisting}}
 
 修复提示词的设计要点包括：（1）主动日志获取——要求 LLM 首先调用 \texttt{function\_calls\_emulate\_info()} 和 \texttt{mmio\_function\_emulate\_info()} 获取完整的执行流和错误信息，从日志中自行定位问题函数，而非等待外部指定；（2）上下文完整获取——要求 LLM 在生成修复方案前必须调用 \texttt{GetReplaceFuncDetailsByFile} 获取该函数的历次替换历史，避免重复已失败的修复方案；（3）OS 核心函数保护——禁止 LLM 修改操作系统核心函数（如 \texttt{vTaskStartScheduler}、\texttt{rt\_schedule} 等），若崩溃发生在 OS 核心函数中则应查找附近的驱动初始化代码问题；（4）步数预算控制——限制 LLM 对最多 3--5 个可疑函数进行分析后立即生成修复方案，避免无限调用分析工具耗尽步数。
 
@@ -470,7 +470,7 @@ Step 3: Generate fix and apply (UpdateFunctionReplacement)
 
 仿真执行智能体作为动态测试反馈闭环的主控调度单元，其提示词定义了闭环的验证标准和状态驱动的调试工作流，如代码~\ref{lst:emulator-prompt}所示。提示词的设计特点是：以"无死循环、无异常、到达 main 函数"三项条件作为成功判定依据；严格规定 Emulate $\to$ Diagnose $\to$ Build 的三步循环且不允许跳步；明确告知 LLM 修复是否成功只能通过仿真运行结果判断，而非通过静态分析推断。闭环构建智能体的提示词与分析智能体中的编译修复智能体类似，额外要求 LLM 在遇到大量编译错误时逐函数修复，避免上下文溢出。
 
-\begin{lstlisting}[style=CStyle,abovecaptionskip=0pt,belowcaptionskip=0pt,caption={仿真执行智能体提示词骨架},label=lst:emulator-prompt]
+{\renewcommand{\lstlistingname}{代码清单}\begin{lstlisting}[style=PromptStyle,caption={仿真执行智能体提示词骨架},label=lst:emulator-prompt]
 **Task**: Iteratively debug and validate the firmware after
 replacing hardware-coupled functions with mock stubs.
 **Validation Criteria** (all must be true):
@@ -492,10 +492,17 @@ replacing hardware-coupled functions with mock stubs.
 - Always call Builder after Fixer.
 - Validation is empirical: only Emulator's success field
   confirms a fix, not further analysis.
-\end{lstlisting}
+\end{lstlisting}}
 
 闭环构建智能体的提示词与分析智能体中的编译修复智能体类似，主要负责应用修复代码并执行编译构建，额外要求 LLM 在遇到大量编译错误时逐函数修复。
 
+\subsection{模糊测试集成实现}
+\label{sec:fuzz-integration}
+
+为验证替换后固件在实际安全测试场景中的可用性，本节阐述将 AFL++ 模糊测试器与 Unicorn 仿真环境集成的具体实现。仿真引擎层通过 UnicornAFL 扩展与 AFL++ 对接，由 UnicornAFL 在 Unicorn 的指令翻译流程中插入覆盖率采集点，并将覆盖信息写入 AFL++ 的共享内存位图，使 AFL++ 能够感知仿真执行的代码覆盖情况并据此引导测试用例变异。
+
+模糊测试器生成的变异数据通过第~\ref{sec:hook-mechanism}~节实现的 \texttt{HAL\_BE\_*} 宿主机接管机制注入固件。具体流程为：fuzzer harness 在仿真初始化阶段将 AFL++ 提供的测试输入缓存到宿主机侧的输入缓冲区；当仿真执行到固件的数据接收函数（如 \texttt{HAL\_UART\_Receive}、\texttt{ENET\_GetRxFrame} 等）时，由 Redirect 策略生成的替换代码调用对应的 \texttt{HAL\_BE\_*} 注入接口，宿主机侧的 Python 处理器从输入缓冲区中读取测试数据并写入固件的虚拟内存，随后仿真继续执行固件业务逻辑对测试输入进行解析和处理。不同外设类型的注入方式有所差异：对于 UART 等定长通信接口，harness 将测试输入截断至目标长度后写入缓冲区；对于以太网等变长报文接口，harness 将测试输入作为一帧网络数据注入，由 \texttt{HAL\_BE\_ENET\_ReadFrame} 按帧长度字段进行边界处理。该机制复用了替换模块的数据通道，无需为模糊测试场景额外编写仿真适配代码。
+
 \section{本章小结}
 
-本章围绕第三章的设计方案，采用 CodeQL、LangGraph、Unicorn 等技术栈完成了系统的具体实现：基于 CodeQL 实现了三种 MMIO 定位模式的查询规则和数据流追踪；基于 LangGraph 实现了分析、编译修复、仿真执行和闭环修复四个智能体的工作流；基于 Unicorn 构建了仿真平台，通过注入接口占位函数和 Python 处理器实现固件与仿真环境的数据交互。实现结果表明，系统可在大部分环节自动完成从静态分析到动态反馈的流程，必要时由人工进行监督与兜底修正。
+本章围绕第三章的设计方案，采用 CodeQL、LangGraph、Unicorn 等技术栈完成了系统的具体实现：基于 CodeQL 实现了三种 MMIO 定位模式的查询规则和数据流追踪；基于 LangGraph 实现了分析、编译修复、仿真执行和闭环修复四个智能体的工作流；基于 Unicorn 构建了仿真平台，通过注入接口占位函数和 Python 处理器实现固件与仿真环境的数据交互；基于 UnicornAFL 实现了 AFL++ 模糊测试器与仿真环境的集成，通过 fork-server 协议和 \texttt{HAL\_BE\_*} 注入接口完成覆盖率反馈与测试输入注入。实现结果表明，系统可在大部分环节自动完成从静态分析到动态反馈的流程，必要时由人工进行监督与兜底修正。

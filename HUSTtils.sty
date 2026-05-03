@@ -140,6 +140,25 @@ like to use]
 	morecomment=[f][\lstbg{green!20}]{+\ },
 }
 
+\definecolor{promptBg}{rgb}{0.96,0.96,0.96}
+\definecolor{promptFrame}{rgb}{0.55,0.45,0.40}
+
+\lstdefinestyle{PromptStyle}{
+    backgroundcolor=\color{promptBg},
+    basicstyle=\ttfamily\scriptsize,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=none,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2,
+    frame=single,
+    rulecolor=\color{promptFrame},
+    framerule=1.2pt,
+}
+
 \lstdefinestyle{CppStyle}{
     % margin
     % framexleftmargin=5mm, % Adjust left margin
