@@ -23,7 +23,6 @@
 NXP\_FATFS\_BareMetal & 26 & 3 & NXP \\
 NXP\_FATFS\_FreeRTOS & 34 & 7 & NXP \\
 NXP\_I2C\_BareMetal & 45 & 2 & NXP \\
-NXP\_I2C\_FreeRTOS & 0 & 0 & NXP \\
 NXP\_LwIP\_BareMetal & 20 & 1 & NXP \\
 NXP\_LwIP\_FreeRTOS & 9 & 0 & NXP \\
 NXP\_UART\_BareMetal & 33 & 3 & NXP \\
@@ -34,9 +33,11 @@ imxrt1052-nxp-evk/i2c & 33 & 0 & NXP \\
 imxrt1052-nxp-evk/uart & 20 & 4 & NXP \\
 imxrt1060-nxp-evk/base & 4 & 2 & NXP \\
 imxrt1060-nxp-evk/eth & 5 & 1 & NXP \\
+nxp-zephyr/eth\_dhcpv4 & 5 & 2 & NXP \\
+nxp-zephyr/fs\_littlefs & 2 & 0 & NXP \\
 \midrule
 \multicolumn{4}{l}{\textbf{小计}} \\
-\textbf{NXP} & \textbf{296} & \textbf{48} & \\
+\textbf{NXP} & \textbf{303} & \textbf{41} & \\
 \bottomrule
 \end{tabular}
 &
@@ -49,22 +50,25 @@ stm32f401-st-nucleo/eth & 19 & 13 & STM32 \\
 stm32f401-st-nucleo/fatfs & 14 & 11 & STM32 \\
 stm32f401-st-nucleo/i2c & 5 & 3 & STM32 \\
 stm32f401-st-nucleo/uart & 11 & 11 & STM32 \\
+stm32f401-st-nucleo/fatfs\_sdcard & 18 & 7 & STM32 \\
+LwIP\_HTTP\_Server\_SocketRTOS & 18 & 3 & STM32 \\
 LwIP\_HTTP\_Server\_Socket\_RTOS & 17 & 1 & STM32 \\
 LwIP\_StreamingServer & 18 & 7 & STM32 \\
 UART\_Hyperterminal\_IT & 8 & 4 & STM32 \\
+stm32-zephyr/fs\_littlefs & 2 & 1 & STM32 \\
+stm32-zephyr/i2c\_hts221 & 1 & 0 & STM32 \\
+stm32-zephyr/uart\_echo & 1 & 0 & STM32 \\
+\midrule
 atmel/fs\_littlefs\_same54 & 25 & 19 & Atmel \\
 atmel/uart\_echo\_same54 & 13 & 9 & Atmel \\
 atmel/i2c\_shell\_same54 & 11 & 10 & Atmel \\
 atmel/eth\_dhcpv4\_e70 & 7 & 1 & Atmel \\
-nxp-zephyr/eth\_dhcpv4 & 5 & 2 & NXP \\
-nxp-zephyr/fs\_littlefs & 2 & 0 & NXP \\
 \midrule
 \multicolumn{4}{l}{\textbf{小计}} \\
-\textbf{STM32} & \textbf{118} & \textbf{61} & \\
+\textbf{STM32} & \textbf{158} & \textbf{75} & \\
 \textbf{Atmel} & \textbf{56} & \textbf{39} & \\
-\textbf{NXP(Zephyr)} & \textbf{7} & \textbf{2} & \\
 \midrule
-\textbf{总计} & \textbf{513} & \textbf{154} & \\
+\textbf{总计} & \textbf{517} & \textbf{155} & \\
 \bottomrule
 \end{tabular}
 \end{tabular}%
