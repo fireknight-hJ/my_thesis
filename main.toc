@@ -52,13 +52,13 @@
 \contentsline {subsection}{\numberline {3.2.3}替换验证机制设计}{33}{subsection.3.2.3}%
 \contentsline {subsubsection}{\numberline {3.2.3.1}语义保持性定义}{33}{subsubsection.3.2.3.1}%
 \contentsline {section}{\numberline {3.3}动态测试反馈闭环模块设计}{34}{section.3.3}%
-\contentsline {subsection}{\numberline {3.3.1}动态执行环境设计}{34}{subsection.3.3.1}%
-\contentsline {subsubsection}{\numberline {3.3.1.1}仿真平台架构设计}{34}{subsubsection.3.3.1.1}%
-\contentsline {subsection}{\numberline {3.3.2}仿真执行智能体设计}{36}{subsection.3.3.2}%
+\contentsline {subsection}{\numberline {3.3.1}动态执行环境设计}{35}{subsection.3.3.1}%
+\contentsline {subsubsection}{\numberline {3.3.1.1}仿真平台架构设计}{35}{subsubsection.3.3.1.1}%
+\contentsline {subsection}{\numberline {3.3.2}仿真执行智能体设计}{37}{subsection.3.3.2}%
 \contentsline {subsection}{\numberline {3.3.3}反馈信息结构化设计}{37}{subsection.3.3.3}%
-\contentsline {subsection}{\numberline {3.3.4}迭代优化机制设计}{37}{subsection.3.3.4}%
+\contentsline {subsection}{\numberline {3.3.4}迭代优化机制设计}{38}{subsection.3.3.4}%
 \contentsline {subsubsection}{\numberline {3.3.4.1}错误诊断与迭代终止}{38}{subsubsection.3.3.4.1}%
-\contentsline {section}{\numberline {3.4}本章小结}{38}{section.3.4}%
+\contentsline {section}{\numberline {3.4}本章小结}{39}{section.3.4}%
 \contentsline {chapter}{\numberline {4}系统实现}{40}{chapter.4}%
 \contentsline {section}{\numberline {4.1}驱动函数接口静态分析与识别模块实现}{40}{section.4.1}%
 \contentsline {subsection}{\numberline {4.1.1}CodeQL 查询实现}{40}{subsection.4.1.1}%
@@ -118,7 +118,7 @@
 \contentsline {section}{\numberline {6.5}未来工作展望}{80}{section.6.5}%
 \ttl@change@i {\@ne }{chapter}{0.0em}{\vspace {0.3em}\bfseries \hei \sihao \addvspace {6bp minus6bp}}{\thecontentslabel \hspace {1em}}{}{\normalfont \dotfill \textrm {\contentspage [(\thecontentspage )]}}\relax 
 \ttl@change@v {chapter}{}{}{}\relax 
-\contentsline {chapter}{\sihao 参考文献}{82}{section*.29}%
+\contentsline {chapter}{\sihao 参考文献}{82}{section*.30}%
 \ttl@change@i {\@ne }{chapter}{0.0em}{\vspace {0.45em}\bfseries \hei \sihao \addvspace {6bp minus6bp}}{\appendixname ~\thecontentslabel \hspace {1em}}{}{\normalfont \dotfill \textrm {\contentspage [(\thecontentspage )]}}\relax 
 \ttl@change@v {chapter}{}{}{}\relax 
 \contentsline {section}{\numberline {A.1}动态反馈闭环替换更新详细统计}{88}{section.A.1}%
