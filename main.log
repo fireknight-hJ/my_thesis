@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026/Homebrew) (preloaded format=xelatex 2026.3.4)  16 APR 2026 16:45
+This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026/Homebrew) (preloaded format=xelatex 2026.3.4)  5 MAY 2026 01:27
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1530,7 +1530,7 @@ utils.tex
 File: xkeyval.tex 2014/12/03 v2.7a key=value parser (HA)
 ))
 \verbatim@out=\write4
-runsystem(echo 'write18-test-20264161005'>"main.w18")...disabled (restricted).
+runsystem(echo 'write18-test-20265587'>"main.w18")...disabled (restricted).
 
 
 
@@ -2538,21 +2538,6 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [20]
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
- []
-
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
- []
-
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
- []
-
-[21]
 \openout2 = `body/chap03_design.aux'.
 
  (./body/chap03_design.tex
@@ -2574,7 +2559,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[22
+[21
 
 
 
@@ -2594,7 +2579,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[23]
+[22]
 (/opt/homebrew/Cellar/texlive/20260301/share/texmf-dist/tex/latex/listings/lstl
 ang1.sty
 File: lstlang1.sty 2025/11/14 1.11b listings language file
@@ -2624,7 +2609,25 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
+[23]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+ []
+
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+ []
+
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+ []
+
 [24]
+File: figures/驱动函数分析替换与编译.png Graphic file (type bmp)
+<figures/驱动函数分析替换与编译.png>
+
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -2640,9 +2643,6 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [25]
-File: figures/驱动函数分析替换与编译.png Graphic file (type bmp)
-<figures/驱动函数分析替换与编译.png>
-
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -2688,21 +2688,6 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [28]
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
- []
-
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
- []
-
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
- []
-
-[29]
 Underfull \hbox (badness 10000) in paragraph at lines 177--178
 []|\TU/lmtt/m/n/11 HAL_UART_WaitOnFlag\TU/TimesNewRoman(0)/m/n/11 ,
  []
@@ -2719,6 +2704,21 @@ Underfull \hbox (badness 10000) in paragraph at lines 179--180
  []
 
 
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+ []
+
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+ []
+
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+ []
+
+[29]
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -2854,21 +2854,6 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [38]
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
- []
-
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
- []
-
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
- []
-
-[39]
 \openout2 = `body/chap04_implementation.aux'.
 
  (./body/chap04_implementation.tex
@@ -2888,12 +2873,27 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[40
+[39
 
 
 
 
 ]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+ []
+
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+ []
+
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+ []
+
+[40]
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3088,7 +3088,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[53]
+[53])
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3103,22 +3103,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[54])
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
- []
-
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
- []
-
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
- []
-
-[55]
+[54]
 \openout2 = `body/chap05_experiment.aux'.
 
  (./body/chap05_experiment.tex
@@ -3138,12 +3123,27 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[56
+[55
 
 
 
 
 ]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+ []
+
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+ []
+
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+ []
+
+[56]
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3234,21 +3234,6 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
 
 [62]
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
- []
-
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
- []
-
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
- []
-
-[63]
 Overfull \hbox (1.25813pt too wide) in paragraph at lines 436--437
 []\TU/SimSun.ttf(0)/m/n/12 上 述 调 用 链 中，| \TU/lmtt/m/n/12 BOARD_InitHardware\TU/
 SimSun.ttf(0)/m/n/12 、| \TU/lmtt/m/n/12 SysTick_Config\TU/SimSun.ttf(0)/m/n/12 
@@ -3270,7 +3255,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[64]
+[63]
 Overfull \hbox (13.77003pt too wide) in paragraph at lines 457--458
 []\TU/SimSun.ttf(0)/m/n/12 该 阶 段 是 验 证 替 换 代 码 功 能 正 确 性 的 核 心 环 节。|  调 用 链 显 示
 ： （\TU/TimesNewRoman(0)/m/n/12 1\TU/SimSun.ttf(0)/m/n/12 ）| \TU/lmtt/m/n/12 eth
@@ -3278,6 +3263,21 @@ ernetif_input
  []
 
 
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+ []
+
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+ []
+
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+ []
+
+[64]
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3412,7 +3412,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[73]
+[73])
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3427,22 +3427,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[74])
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
- []
-
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
- []
-
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
- []
-
-[75]
+[74]
 \openout2 = `body/conclusion.aux'.
 
  (./body/conclusion.tex
@@ -3462,12 +3447,27 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[76
+[75
 
 
 
 
 ]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+ []
+
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+ []
+
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+ []
+
+[76]
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3512,7 +3512,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[79]
+[79])
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3527,22 +3527,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[80])
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
- []
-
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
- []
-
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
- []
-
-[81] (./main.bbl
+[80] (./main.bbl
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `\sihao' on input line 1.
@@ -3562,12 +3547,27 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[82
+[81
 
 
 
 
 ]
+Overfull \hbox (8.14285pt too wide) has occurred while \output is active
+[]  [] 
+ []
+
+
+Overfull \hbox (2.0pt too wide) has occurred while \output is active
+[][] 
+ []
+
+
+Overfull \hbox (6.14285pt too wide) has occurred while \output is active
+ []
+ []
+
+[82]
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3612,7 +3612,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[85]
+[85])
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3627,7 +3627,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[86])
+[86] (./body/ap_feedback_loop_stats.tex)
 Overfull \hbox (8.14285pt too wide) has occurred while \output is active
 []  [] 
  []
@@ -3642,22 +3642,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[87] (./body/ap_feedback_loop_stats.tex)
-Overfull \hbox (8.14285pt too wide) has occurred while \output is active
-[]  [] 
- []
-
-
-Overfull \hbox (2.0pt too wide) has occurred while \output is active
-[][] 
- []
-
-
-Overfull \hbox (6.14285pt too wide) has occurred while \output is active
- []
- []
-
-[88
+[87
 
 ]
 Overfull \vbox (4.03386pt too high) has occurred while \output is active []
@@ -3677,7 +3662,7 @@ Overfull \hbox (6.14285pt too wide) has occurred while \output is active
  []
  []
 
-[89]
+[88]
 \tf@thm=\write7
 \openout7 = `main.thm'.
 
@@ -3689,15 +3674,15 @@ LaTeX2e <2025-11-01>
 L3 programming layer <2022/08/05>
  ***********
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 5FF82799750C67A3E071BD5944812CA3;5709.
+(rerunfilecheck)             Checksum: EB42EAEB3317C5770223C502D9F0299A;5709.
  ) 
 Here is how much of TeX's memory you used:
- 54034 strings out of 468168
- 1318124 string characters out of 5423555
- 2278189 words of memory out of 5000000
- 81760 multiletter control sequences out of 15000+600000
- 647369 words of font info for 200 fonts, out of 8000000 for 9000
+ 54231 strings out of 468168
+ 1325349 string characters out of 5423555
+ 2277339 words of memory out of 5000000
+ 81955 multiletter control sequences out of 15000+600000
+ 647385 words of font info for 202 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 99i,17n,108p,875b,2534s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 99i,17n,108p,987b,2534s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on main.pdf (97 pages).
+Output written on main.xdv (96 pages, 1845748 bytes).
